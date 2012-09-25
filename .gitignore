@@ -13,4 +13,10 @@ bin/
 gen/
 
 # Local configuration file (sdk path, etc)
+.settings/
+libs/
+.classpath
+.project
+proguard-project.txt
+project.properties
 local.properties
