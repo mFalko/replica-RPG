@@ -18,10 +18,13 @@ package com.falko.android.snowball.core;
 
 import java.util.ArrayList;
 
+import com.falko.android.snowball.core.collision.HitPointPool;
 import com.falko.android.snowball.core.graphics.BufferLibrary;
 import com.falko.android.snowball.core.graphics.DrawableFactory;
 import com.falko.android.snowball.core.graphics.TextureLibrary;
 import com.falko.android.snowball.core.systems.CameraSystem;
+import com.falko.android.snowball.core.systems.CollisionSystem;
+import com.falko.android.snowball.core.systems.GameObjectCollisionSystem;
 import com.falko.android.snowball.core.systems.OpenGLSystem;
 import com.falko.android.snowball.core.systems.RenderSystem;
 import com.falko.android.snowball.core.systems.SoundSystem;
@@ -49,16 +52,16 @@ public class ObjectRegistry extends BaseObject {
     public BufferLibrary bufferLibrary;
     public CameraSystem cameraSystem;
 //    public ChannelSystem channelSystem;
-//    public CollisionSystem collisionSystem;
+    public CollisionSystem collisionSystem;
     public ContextParameters contextParameters;
 //    public CustomToastSystem customToastSystem;
     public DebugSystem debugSystem;
     public DrawableFactory drawableFactory;
     public EventRecorder eventRecorder;
-//    public GameObjectCollisionSystem gameObjectCollisionSystem;
+    public GameObjectCollisionSystem gameObjectCollisionSystem;
     public GameObjectFactory gameObjectFactory;
     public GameObjectManager gameObjectManager;
-//    public HitPointPool hitPointPool;
+    public HitPointPool hitPointPool;
 //    public HotSpotSystem hotSpotSystem;
     public HudSystem hudSystem;
 	public InputGameInterface inputGameInterface;

@@ -79,5 +79,8 @@ public class Zone extends BaseObject {
 		layers_.add(layer);
 	}
 	
+	private int height_;
+	private int width_;
+//	private 
 	private FixedSizeArray<Layer> layers_;
 }
