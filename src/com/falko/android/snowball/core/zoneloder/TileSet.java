@@ -61,11 +61,17 @@ public class TileSet extends BaseObject{
 		final float y = (gid / width) * tileHeight;
 		final float x = (gid % width) * tileWidth;
 
-		float[] uv0 = { x / pixelWidth, y / pixelHeight };
-		float[] uv1 = { x / pixelWidth, (y + tileHeight) / pixelHeight };
-		float[] uv2 = { (x + tileWidth) / pixelWidth,
-				(y + tileHeight) / pixelHeight };
-		float[] uv3 = { (x + tileWidth) / pixelWidth, y / pixelHeight };
+		float[] uv0 = { (x + GL_MAGIC_OFFSET) / pixelWidth ,
+						(y + GL_MAGIC_OFFSET) / pixelHeight};
+		
+		float[] uv1 = { (x + GL_MAGIC_OFFSET) / pixelWidth, 
+						(y + tileHeight - GL_MAGIC_OFFSET) / pixelHeight};
+		
+		float[] uv2 = { (x + tileWidth - GL_MAGIC_OFFSET) / pixelWidth,
+						(y + tileHeight - GL_MAGIC_OFFSET) / pixelHeight };
+		
+		float[] uv3 = { (x + tileWidth - GL_MAGIC_OFFSET) / pixelWidth,
+						(y + GL_MAGIC_OFFSET) / pixelHeight };
 
 		uv[0] = uv0;
 		uv[1] = uv1;
@@ -145,7 +151,7 @@ public class TileSet extends BaseObject{
 		return textures;
 	}
 	
-
+	private static final float GL_MAGIC_OFFSET = 0.375f;
 	private FixedSizeArray<Sheet> sheets_;
 	
 	private static long FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
