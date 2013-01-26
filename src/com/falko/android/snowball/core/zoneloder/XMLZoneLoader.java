@@ -128,6 +128,9 @@ public class XMLZoneLoader implements ZoneLoader {
 		for (int i = 0; i < layers_.getCount(); ++i) {
 			map.addLayer(layers_.get(i));
 		}
+		
+		map.setWorldHeight(worldHeight_ * tileSet_.getTileHeight(0));
+		map.setWorldWidth(worldWidth_ * tileSet_.getTileWidth(0));
 		return map;
 	}
 

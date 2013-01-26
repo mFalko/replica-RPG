@@ -1883,9 +1883,7 @@ public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
         private void checkGLESVersion() {
             if (! mGLESVersionCheckComplete) {
-                mGLESVersion = SystemProperties.getInt(
-                        "ro.opengles.version",
-                        ConfigurationInfo.GL_ES_VERSION_UNDEFINED);
+                mGLESVersion = kGLES_20; //FIXME: Nasty dirty hack 
                 if (mGLESVersion >= kGLES_20) {
                     mMultipleGLESContextsAllowed = true;
                 } 

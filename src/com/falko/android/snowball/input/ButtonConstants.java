@@ -27,10 +27,9 @@ public final class ButtonConstants {
     public static final int STOMP_BUTTON_REGION_WIDTH = 70;
     public static final int STOMP_BUTTON_REGION_HEIGHT = 80;
     
-    public static final int MOVEMENT_SLIDER_REGION_X = 0;
-    public static final int MOVEMENT_SLIDER_REGION_Y = 0;
-    public static final int MOVEMENT_SLIDER_REGION_WIDTH = 220;
-    public static final int MOVEMENT_SLIDER_REGION_HEIGHT = 200;
-    public static final int MOVEMENT_SLIDER_BAR_WIDTH = 140;
-    public static final int MOVEMENT_SLIDER_X = 20;
+    public static final int D_PAD_REGION_X = 0;
+    public static final int D_PAD_REGION_Y = 0;
+    public static final int D_PAD_REGION_WIDTH = 64;
+    public static final int D_PAD_REGION_HEIGHT = 64;
+    
 }

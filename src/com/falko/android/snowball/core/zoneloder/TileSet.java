@@ -151,7 +151,7 @@ public class TileSet extends BaseObject{
 		return textures;
 	}
 	
-	private static final float GL_MAGIC_OFFSET = 0.375f;
+	private static final float GL_MAGIC_OFFSET = 0.45f;
 	private FixedSizeArray<Sheet> sheets_;
 	
 	private static long FLIPPED_HORIZONTALLY_FLAG = 0x80000000;

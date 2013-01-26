@@ -15,6 +15,8 @@
  */
 package com.falko.android.snowball.utility;
 
+import android.util.Log;
+
 import com.falko.android.snowball.core.BaseObject;
 
 /**
@@ -47,14 +49,22 @@ public abstract class ObjectPool extends BaseObject {
     /** Allocates an object from the pool */
     protected Object allocate() {
         Object result = mAvailable.removeLast();
-        assert result != null : "Object pool of type " + this.getClass().getSimpleName()
-                                + " exhausted!!";
+//        assert result != null : "Object pool of type " + this.getClass().getSimpleName()
+//                                + " exhausted!!";
+        if (result == null) {
+        	Log.e("SnowBall","Object pool of type " + this.getClass().getSimpleName()
+                    + " exhausted!!     " +  mAvailable.getCount() + " left!!");
+        }
+        
         return result;
     }
 
     /** Returns an object to the pool. */
     public void release(Object entry) {
         mAvailable.add(entry);
+        
+        
+        
     }
 
     /** Returns the number of pooled elements that have been allocated but not released. */

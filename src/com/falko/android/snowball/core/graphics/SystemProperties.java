@@ -93,7 +93,15 @@ public class SystemProperties
         if (key.length() > PROP_NAME_MAX) {
             throw new IllegalArgumentException("key.length > " + PROP_NAME_MAX);
         }
-        return native_get_long(key, def);
+        
+        long ret = 0;
+        try {
+        	ret = native_get_long(key, def);
+        } catch (Exception ex) {
+        	ret =  0x20000;
+        }
+        
+        return ret;
     }
 
     /**

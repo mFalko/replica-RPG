@@ -171,7 +171,7 @@ public class DrawableFactory extends BaseObject {
 	private class BackgroundDrawablePool extends TObjectPool<BackgroundDrawable> {
         
         public BackgroundDrawablePool() {
-            super();
+            super(60);
         }
         
         @Override

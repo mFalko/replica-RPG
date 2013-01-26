@@ -29,6 +29,7 @@ import com.falko.android.snowball.core.systems.OpenGLSystem;
 import com.falko.android.snowball.core.systems.RenderSystem;
 import com.falko.android.snowball.core.systems.SoundSystem;
 import com.falko.android.snowball.core.systems.VibrationSystem;
+import com.falko.android.snowball.core.zoneloder.Zone;
 import com.falko.android.snowball.hud.HudSystem;
 import com.falko.android.snowball.input.InputGameInterface;
 import com.falko.android.snowball.input.InputSystem;
@@ -76,6 +77,9 @@ public class ObjectRegistry extends BaseObject {
     public RenderSystem renderSystem;
     public VectorPool vectorPool;
     public VibrationSystem vibrationSystem;
+    
+    public Zone zone;
+    
 	
     private ArrayList<BaseObject> mItemsNeedingReset = new ArrayList<BaseObject>();
     

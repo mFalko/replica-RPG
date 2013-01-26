@@ -30,20 +30,21 @@ import com.falko.android.snowball.core.systems.RenderSystem;
 import com.falko.android.snowball.utility.FixedSizeArray;
 import com.falko.android.snowball.utility.Vector2D;
 
-
-
 /**
  * @author matt
- *
+ * 
  */
 public class Zone extends BaseObject {
 
 	public Zone(int layerCount) {
 		layers_ = new FixedSizeArray<Layer>(layerCount);
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.falko.android.pinhead.BaseObject#update(float, com.falko.android.pinhead.BaseObject)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.falko.android.pinhead.BaseObject#update(float,
+	 * com.falko.android.pinhead.BaseObject)
 	 */
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
@@ -53,10 +54,11 @@ public class Zone extends BaseObject {
 		final RenderSystem renderer = sSystemRegistry.renderSystem;
 		final float cameraX = camera.getFocusPositionX();
 		final float cameraY = camera.getFocusPositionY();
+
 		final float viewWidth = sSystemRegistry.contextParameters.viewWidth;
 		final float viewHeight = sSystemRegistry.contextParameters.viewHeight;
-		//TODO: Refactor code to use TiledBackgroundVertexGrid
-		Vector2D v = new Vector2D(0,0);
+		// TODO: Refactor code to use TiledBackgroundVertexGrid
+		Vector2D v = new Vector2D(0, 0);
 		for (int i = 0; i < count; ++i) {
 			final Layer layer = layers_.get(i);
 			BackgroundDrawable drawable = factory.allocateBackgroundDrawable();
@@ -65,22 +67,38 @@ public class Zone extends BaseObject {
 			renderer.scheduleForDraw(drawable, v, i, false);
 		}
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.falko.android.pinhead.BaseObject#reset()
 	 */
 	@Override
 	public void reset() {
-		
+
+	}
+
+	public int getWorldHeight() {
+		return worldHeight_;
+	}
+	
+	public int getWorldWidth() {
+		return worldWidth_;
 	}
 	
 	protected void addLayer(Layer layer) {
 		layers_.add(layer);
 	}
-	
-	private int height_;
-	private int width_;
-//	private 
+
+	protected void setWorldHeight(int height) {
+		worldHeight_ = height;
+	}
+
+	protected void setWorldWidth(int width) {
+		worldWidth_ = width;
+	}
+
 	private FixedSizeArray<Layer> layers_;
+	private int worldWidth_;
+	private int worldHeight_;
 }

@@ -20,12 +20,12 @@
 package com.falko.android.snowball;
 
 import android.app.Activity;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 
 import com.falko.android.snowball.core.Game;
+import com.falko.android.snowball.core.graphics.GLSurfaceView;
 import com.falko.android.snowball.utility.DebugLog;
 import com.falko.android.snowball.utility.EventReporter;
 
@@ -120,7 +120,7 @@ public class SnowBall extends Activity {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (!game_.isPaused()) {
-//			game_.onTouchEvent(event);
+			game_.onTouchEvent(event);
 	    	
 	        final long time = System.currentTimeMillis();
 	        if (event.getAction() == MotionEvent.ACTION_MOVE && time - mLastTouchTime < 32) {

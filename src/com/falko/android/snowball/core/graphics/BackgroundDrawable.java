@@ -33,7 +33,7 @@ public class BackgroundDrawable extends DrawableObject {
 	 */
 	@Override
 	public void draw(float x, float y, float scaleX, float scaleY) {
-		layer_.draw(x, y, viewWidth_, viewHeight_);
+		layer_.draw(cameraX_, cameraY_, viewWidth_, viewHeight_);
 	}
 	
 	public void init(Layer layer, float cameraX, float cameraY, float viewWidth, float viewHeight) {

@@ -18,19 +18,22 @@ package com.falko.android.snowball.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import com.falko.android.snowball.GhostMovementGameComponent;
+import com.falko.android.snowball.R;
+import com.falko.android.snowball.core.components.RenderComponent;
 import com.falko.android.snowball.core.graphics.BufferLibrary;
 import com.falko.android.snowball.core.graphics.DrawableFactory;
+import com.falko.android.snowball.core.graphics.GLSurfaceView;
 import com.falko.android.snowball.core.graphics.GameRenderer;
+import com.falko.android.snowball.core.graphics.Texture;
 import com.falko.android.snowball.core.graphics.TextureLibrary;
 import com.falko.android.snowball.core.systems.CameraSystem;
 import com.falko.android.snowball.core.systems.OpenGLSystem;
@@ -173,7 +176,7 @@ public class Game extends AllocationGuard {
 
 			// collision.loadCollisionTiles(context.getResources().openRawResource(R.raw.collision));
 
-//			gameRoot.add(gameManager);
+			gameRoot.add(gameManager);
 
 			// Camera must come after the game manager so that the camera target
 			// moves before the camera
@@ -212,7 +215,26 @@ public class Game extends AllocationGuard {
 //			objectFactory.preloadEffects();
 			
 			
-
+			
+			
+			Texture texture = BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.debug_circle_red);
+			texture.width = 32;
+			texture.height = 32;
+			GameObject ghost = new GameObject();
+			ghost.width = 32;
+			ghost.height = 32;
+			RenderComponent ghostRenCom = new RenderComponent();
+			ghostRenCom.setCameraRelative(true);
+			ghostRenCom.setPriority(3);
+			GhostMovementGameComponent gm  = new GhostMovementGameComponent();
+			gm.setRenderComponent(ghostRenCom);
+			ghost.add(gm);
+			ghost.add(ghostRenCom);
+			gameRoot.add(ghost);
+			camera.setTarget(ghost);
+			
+			
+			
 			try {
 				InputStream in = context.getAssets().open("Skeleton.tmx");
 				ZoneLoader loader = new XMLZoneLoader();
@@ -221,6 +243,11 @@ public class Game extends AllocationGuard {
 				
 			}
 			gameRoot.add(zone_);
+			BaseObject.sSystemRegistry.zone = zone_;
+			
+			
+			
+			
 			
 			mGameRoot = gameRoot;
 
@@ -297,7 +324,6 @@ public class Game extends AllocationGuard {
 		// levelSystem.incrementAttemptsCount();
 		// levelSystem.spawnObjects();
 		//
-		BaseObject.sSystemRegistry.hudSystem.startFade(true, 0.2f);
 
 		// mCurrentLevel = level;
 		// mPendingLevel = null;
@@ -325,10 +351,7 @@ public class Game extends AllocationGuard {
 		TimeSystem time = BaseObject.sSystemRegistry.timeSystem;
 		time.reset();
 
-		HudSystem hud = BaseObject.sSystemRegistry.hudSystem;
-		if (hud != null) {
-			hud.startFade(true, 1.0f);
-		}
+		
 
 		// CustomToastSystem toast =
 		// BaseObject.sSystemRegistry.customToastSystem;
@@ -410,6 +433,7 @@ public class Game extends AllocationGuard {
 	public boolean onTouchEvent(MotionEvent event) {
 		if (mRunning) {
 			mTouchFilter.updateTouch(event);
+//			Log.v("SnowBall", "On touch Event");
 		}
 		return true;
 	}
@@ -512,18 +536,10 @@ public class Game extends AllocationGuard {
 	public void setControlOptions(boolean clickAttack, boolean tiltControls,
 			int tiltSensitivity, int movementSensitivity,
 			boolean onScreenControls) {
-		BaseObject.sSystemRegistry.inputGameInterface
-				.setUseClickForAttack(clickAttack);
-		BaseObject.sSystemRegistry.inputGameInterface
-				.setUseOrientationForMovement(tiltControls);
-		BaseObject.sSystemRegistry.inputGameInterface
-				.setOrientationMovementSensitivity((tiltSensitivity / 100.0f));
-		BaseObject.sSystemRegistry.inputGameInterface
-				.setMovementSensitivity((movementSensitivity / 100.0f));
+
+	
 		BaseObject.sSystemRegistry.inputGameInterface
 				.setUseOnScreenControls(onScreenControls);
-		BaseObject.sSystemRegistry.hudSystem
-				.setMovementSliderMode(onScreenControls);
 	}
 
 	public void setSafeMode(boolean safe) {
@@ -550,11 +566,7 @@ public class Game extends AllocationGuard {
 		return (mRunning && mGameThread != null && mGameThread.getPaused());
 	}
 
-	public void setKeyConfig(int leftKey, int rightKey, int jumpKey,
-			int attackKey) {
-		BaseObject.sSystemRegistry.inputGameInterface.setKeys(leftKey,
-				rightKey, jumpKey, attackKey);
-	}
+
 
 	public int getRobotsDestroyed() {
 		return BaseObject.sSystemRegistry.eventRecorder.getRobotsDestroyed();

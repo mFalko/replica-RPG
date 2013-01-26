@@ -23,7 +23,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.opengl.GLSurfaceView;
 import android.os.SystemClock;
 
 import com.falko.android.snowball.core.BaseObject;
@@ -182,6 +181,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                 final float halfHeight = halfHeight_;
                 for (int i = 0; i < count; i++) {
                     RenderElement element = (RenderElement)objectArray[i];
+                    if (element == null) continue;
                     float x = element.x;
                     float y = element.y;
                     if (element.cameraRelative) {

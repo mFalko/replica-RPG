@@ -109,8 +109,6 @@ public class Layer {
 	private Vector2D topRight_; // the top right corner in pixel coords
 	private int tileWidth_;
 	private int tileHeight_;
-	private int gameWidth_;
-	private int gameHeight_;
 	private VertexGrid[] grids_;
 	private Texture[] textures_;
 

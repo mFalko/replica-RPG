@@ -18,6 +18,7 @@ package com.falko.android.snowball.core.systems;
 
 import com.falko.android.snowball.core.BaseObject;
 import com.falko.android.snowball.core.GameObject;
+import com.falko.android.snowball.core.zoneloder.Zone;
 import com.falko.android.snowball.utility.Lerp;
 import com.falko.android.snowball.utility.TimeSystem;
 import com.falko.android.snowball.utility.Utils;
@@ -70,7 +71,7 @@ public class CameraSystem extends BaseObject {
         mTargetPosition.zero();
     }
     
-    void setTarget(GameObject target) {
+    public void setTarget(GameObject target) {
         if (target != null && mTarget != target) {
             mPreInterpolateCameraPosition.set(mCurrentCameraPosition);
             mPreInterpolateCameraPosition.subtract(target.getPosition());
@@ -148,12 +149,13 @@ public class CameraSystem extends BaseObject {
                 final float yDelta = targetPosition.y - mCurrentCameraPosition.y;
                 if (yDelta > Y_UP_FOLLOW_DISTANCE) {
                     mCurrentCameraPosition.y = targetPosition.y - Y_UP_FOLLOW_DISTANCE;
-                } else if (yDelta < -Y_DOWN_FOLLOW_DISTANCE) {
-                    mCurrentCameraPosition.y = targetPosition.y + Y_DOWN_FOLLOW_DISTANCE;
-                }
+                } 
+//                else if (yDelta < -Y_DOWN_FOLLOW_DISTANCE) {
+//                    mCurrentCameraPosition.y = targetPosition.y + Y_DOWN_FOLLOW_DISTANCE;
+//                }
 
             }
-            
+//            Log.v("Snowball", "xpsx = " + mCurrentCameraPosition.x);
         	mBias.zero();
 
         }
@@ -195,18 +197,18 @@ public class CameraSystem extends BaseObject {
     public float snapFocalPointToWorldBoundsX(float worldX) {
         float focalPositionX = worldX;
         final float width = sSystemRegistry.contextParameters.gameWidth;
-//        final LevelSystem level = sSystemRegistry.levelSystem;
-//        if (level != null) {
-//            final float worldPixelWidth = Math.max(level.getLevelWidth(), width);
-//            final float rightEdge = focalPositionX + (width / 2.0f);
-//            final float leftEdge = focalPositionX - (width / 2.0f);
-//    
-//            if (rightEdge > worldPixelWidth) {
-//                focalPositionX = worldPixelWidth - (width / 2.0f);
-//            } else if (leftEdge < 0) {
-//                focalPositionX = width / 2.0f;
-//            }
-//        }
+        final Zone level = sSystemRegistry.zone;
+        if (level != null) {
+            final float worldPixelWidth = Math.max(level.getWorldWidth(), width);
+            final float rightEdge = focalPositionX + width;// + (width / 2.0f);
+            final float leftEdge = focalPositionX;// - (width / 4.0f);
+    
+            if (rightEdge > worldPixelWidth) {
+                focalPositionX = worldPixelWidth- width;// - (width / 2.0f);
+            } else if (leftEdge < 0) {
+                focalPositionX = 0;//width / 4.0f;
+            }
+        }
         return focalPositionX;
     }
 

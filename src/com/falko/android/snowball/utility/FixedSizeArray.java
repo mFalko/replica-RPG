@@ -19,6 +19,8 @@ package com.falko.android.snowball.utility;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import android.util.Log;
+
 import com.falko.android.snowball.core.AllocationGuard;
 
 /**
@@ -118,6 +120,11 @@ public class FixedSizeArray<T> extends AllocationGuard {
             mContents[mCount - 1] = null;
             mCount--;
         }
+        
+        if (mCount > 0 && object == null) {
+        	Log.e("SnowBall", "WTF");
+        }
+        
         return object;
     }
     
