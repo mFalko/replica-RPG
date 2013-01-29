@@ -143,6 +143,7 @@ public class HudSystem extends BaseObject {
                 dpadCenter_.setWidth((int)(tex.width / DPAD_BUTTON_SIZE_BASE));
                 dpadCenter_.setHeight((int)(tex.height / DPAD_BUTTON_SIZE_BASE));
             }
+			
 			render.scheduleForDraw(dpadCenter_, dpadCenterButtonLocation_, SortConstants.HUD, false);
 		}
 		

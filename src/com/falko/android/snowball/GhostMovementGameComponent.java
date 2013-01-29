@@ -5,11 +5,13 @@ import com.falko.android.snowball.core.GameObject;
 import com.falko.android.snowball.core.components.GameComponent;
 import com.falko.android.snowball.core.components.RenderComponent;
 import com.falko.android.snowball.core.graphics.DrawableBitmap;
+import com.falko.android.snowball.input.InputButton;
 import com.falko.android.snowball.input.InputGameInterface;
-import com.falko.android.snowball.input.InputXY;
 import com.falko.android.snowball.utility.Vector2D;
 
 public class GhostMovementGameComponent extends GameComponent {
+	
+	private final int GHOST_MOVEMENT_SPEED = 5;
 
 	public GhostMovementGameComponent() {
 		
@@ -27,11 +29,24 @@ public class GhostMovementGameComponent extends GameComponent {
 		Vector2D pos =  ((GameObject) parent).getPosition();
 		
 		
-		InputXY dpad = input.getDirectionalPad();
+		InputButton dpadup = input.getDpadUpButton();
+		if (dpadup.getPressed()) {
+			pos.y += GHOST_MOVEMENT_SPEED;
+		} 
 		
-		if (dpad.getPressed()) {
-			pos.x += dpad.getX();
-			pos.y += dpad.getY();
+		InputButton dpaddown = input.getDpadDownButton();
+		if (dpaddown.getPressed()) {
+			pos.y += -GHOST_MOVEMENT_SPEED;
+		} 
+		
+		InputButton dpadleft = input.getDpadLeftButton();
+		if (dpadleft.getPressed()) {
+			pos.x += -GHOST_MOVEMENT_SPEED;
+		} 
+		
+		InputButton dpadright = input.getDpadRightButton();
+		if (dpadright.getPressed()) {
+			pos.x += GHOST_MOVEMENT_SPEED;
 		} 
 		 
 		 DrawableBitmap bmap = sSystemRegistry.drawableFactory.allocateDrawableBitmap();

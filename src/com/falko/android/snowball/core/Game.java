@@ -23,6 +23,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -115,6 +116,7 @@ public class Game extends AllocationGuard {
 				mTouchFilter = new SingleTouchFilter();
 			} else {
 				mTouchFilter = new MultiTouchFilter();
+				Log.v("SNowBAll", "Multitouch");
 			}
 
 			// Short-term textures are cleared between levels.

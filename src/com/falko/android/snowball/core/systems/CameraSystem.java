@@ -40,8 +40,7 @@ public class CameraSystem extends BaseObject {
     private float mTargetChangedTime;
     
     private static final float X_FOLLOW_DISTANCE = 0.0f;
-    private static final float Y_UP_FOLLOW_DISTANCE = 90.0f; 
-    private static final float Y_DOWN_FOLLOW_DISTANCE = 0.0f; 
+    private static final float Y_FOLLOW_DISTANCE = 0.0f;
     
     private static final float MAX_INTERPOLATE_TO_TARGET_DISTANCE = 300.0f;
     private static final float INTERPOLATE_TO_TARGET_TIME = 1.0f;
@@ -147,12 +146,9 @@ public class CameraSystem extends BaseObject {
                 
                
                 final float yDelta = targetPosition.y - mCurrentCameraPosition.y;
-                if (yDelta > Y_UP_FOLLOW_DISTANCE) {
-                    mCurrentCameraPosition.y = targetPosition.y - Y_UP_FOLLOW_DISTANCE;
-                } 
-//                else if (yDelta < -Y_DOWN_FOLLOW_DISTANCE) {
-//                    mCurrentCameraPosition.y = targetPosition.y + Y_DOWN_FOLLOW_DISTANCE;
-//                }
+                if (Math.abs(yDelta) > Y_FOLLOW_DISTANCE) {
+                    mCurrentCameraPosition.y = targetPosition.y - (Y_FOLLOW_DISTANCE * Utils.sign(yDelta));
+                }
 
             }
 //            Log.v("Snowball", "xpsx = " + mCurrentCameraPosition.x);
@@ -221,18 +217,18 @@ public class CameraSystem extends BaseObject {
         float focalPositionY = worldY;
 
         final float height = sSystemRegistry.contextParameters.gameHeight;
-//        final LevelSystem level = sSystemRegistry.levelSystem;
-//        if (level != null) {
-//            final float worldPixelHeight = Math.max(level.getLevelHeight(), sSystemRegistry.contextParameters.gameHeight);
-//            final float topEdge = focalPositionY + (height / 2.0f);
-//            final float bottomEdge = focalPositionY - (height / 2.0f);
-//    
-//            if (topEdge > worldPixelHeight) {
-//                focalPositionY = worldPixelHeight - (height / 2.0f);
-//            } else if (bottomEdge < 0) {
-//                focalPositionY = height / 2.0f;
-//            }
-//        }
+        final Zone level = sSystemRegistry.zone;
+        if (level != null) {
+            final float worldPixelHeight = Math.max(level.getWorldHeight(), sSystemRegistry.contextParameters.gameHeight);
+            final float topEdge = focalPositionY + height;//(height / 2.0f);
+            final float bottomEdge = focalPositionY;// - (height / 2.0f);
+    
+            if (topEdge > worldPixelHeight) {
+                focalPositionY = worldPixelHeight - height;//(height / 2.0f);
+            } else if (bottomEdge < 0) {
+                focalPositionY = 0;//height / 2.0f;
+            }
+        }
         
         return focalPositionY;
     }

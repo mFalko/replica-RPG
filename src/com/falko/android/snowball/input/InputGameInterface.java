@@ -27,7 +27,10 @@ public class InputGameInterface extends BaseObject {
 	
 	private InputXY mDirectionalPad = new InputXY();
 
-
+	private InputButton dpadUpButton = new InputButton();
+	private InputButton dpadDownButton = new InputButton();
+	private InputButton dpadLeftButton = new InputButton();
+	private InputButton dpadRightButton = new InputButton();
 
 	public InputGameInterface() {
 		super();
@@ -39,7 +42,13 @@ public class InputGameInterface extends BaseObject {
 		mJumpButton.release();
 		mAttackButton.release();
 		mDirectionalPad.release();
-
+		
+		dpadUpButton.release();
+		dpadDownButton.release();
+		dpadLeftButton.release();
+		dpadRightButton.release();
+		
+		
 	}
 
 	@Override
@@ -51,22 +60,43 @@ public class InputGameInterface extends BaseObject {
 
 		
 		
-		final InputXY dapdTouch = touch.findPointerInRegion(
+		final InputXY dpadTouch = touch.findPointerInRegion(
 				40, 20, 100, 100);
 		
-		if (dapdTouch != null) {
+		if (dpadTouch != null) {
 			
-			final int centerX = 80;
-			final int centerY = 60;
+			float touchx = dpadTouch.getX() - 40;
+			float touchy = dpadTouch.getY() - 20;
 			
-			int deltaX = dapdTouch.getX() - centerX > 40? 5 : dapdTouch.getX() - centerX < -40? -5 : 0;
-			int deltaY = dapdTouch.getY() - centerY > 30? 5 : dapdTouch.getY() - centerY < -30? -5 : 0;
-			mDirectionalPad.press(dapdTouch.getLastPressedTime(),deltaX, deltaY);
-
-			Log.v("SNowBAll", "Touch Dpad");
+			if (touchy >= 70f && (touchx >= 30f && touchx <= 70f)) {
+				dpadUpButton.press(dpadTouch.getLastPressedTime(), 1);
+			} else {
+				dpadUpButton.release();
+			}
 			
+			if (touchy <= 30f && (touchx >= 30f && touchx <= 70f)) {
+				dpadDownButton.press(dpadTouch.getLastPressedTime(), 1);
+			} else {
+				dpadDownButton.release();
+			}
+			
+			if (touchx <= 30f && (touchy >= 30f && touchy <= 70f)) {
+				dpadLeftButton.press(dpadTouch.getLastPressedTime(), 1);
+			} else {
+				dpadLeftButton.release();
+			}
+			
+			if (touchx >= 70f && (touchy >= 30f && touchy <= 70f)) {
+				dpadRightButton.press(dpadTouch.getLastPressedTime(), 1);
+			} else {
+				dpadRightButton.release();
+			}
+	
 		} else {
-			mDirectionalPad.release();
+			dpadUpButton.release();
+			dpadDownButton.release();
+			dpadLeftButton.release();
+			dpadRightButton.release();
 		}
 		
 	
@@ -75,7 +105,23 @@ public class InputGameInterface extends BaseObject {
 	public final InputXY getDirectionalPad() {
 		return mDirectionalPad;
 	}
+	
+	public final InputButton getDpadUpButton() {
+		return dpadUpButton;
+	}
 
+	public final InputButton getDpadDownButton() {
+		return dpadDownButton;
+	}
+	
+	public final InputButton getDpadLeftButton() {
+		return dpadLeftButton;
+	}
+	
+	public final InputButton getDpadRightButton() {
+		return dpadRightButton;
+	}
+	
 	public final InputButton getJumpButton() {
 		return mJumpButton;
 	}
