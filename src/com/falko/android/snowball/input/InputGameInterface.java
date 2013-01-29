@@ -16,8 +16,9 @@
 
 package com.falko.android.snowball.input;
 
+import android.util.Log;
+
 import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.ContextParameters;
 
 public class InputGameInterface extends BaseObject {
 
@@ -26,8 +27,7 @@ public class InputGameInterface extends BaseObject {
 	
 	private InputXY mDirectionalPad = new InputXY();
 
-	private InputButton scrollRightButton = new InputButton();
-	private InputButton scrollLeftButton = new InputButton();
+
 
 	public InputGameInterface() {
 		super();
@@ -49,29 +49,27 @@ public class InputGameInterface extends BaseObject {
 		final InputTouchScreen touch = input.getTouchScreen();
 		final float gameTime = sSystemRegistry.timeSystem.getGameTime();
 
-		ContextParameters params = sSystemRegistry.contextParameters;
-		float scrollRightRegionX = params.gameWidth - 100;
-		float scrollRightWidthX = 100;
-		float scrollleftRegionX = 0;
-		float scrollLeftWidthX = 100;
+		
+		
+		final InputXY dapdTouch = touch.findPointerInRegion(
+				40, 20, 100, 100);
+		
+		if (dapdTouch != null) {
+			
+			final int centerX = 80;
+			final int centerY = 60;
+			
+			int deltaX = dapdTouch.getX() - centerX > 40? 5 : dapdTouch.getX() - centerX < -40? -5 : 0;
+			int deltaY = dapdTouch.getY() - centerY > 30? 5 : dapdTouch.getY() - centerY < -30? -5 : 0;
+			mDirectionalPad.press(dapdTouch.getLastPressedTime(),deltaX, deltaY);
 
-		final InputXY scrollRightTouch = touch.findPointerInRegion(
-				scrollRightRegionX, 0, scrollRightWidthX, params.gameHeight);
-
-		final InputXY scrollLeftTouch = touch.findPointerInRegion(
-				scrollleftRegionX, 0, scrollLeftWidthX, params.gameHeight);
-
-		if (scrollRightTouch != null) {
-			scrollRightButton.press(scrollRightTouch.getLastPressedTime(), 1);
+			Log.v("SNowBAll", "Touch Dpad");
+			
 		} else {
-			scrollRightButton.release();
+			mDirectionalPad.release();
 		}
-
-		if (scrollLeftTouch != null) {
-			scrollLeftButton.press(scrollLeftTouch.getLastPressedTime(), 1);
-		} else {
-			scrollLeftButton.release();
-		}
+		
+	
 	}
 
 	public final InputXY getDirectionalPad() {
@@ -86,13 +84,6 @@ public class InputGameInterface extends BaseObject {
 		return mAttackButton;
 	}
 
-	public final InputButton getSLButton() {
-		return scrollLeftButton;
-	}
-
-	public final InputButton getSRButton() {
-		return scrollRightButton;
-	}
 
 	public void setUseOnScreenControls(boolean onscreen) {
 		// mUseOnScreenControls = onscreen;

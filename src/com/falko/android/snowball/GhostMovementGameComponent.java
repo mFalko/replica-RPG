@@ -6,6 +6,7 @@ import com.falko.android.snowball.core.components.GameComponent;
 import com.falko.android.snowball.core.components.RenderComponent;
 import com.falko.android.snowball.core.graphics.DrawableBitmap;
 import com.falko.android.snowball.input.InputGameInterface;
+import com.falko.android.snowball.input.InputXY;
 import com.falko.android.snowball.utility.Vector2D;
 
 public class GhostMovementGameComponent extends GameComponent {
@@ -24,13 +25,14 @@ public class GhostMovementGameComponent extends GameComponent {
 		
 		InputGameInterface input = sSystemRegistry.inputGameInterface;
 		Vector2D pos =  ((GameObject) parent).getPosition();
-		 if (input.getSRButton().getPressed()) {
-//			 Log.v("SnowBall", "Ghost update +10");
-			pos.add(5, 0);
-		 } else if (input.getSLButton().getPressed()) {
-			 pos.add(-5, 0);
-//			 Log.v("SnowBall", "Ghost update -10");
-		 }
+		
+		
+		InputXY dpad = input.getDirectionalPad();
+		
+		if (dpad.getPressed()) {
+			pos.x += dpad.getX();
+			pos.y += dpad.getY();
+		} 
 		 
 		 DrawableBitmap bmap = sSystemRegistry.drawableFactory.allocateDrawableBitmap();
 		 bmap.setTexture(sSystemRegistry.shortTermTextureLibrary.getTextureByResource(R.drawable.debug_circle_red));

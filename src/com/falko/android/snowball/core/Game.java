@@ -183,6 +183,8 @@ public class Game extends AllocationGuard {
 			// centers.
 
 			gameRoot.add(camera);
+			
+			
 
 			// More basic systems.
 
@@ -198,7 +200,17 @@ public class Game extends AllocationGuard {
 			BaseObject.sSystemRegistry.drawableFactory = new DrawableFactory();
 
 			// hud system
-
+			HudSystem hud = new HudSystem();
+			
+			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_inactive_up);
+			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_inactive_down);
+			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_inactive_left);
+			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_inactive_right);
+			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_center);
+			BaseObject.sSystemRegistry.hudSystem = hud;
+			gameRoot.add(hud);
+			
+			
 //			BaseObject.sSystemRegistry.vibrationSystem = new VibrationSystem();
 
 //			EventRecorder eventRecorder = new EventRecorder();
