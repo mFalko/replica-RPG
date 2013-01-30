@@ -43,6 +43,7 @@ import com.falko.android.snowball.core.zoneloder.XMLZoneLoader;
 import com.falko.android.snowball.core.zoneloder.Zone;
 import com.falko.android.snowball.core.zoneloder.ZoneLoader;
 import com.falko.android.snowball.hud.HudSystem;
+import com.falko.android.snowball.input.ButtonConstants;
 import com.falko.android.snowball.input.InputGameInterface;
 import com.falko.android.snowball.input.InputSystem;
 import com.falko.android.snowball.input.MultiTouchFilter;
@@ -67,9 +68,8 @@ public class Game extends AllocationGuard {
 	private boolean mRunning;
 	private boolean mBootstrapComplete;
 
-	
 	private Zone zone_;
-	
+
 	private boolean mGLDataLoaded;
 	private ContextParameters mContextParameters;
 	private TouchFilter mTouchFilter;
@@ -80,7 +80,7 @@ public class Game extends AllocationGuard {
 		mBootstrapComplete = false;
 		mGLDataLoaded = false;
 		mContextParameters = new ContextParameters();
-		
+
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class Game extends AllocationGuard {
 			// The buffer library manages hardware VBOs.
 			BaseObject.sSystemRegistry.bufferLibrary = new BufferLibrary();
 
-//			BaseObject.sSystemRegistry.soundSystem = new SoundSystem();
+			// BaseObject.sSystemRegistry.soundSystem = new SoundSystem();
 
 			// The root of the game graph.
 			MainLoop gameRoot = new MainLoop();
@@ -139,14 +139,18 @@ public class Game extends AllocationGuard {
 			BaseObject.sSystemRegistry.inputSystem = input;
 			BaseObject.sSystemRegistry.registerForReset(input);
 
-		
-			
-//			WindowManager windowMgr = (WindowManager) context
-//					.getSystemService(Context.WINDOW_SERVICE);
-//			int rotationIndex = windowMgr.getDefaultDisplay().getOrientation();
-//			input.setScreenRotation(rotationIndex);
+			// WindowManager windowMgr = (WindowManager) context
+			// .getSystemService(Context.WINDOW_SERVICE);
+			// int rotationIndex =
+			// windowMgr.getDefaultDisplay().getOrientation();
+			// input.setScreenRotation(rotationIndex);
 
 			InputGameInterface inputInterface = new InputGameInterface();
+			inputInterface.setDpadLocation(
+					ButtonConstants.D_PAD_REGION_X,
+					ButtonConstants.D_PAD_REGION_Y,
+					ButtonConstants.D_PAD_REGION_WIDTH,
+					ButtonConstants.D_PAD_REGION_HEIGHT);
 			gameRoot.add(inputInterface);
 			BaseObject.sSystemRegistry.inputGameInterface = inputInterface;
 
@@ -161,8 +165,8 @@ public class Game extends AllocationGuard {
 					params.viewWidth * 2);
 			BaseObject.sSystemRegistry.gameObjectManager = gameManager;
 
-//			GameObjectFactory objectFactory = new GameObjectFactory();
-//			BaseObject.sSystemRegistry.gameObjectFactory = objectFactory;
+			// GameObjectFactory objectFactory = new GameObjectFactory();
+			// BaseObject.sSystemRegistry.gameObjectFactory = objectFactory;
 
 			// BaseObject.sSystemRegistry.hotSpotSystem = new HotSpotSystem();
 			//
@@ -185,8 +189,6 @@ public class Game extends AllocationGuard {
 			// centers.
 
 			gameRoot.add(camera);
-			
-			
 
 			// More basic systems.
 
@@ -198,26 +200,31 @@ public class Game extends AllocationGuard {
 
 			RenderSystem renderer = new RenderSystem();
 			BaseObject.sSystemRegistry.renderSystem = renderer;
-//			BaseObject.sSystemRegistry.vectorPool = new VectorPool();
+			// BaseObject.sSystemRegistry.vectorPool = new VectorPool();
 			BaseObject.sSystemRegistry.drawableFactory = new DrawableFactory();
 
 			// hud system
 			HudSystem hud = new HudSystem();
-			
-			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_inactive_up);
-			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_inactive_down);
-			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_inactive_left);
-			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_inactive_right);
-			BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.dpad_center);
+			hud.setTouchDPadBounds(
+					ButtonConstants.D_PAD_REGION_X,
+					ButtonConstants.D_PAD_REGION_Y,
+					ButtonConstants.D_PAD_REGION_WIDTH,
+					ButtonConstants.D_PAD_REGION_HEIGHT);
+
+			BaseObject.sSystemRegistry.shortTermTextureLibrary
+					.allocateTexture(R.drawable.joystick_circle_outer);
+			BaseObject.sSystemRegistry.shortTermTextureLibrary
+					.allocateTexture(R.drawable.joystick_circle_inner);
+
 			BaseObject.sSystemRegistry.hudSystem = hud;
 			gameRoot.add(hud);
-			
-			
-//			BaseObject.sSystemRegistry.vibrationSystem = new VibrationSystem();
 
-//			EventRecorder eventRecorder = new EventRecorder();
-//			BaseObject.sSystemRegistry.eventRecorder = eventRecorder;
-//			BaseObject.sSystemRegistry.registerForReset(eventRecorder);
+			// BaseObject.sSystemRegistry.vibrationSystem = new
+			// VibrationSystem();
+
+			// EventRecorder eventRecorder = new EventRecorder();
+			// BaseObject.sSystemRegistry.eventRecorder = eventRecorder;
+			// BaseObject.sSystemRegistry.registerForReset(eventRecorder);
 
 			// gameRoot.add(collision);
 
@@ -226,12 +233,10 @@ public class Game extends AllocationGuard {
 			// DebugSystem(longTermTextureLibrary);
 			// dynamicCollision.setDebugPrefs(false, true);
 
-//			objectFactory.preloadEffects();
-			
-			
-			
-			
-			Texture texture = BaseObject.sSystemRegistry.shortTermTextureLibrary.allocateTexture(R.drawable.debug_circle_red);
+			// objectFactory.preloadEffects();
+
+			Texture texture = BaseObject.sSystemRegistry.shortTermTextureLibrary
+					.allocateTexture(R.drawable.debug_circle_red);
 			texture.width = 32;
 			texture.height = 32;
 			GameObject ghost = new GameObject();
@@ -240,33 +245,29 @@ public class Game extends AllocationGuard {
 			RenderComponent ghostRenCom = new RenderComponent();
 			ghostRenCom.setCameraRelative(true);
 			ghostRenCom.setPriority(3);
-			GhostMovementGameComponent gm  = new GhostMovementGameComponent();
+			GhostMovementGameComponent gm = new GhostMovementGameComponent();
 			gm.setRenderComponent(ghostRenCom);
 			ghost.add(gm);
 			ghost.add(ghostRenCom);
-			gameRoot.add(ghost);
+			gameManager.add(ghost);
+			ghost.activationRadius = -1;
+			gameManager.setPlayer(ghost);
 			camera.setTarget(ghost);
-			
-			
-			
+
 			try {
 				InputStream in = context.getAssets().open("Skeleton.tmx");
 				ZoneLoader loader = new XMLZoneLoader();
 				zone_ = loader.loadZone(in, context);
 			} catch (IOException e) {
-				
+
 			}
 			gameRoot.add(zone_);
 			BaseObject.sSystemRegistry.zone = zone_;
-			
-			
-			
-			
-			
+
 			mGameRoot = gameRoot;
 
-			 mGameThread = new GameThread(mRenderer);
-			 mGameThread.setGameRoot(mGameRoot);
+			mGameThread = new GameThread(mRenderer);
+			mGameThread.setGameRoot(mGameRoot);
 
 			// mCurrentLevel = null;
 
@@ -292,7 +293,7 @@ public class Game extends AllocationGuard {
 		// usefulness next level,
 		// but this is way simpler.
 		GameObjectFactory factory = BaseObject.sSystemRegistry.gameObjectFactory;
-//		 factory.clearStaticData();
+		// factory.clearStaticData();
 		// factory.sanityCheckPools();
 
 		// Reset the level
@@ -364,8 +365,6 @@ public class Game extends AllocationGuard {
 
 		TimeSystem time = BaseObject.sSystemRegistry.timeSystem;
 		time.reset();
-
-		
 
 		// CustomToastSystem toast =
 		// BaseObject.sSystemRegistry.customToastSystem;
@@ -447,7 +446,7 @@ public class Game extends AllocationGuard {
 	public boolean onTouchEvent(MotionEvent event) {
 		if (mRunning) {
 			mTouchFilter.updateTouch(event);
-//			Log.v("SnowBall", "On touch Event");
+			// Log.v("SnowBall", "On touch Event");
 		}
 		return true;
 	}
@@ -532,7 +531,7 @@ public class Game extends AllocationGuard {
 		// mSurfaceView.loadBuffers(BaseObject.sSystemRegistry.bufferLibrary);
 		// mGLDataLoaded = true;
 		// }
-		
+
 		BaseObject.sSystemRegistry.shortTermTextureLibrary.invalidateAll();
 		BaseObject.sSystemRegistry.shortTermTextureLibrary.loadAll(context, gl);
 		BaseObject.sSystemRegistry.longTermTextureLibrary.invalidateAll();
@@ -551,7 +550,6 @@ public class Game extends AllocationGuard {
 			int tiltSensitivity, int movementSensitivity,
 			boolean onScreenControls) {
 
-	
 		BaseObject.sSystemRegistry.inputGameInterface
 				.setUseOnScreenControls(onScreenControls);
 	}
@@ -579,8 +577,6 @@ public class Game extends AllocationGuard {
 	public boolean isPaused() {
 		return (mRunning && mGameThread != null && mGameThread.getPaused());
 	}
-
-
 
 	public int getRobotsDestroyed() {
 		return BaseObject.sSystemRegistry.eventRecorder.getRobotsDestroyed();

@@ -17,19 +17,10 @@
 package com.falko.android.snowball.input;
 
 public final class ButtonConstants {
-    public static final int FLY_BUTTON_REGION_X = 0;
-    public static final int FLY_BUTTON_REGION_Y = 0;
-    public static final int FLY_BUTTON_REGION_WIDTH = 90; //128 - 24;
-    public static final int FLY_BUTTON_REGION_HEIGHT = 256;
     
-    public static final int STOMP_BUTTON_REGION_X = 100;
-    public static final int STOMP_BUTTON_REGION_Y = 0;
-    public static final int STOMP_BUTTON_REGION_WIDTH = 70;
-    public static final int STOMP_BUTTON_REGION_HEIGHT = 80;
-    
-    public static final int D_PAD_REGION_X = 0;
-    public static final int D_PAD_REGION_Y = 0;
-    public static final int D_PAD_REGION_WIDTH = 64;
-    public static final int D_PAD_REGION_HEIGHT = 64;
+    public static final int D_PAD_REGION_X = 10;
+    public static final int D_PAD_REGION_Y = 10;
+    public static final int D_PAD_REGION_WIDTH = 130;
+    public static final int D_PAD_REGION_HEIGHT = 130;
     
 }

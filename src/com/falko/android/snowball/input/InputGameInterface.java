@@ -16,21 +16,11 @@
 
 package com.falko.android.snowball.input;
 
-import android.util.Log;
-
 import com.falko.android.snowball.core.BaseObject;
 
 public class InputGameInterface extends BaseObject {
 
-	private InputButton mJumpButton = new InputButton();
-	private InputButton mAttackButton = new InputButton();
-	
-	private InputXY mDirectionalPad = new InputXY();
-
-	private InputButton dpadUpButton = new InputButton();
-	private InputButton dpadDownButton = new InputButton();
-	private InputButton dpadLeftButton = new InputButton();
-	private InputButton dpadRightButton = new InputButton();
+	private InputDPad dpad_ = new InputDPad();
 
 	public InputGameInterface() {
 		super();
@@ -39,97 +29,28 @@ public class InputGameInterface extends BaseObject {
 
 	@Override
 	public void reset() {
-		mJumpButton.release();
-		mAttackButton.release();
-		mDirectionalPad.release();
-		
-		dpadUpButton.release();
-		dpadDownButton.release();
-		dpadLeftButton.release();
-		dpadRightButton.release();
-		
-		
+		dpad_.reset();
+	}
+
+	public void setDpadLocation(float x, float y, float width, float height) {
+		dpad_.setBounds(x, y, height, width);
 	}
 
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
-		InputSystem input = sSystemRegistry.inputSystem;
 
-		final InputTouchScreen touch = input.getTouchScreen();
 		final float gameTime = sSystemRegistry.timeSystem.getGameTime();
 
-		
-		
-		final InputXY dpadTouch = touch.findPointerInRegion(
-				40, 20, 100, 100);
-		
-		if (dpadTouch != null) {
-			
-			float touchx = dpadTouch.getX() - 40;
-			float touchy = dpadTouch.getY() - 20;
-			
-			if (touchy >= 70f && (touchx >= 30f && touchx <= 70f)) {
-				dpadUpButton.press(dpadTouch.getLastPressedTime(), 1);
-			} else {
-				dpadUpButton.release();
-			}
-			
-			if (touchy <= 30f && (touchx >= 30f && touchx <= 70f)) {
-				dpadDownButton.press(dpadTouch.getLastPressedTime(), 1);
-			} else {
-				dpadDownButton.release();
-			}
-			
-			if (touchx <= 30f && (touchy >= 30f && touchy <= 70f)) {
-				dpadLeftButton.press(dpadTouch.getLastPressedTime(), 1);
-			} else {
-				dpadLeftButton.release();
-			}
-			
-			if (touchx >= 70f && (touchy >= 30f && touchy <= 70f)) {
-				dpadRightButton.press(dpadTouch.getLastPressedTime(), 1);
-			} else {
-				dpadRightButton.release();
-			}
-	
-		} else {
-			dpadUpButton.release();
-			dpadDownButton.release();
-			dpadLeftButton.release();
-			dpadRightButton.release();
-		}
-		
-	
+		dpad_.update(gameTime, this);
 	}
 
-	public final InputXY getDirectionalPad() {
-		return mDirectionalPad;
-	}
-	
-	public final InputButton getDpadUpButton() {
-		return dpadUpButton;
+	public InputDPad getDpad() {
+		return dpad_;
 	}
 
-	public final InputButton getDpadDownButton() {
-		return dpadDownButton;
+	public boolean getDpadPressed() {
+		return dpad_ != null && dpad_.pressed();
 	}
-	
-	public final InputButton getDpadLeftButton() {
-		return dpadLeftButton;
-	}
-	
-	public final InputButton getDpadRightButton() {
-		return dpadRightButton;
-	}
-	
-	public final InputButton getJumpButton() {
-		return mJumpButton;
-	}
-
-	public final InputButton getAttackButton() {
-		return mAttackButton;
-	}
-
 
 	public void setUseOnScreenControls(boolean onscreen) {
 		// mUseOnScreenControls = onscreen;
