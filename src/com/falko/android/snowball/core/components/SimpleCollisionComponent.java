@@ -61,8 +61,9 @@ public class SimpleCollisionComponent extends GameComponent {
         	if (mMovementDirection.length2() > 0.0f) {
         		final CollisionSystem collision = sSystemRegistry.collisionSystem;
         		if (collision != null) {
-        			final boolean hit = collision.castRay(mPreviousPosition, mCurrentPosition, 
-        					mMovementDirection, mHitPoint, mHitNormal, parentObject);
+        			//FIXME: fix this
+        			final boolean hit = false;//= collision.castRay(mPreviousPosition, mCurrentPosition, 
+//        					mMovementDirection, mHitPoint, mHitNormal, parentObject);
         			
         			if (hit) {
         				// snap

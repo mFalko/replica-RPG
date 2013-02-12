@@ -28,7 +28,6 @@ public class SortConstants {
 	public static final int FOREGROUND_EFFECT = 30;
 	public static final int PROJECTILE = 40;
 	public static final int FOREGROUND_OBJECT = 50;
-	public static final int OVERLAY = 70;
 	public static final int HUD = 100;
 	public static final int FADE = 200;
 }

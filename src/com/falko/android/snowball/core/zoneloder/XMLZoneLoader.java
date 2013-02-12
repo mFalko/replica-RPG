@@ -47,7 +47,7 @@ public class XMLZoneLoader implements ZoneLoader {
 	public XMLZoneLoader() {
 		layers_ = new FixedSizeArray<Layer>(MAX_LAYERS);
 		tileSet_ = new TileSet();
-		
+
 	}
 
 	/*
@@ -89,27 +89,25 @@ public class XMLZoneLoader implements ZoneLoader {
 
 			VertexGrid[] grids = new VertexGrid[gridCount];
 			Texture[] textures = new Texture[gridCount];
-			
+
 			for (int j = 0; j < grids.length; ++j) {
 				grids[j] = new VertexGrid(worldWidth_, worldHeight_);
 				textures[j] = sheets[j].texture_;
-			} 
-			
+			}
+
 			final int tileHeight = tileSet_.getTileHeight(mapData_[i][0][0]);
 			final int tileWidth = tileSet_.getTileWidth(mapData_[i][0][0]);
-		
+
 			for (int tileY = 0; tileY < worldHeight_; tileY++) {
 				for (int tileX = 0; tileX < worldWidth_; tileX++) {
-					
+
 					final long GID = mapData_[i][tileY][tileX];
 					final float offsetX = tileX * tileWidth;
-					final float offsetY = tileY * tileHeight; 
-					
-					final float[] p0 = { offsetX,
-							offsetY + tileHeight, 0.0f };
+					final float offsetY = tileY * tileHeight;
+
+					final float[] p0 = { offsetX, offsetY + tileHeight, 0.0f };
 					final float[] p1 = { offsetX, offsetY, 0.0f };
-					final float[] p2 = { offsetX + tileWidth,
-							offsetY, 0.0f };
+					final float[] p2 = { offsetX + tileWidth, offsetY, 0.0f };
 					final float[] p3 = { offsetX + tileWidth,
 							offsetY + tileHeight, 0.0f };
 
@@ -118,17 +116,19 @@ public class XMLZoneLoader implements ZoneLoader {
 					grids[gridIndex].set(tileX, tileY, positions, uvWorkspace);
 				}
 			}
-			
+
 			Vector2D bottomLeft = new Vector2D();
-			Vector2D topRight = new Vector2D(tileWidth*worldWidth_, tileHeight*worldHeight_);
-			layers_.add(new Layer(bottomLeft, topRight, tileWidth, tileHeight, grids, textures));
+			Vector2D topRight = new Vector2D(tileWidth * worldWidth_,
+					tileHeight * worldHeight_);
+			layers_.add(new Layer(bottomLeft, topRight, tileWidth, tileHeight,
+					grids, textures, 0));
 		}
-		
-		Zone map = new Zone(layerCount_);
+
+		Zone map = new Zone(layerCount_, 0);
 		for (int i = 0; i < layers_.getCount(); ++i) {
 			map.addLayer(layers_.get(i));
 		}
-		
+
 		map.setWorldHeight(worldHeight_ * tileSet_.getTileHeight(0));
 		map.setWorldWidth(worldWidth_ * tileSet_.getTileWidth(0));
 		return map;
@@ -153,7 +153,11 @@ public class XMLZoneLoader implements ZoneLoader {
 
 			} else if (tagName.equals("layer")) {
 
-				 parseLayer(parser);
+				parseLayer(parser);
+
+			} else if (tagName.equals("objectgroup")) {
+
+//				parseObjectGroup(parser);
 
 			}
 		}
@@ -217,8 +221,8 @@ public class XMLZoneLoader implements ZoneLoader {
 				imageWidth, imageHeight);
 	}
 
-	private void parseLayer(XmlPullParser parser) throws IOException, XmlPullParserException {
-		
+	private void parseLayer(XmlPullParser parser) throws IOException,
+			XmlPullParserException {
 
 		parser.nextTag();
 		if (parser.next() != XmlPullParser.TEXT) {
@@ -231,14 +235,53 @@ public class XMLZoneLoader implements ZoneLoader {
 		for (int tileY = worldHeight_ - 1; tileY >= 0; tileY--) {
 			for (int tileX = 0; tileX < worldWidth_; tileX++) {
 				final int y = worldHeight_ - tileY - 1;
-				mapData_[layerCount_][tileY][tileX] = Long.parseLong(mapStrArray[y
-						* worldWidth_ + tileX].trim());
+				mapData_[layerCount_][tileY][tileX] = Long
+						.parseLong(mapStrArray[y * worldWidth_ + tileX].trim());
 			}
 		}
 		layerCount_++;
 	}
 
-	private static final int MAX_LAYERS = 3;
+	private void parseObjectGroup(XmlPullParser parser) throws XmlPullParserException, IOException {
+		
+		String attributeName = "";
+		int ac = parser.getAttributeCount();
+		for (int i = 0; i < ac; ++i) {
+			attributeName = parser.getAttributeName(i);
+			if (attributeName.equals("name")) {
+				
+			} else if (attributeName.equals("width")) {
+//				imageWidth = Integer.parseInt(parser.getAttributeValue(i));
+			} else if (attributeName.equals("height")) {
+//				imageHeight = Integer.parseInt(parser.getAttributeValue(i));
+			}	
+		}
+		
+		parser.nextTag();
+		assert (parser.getEventType() == XmlPullParser.START_TAG);
+		int xoffset;
+		int yoffset;
+		
+		ac = parser.getAttributeCount();
+		for (int i = 0; i < ac; ++i) {
+			attributeName = parser.getAttributeName(i);
+			if (attributeName.equals("x")) {
+				xoffset = Integer.parseInt(parser.getAttributeValue(i));
+			} else if (attributeName.equals("y")) {
+				yoffset = Integer.parseInt(parser.getAttributeValue(i));
+			}	
+		}
+		
+		parser.nextTag();
+		assert (parser.getEventType() == XmlPullParser.START_TAG);
+		
+		String pointStr = parser.getAttributeValue(0);
+		String pointstrarray[] = pointStr.split(" ");
+		
+		
+	}
+
+	private static final int MAX_LAYERS = 6;
 	private FixedSizeArray<Layer> layers_;
 	private long[][][] mapData_;
 	private TileSet tileSet_;

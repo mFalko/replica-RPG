@@ -2,6 +2,7 @@ package com.falko.android.snowball;
 
 import com.falko.android.snowball.core.BaseObject;
 import com.falko.android.snowball.core.GameObject;
+import com.falko.android.snowball.core.GameObject.ActionType;
 import com.falko.android.snowball.core.components.GameComponent;
 import com.falko.android.snowball.core.components.RenderComponent;
 import com.falko.android.snowball.core.graphics.DrawableBitmap;
@@ -12,11 +13,13 @@ import com.falko.android.snowball.utility.Vector2D;
 
 public class GhostMovementGameComponent extends GameComponent {
 
-	private final float GHOST_MOVEMENT_SPEED = 3.0f;
+	private final float GHOST_MOVEMENT_SPEED = 2.2f;
 	Vector2D d;
 
 	public GhostMovementGameComponent() {
 		d = new Vector2D();
+		
+		setPhase(ComponentPhases.MOVEMENT.ordinal());
 	}
 
 	@Override
@@ -29,7 +32,7 @@ public class GhostMovementGameComponent extends GameComponent {
 
 		InputGameInterface input = sSystemRegistry.inputGameInterface;
 		Vector2D pos = ((GameObject) parent).getPosition();
-
+		GameObject parentObject = (GameObject) parent;
 		float deltaX = 0;
 		float deltaY = 0;
 
@@ -52,20 +55,13 @@ public class GhostMovementGameComponent extends GameComponent {
 
 			pos.y += d.y;
 			pos.x += d.x;
+			parentObject.setCurrentAction(ActionType.MOVE);
+			
+		} else {
+			
+			parentObject.setCurrentAction(ActionType.IDLE);
 		}
 
-		DrawableBitmap bmap = sSystemRegistry.drawableFactory
-				.allocateDrawableBitmap();
-		bmap.setTexture(sSystemRegistry.shortTermTextureLibrary
-				.getTextureByResource(R.drawable.debug_circle_red));
-		bmap.resize(32, 32);
-		reCom.setDrawable(bmap);
-
 	}
 
-	public void setRenderComponent(RenderComponent r) {
-		reCom = r;
-	}
-
-	RenderComponent reCom;
 }

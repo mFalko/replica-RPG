@@ -19,9 +19,9 @@
 
 package com.falko.android.snowball.core.zoneloder;
 
-import android.util.Log;
-
 import com.falko.android.snowball.core.BaseObject;
+import com.falko.android.snowball.core.PhasedObjectManager;
+import com.falko.android.snowball.core.collision.LineSegment;
 import com.falko.android.snowball.core.graphics.BackgroundDrawable;
 import com.falko.android.snowball.core.graphics.DrawableFactory;
 import com.falko.android.snowball.core.graphics.Layer;
@@ -34,10 +34,11 @@ import com.falko.android.snowball.utility.Vector2D;
  * @author matt
  * 
  */
-public class Zone extends BaseObject {
+public class Zone extends PhasedObjectManager{
 
-	public Zone(int layerCount) {
-		layers_ = new FixedSizeArray<Layer>(layerCount);
+	public Zone(int layerCount, int collisionCount) {
+		drawLayers_ = new FixedSizeArray<Layer>(layerCount);
+//		collisionLayers_ = new FixedSizeArray<LineSegment>(collisionCount); 
 	}
 
 	/*
@@ -48,7 +49,7 @@ public class Zone extends BaseObject {
 	 */
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
-		final int count = layers_.getCount();
+		final int count = drawLayers_.getCount();
 		final DrawableFactory factory = sSystemRegistry.drawableFactory;
 		final CameraSystem camera = sSystemRegistry.cameraSystem;
 		final RenderSystem renderer = sSystemRegistry.renderSystem;
@@ -60,10 +61,10 @@ public class Zone extends BaseObject {
 		// TODO: Refactor code to use TiledBackgroundVertexGrid
 		Vector2D v = new Vector2D(0, 0);
 		for (int i = 0; i < count; ++i) {
-			final Layer layer = layers_.get(i);
+			final Layer layer = drawLayers_.get(i);
 			BackgroundDrawable drawable = factory.allocateBackgroundDrawable();
 			drawable.init(layer, cameraX, cameraY, viewWidth, viewHeight);
-			drawable.setPriority(i);
+			drawable.setPriority(layer.getPriority());
 			renderer.scheduleForDraw(drawable, v, i, false);
 		}
 	}
@@ -87,7 +88,7 @@ public class Zone extends BaseObject {
 	}
 	
 	protected void addLayer(Layer layer) {
-		layers_.add(layer);
+		drawLayers_.add(layer);
 	}
 
 	protected void setWorldHeight(int height) {
@@ -98,7 +99,8 @@ public class Zone extends BaseObject {
 		worldWidth_ = width;
 	}
 
-	private FixedSizeArray<Layer> layers_;
+	private FixedSizeArray<Layer> drawLayers_;
+	private FixedSizeArray<LineSegment> backgrouundCollisionLines_;
 	private int worldWidth_;
 	private int worldHeight_;
 }

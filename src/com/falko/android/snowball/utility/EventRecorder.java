@@ -52,7 +52,7 @@ public class EventRecorder extends BaseObject {
 		return mLastEnding;
 	}
 	
-	synchronized void incrementEventCounter(int event) {
+	public synchronized void incrementEventCounter(int event) {
 		if (event == COUNTER_ROBOTS_DESTROYED) {
 			mRobotsDestroyed++;
 		} else if (event == COUNTER_PEARLS_COLLECTED) {

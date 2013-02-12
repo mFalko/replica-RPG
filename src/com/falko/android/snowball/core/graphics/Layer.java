@@ -21,8 +21,6 @@ package com.falko.android.snowball.core.graphics;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.util.FloatMath;
-
 import com.falko.android.snowball.core.systems.OpenGLSystem;
 import com.falko.android.snowball.utility.Vector2D;
 
@@ -33,13 +31,18 @@ import com.falko.android.snowball.utility.Vector2D;
 public class Layer {
 
 	public Layer(Vector2D bottomLeft, Vector2D topRight, int tileWidth,
-			int tileHeight, VertexGrid[] grids, Texture[] textures) {
+			int tileHeight, VertexGrid[] grids, Texture[] textures, int priority) {
 		bottomLeft_ = bottomLeft;
 		topRight_ = topRight;
 		tileWidth_ = tileWidth;
 		tileHeight_ = tileHeight;
 		grids_ = grids;
 		textures_ = textures;
+		priority_ = priority;
+	}
+	
+	public int getPriority() {
+		return priority_;
 	}
 
 	public void draw(float cameraX, float cameraY, float viewWidth,
@@ -54,7 +57,7 @@ public class Layer {
 		int startX = 0;
 		if (offsetX > tileWidth_) {
 			final float XoffsetPrecent = offsetX / layerPixelLength;
-			startX = (int) FloatMath.floor(XoffsetPrecent
+			startX = (int) Math.floor(XoffsetPrecent
 					* (layerPixelLength / tileWidth_));
 		}
 
@@ -62,15 +65,15 @@ public class Layer {
 		int startY = 0;
 		if (offsetY > tileHeight_) {
 			final float YoffsetPrecent = offsetY / layerPixelHeight;
-			startY = (int) FloatMath.floor(YoffsetPrecent
+			startY = (int)Math.floor(YoffsetPrecent
 					* (layerPixelHeight / tileHeight_));
 		}
 
-		int DrawCountX = (int) FloatMath.ceil(viewWidth / tileWidth_) +1;
+		int DrawCountX = (int) Math.ceil(viewWidth / tileWidth_) +1;
 		DrawCountX = startX + DrawCountX < horizontalTileCount ? DrawCountX
 				: horizontalTileCount - startX;
 
-		int DrawCountY = (int) FloatMath.ceil(viewHeight / tileHeight_) +1;
+		int DrawCountY = (int)Math.ceil(viewHeight / tileHeight_) +1;
 		DrawCountY = startY + DrawCountY <= verticalTileCount ? DrawCountY
 				: verticalTileCount - startY;
 
@@ -109,6 +112,7 @@ public class Layer {
 	private Vector2D topRight_; // the top right corner in pixel coords
 	private int tileWidth_;
 	private int tileHeight_;
+	private int priority_;
 	private VertexGrid[] grids_;
 	private Texture[] textures_;
 

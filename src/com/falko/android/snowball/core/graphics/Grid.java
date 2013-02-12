@@ -34,7 +34,7 @@ import com.falko.android.snowball.utility.DebugLog;
  * the SpriteText package in the APIDemos Android sample) to support hardware
  * vertex buffers and to insert edges between grid squares for tiling.
  */
-class Grid {
+public class Grid {
 	private static final int FLOAT_SIZE = 4;
 	private static final int FIXED_SIZE = 4;
 	private static final int CHAR_SIZE = 2;

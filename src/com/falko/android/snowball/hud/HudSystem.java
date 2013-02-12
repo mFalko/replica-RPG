@@ -54,10 +54,6 @@ public class HudSystem extends BaseObject {
 
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
-		final RenderSystem render = sSystemRegistry.renderSystem;
-		final VectorPool pool = sSystemRegistry.vectorPool;
-		final ContextParameters params = sSystemRegistry.contextParameters;
-		final DrawableFactory factory = sSystemRegistry.drawableFactory;
 		final GameObjectManager manager = sSystemRegistry.gameObjectManager;
 
 		if (manager != null && manager.getPlayer() != null) {

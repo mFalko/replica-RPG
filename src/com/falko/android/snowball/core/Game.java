@@ -27,13 +27,19 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.falko.android.snowball.GhostMovementGameComponent;
 import com.falko.android.snowball.R;
+import com.falko.android.snowball.core.GameObject.ActionType;
+import com.falko.android.snowball.core.components.GameComponent;
 import com.falko.android.snowball.core.components.RenderComponent;
+import com.falko.android.snowball.core.components.SpriteComponent;
+import com.falko.android.snowball.core.components.AnimationComponent.PlayerAnimations;
+import com.falko.android.snowball.core.graphics.AnimationFrame;
 import com.falko.android.snowball.core.graphics.BufferLibrary;
+import com.falko.android.snowball.core.graphics.DrawableBitmap;
 import com.falko.android.snowball.core.graphics.DrawableFactory;
 import com.falko.android.snowball.core.graphics.GLSurfaceView;
 import com.falko.android.snowball.core.graphics.GameRenderer;
+import com.falko.android.snowball.core.graphics.SpriteAnimation;
 import com.falko.android.snowball.core.graphics.Texture;
 import com.falko.android.snowball.core.graphics.TextureLibrary;
 import com.falko.android.snowball.core.systems.CameraSystem;
@@ -44,6 +50,7 @@ import com.falko.android.snowball.core.zoneloder.Zone;
 import com.falko.android.snowball.core.zoneloder.ZoneLoader;
 import com.falko.android.snowball.hud.HudSystem;
 import com.falko.android.snowball.input.ButtonConstants;
+import com.falko.android.snowball.input.InputDPad;
 import com.falko.android.snowball.input.InputGameInterface;
 import com.falko.android.snowball.input.InputSystem;
 import com.falko.android.snowball.input.MultiTouchFilter;
@@ -146,8 +153,7 @@ public class Game extends AllocationGuard {
 			// input.setScreenRotation(rotationIndex);
 
 			InputGameInterface inputInterface = new InputGameInterface();
-			inputInterface.setDpadLocation(
-					ButtonConstants.D_PAD_REGION_X,
+			inputInterface.setDpadLocation(ButtonConstants.D_PAD_REGION_X,
 					ButtonConstants.D_PAD_REGION_Y,
 					ButtonConstants.D_PAD_REGION_WIDTH,
 					ButtonConstants.D_PAD_REGION_HEIGHT);
@@ -165,8 +171,8 @@ public class Game extends AllocationGuard {
 					params.viewWidth * 2);
 			BaseObject.sSystemRegistry.gameObjectManager = gameManager;
 
-			// GameObjectFactory objectFactory = new GameObjectFactory();
-			// BaseObject.sSystemRegistry.gameObjectFactory = objectFactory;
+			GameObjectFactory objectFactory = new GameObjectFactory();
+			BaseObject.sSystemRegistry.gameObjectFactory = objectFactory;
 
 			// BaseObject.sSystemRegistry.hotSpotSystem = new HotSpotSystem();
 			//
@@ -204,20 +210,19 @@ public class Game extends AllocationGuard {
 			BaseObject.sSystemRegistry.drawableFactory = new DrawableFactory();
 
 			// hud system
-			HudSystem hud = new HudSystem();
-			hud.setTouchDPadBounds(
-					ButtonConstants.D_PAD_REGION_X,
-					ButtonConstants.D_PAD_REGION_Y,
-					ButtonConstants.D_PAD_REGION_WIDTH,
-					ButtonConstants.D_PAD_REGION_HEIGHT);
-
-			BaseObject.sSystemRegistry.shortTermTextureLibrary
-					.allocateTexture(R.drawable.joystick_circle_outer);
-			BaseObject.sSystemRegistry.shortTermTextureLibrary
-					.allocateTexture(R.drawable.joystick_circle_inner);
-
-			BaseObject.sSystemRegistry.hudSystem = hud;
-			gameRoot.add(hud);
+			 HudSystem hud = new HudSystem();
+			 hud.setTouchDPadBounds(ButtonConstants.D_PAD_REGION_X,
+			 ButtonConstants.D_PAD_REGION_Y,
+			 ButtonConstants.D_PAD_REGION_WIDTH,
+			 ButtonConstants.D_PAD_REGION_HEIGHT);
+			
+			 BaseObject.sSystemRegistry.shortTermTextureLibrary
+			 .allocateTexture(R.drawable.joystick_circle_outer);
+			 BaseObject.sSystemRegistry.shortTermTextureLibrary
+			 .allocateTexture(R.drawable.joystick_circle_inner);
+			
+			 BaseObject.sSystemRegistry.hudSystem = hud;
+			 gameRoot.add(hud);
 
 			// BaseObject.sSystemRegistry.vibrationSystem = new
 			// VibrationSystem();
@@ -235,24 +240,11 @@ public class Game extends AllocationGuard {
 
 			// objectFactory.preloadEffects();
 
-			Texture texture = BaseObject.sSystemRegistry.shortTermTextureLibrary
-					.allocateTexture(R.drawable.debug_circle_red);
-			texture.width = 32;
-			texture.height = 32;
-			GameObject ghost = new GameObject();
-			ghost.width = 32;
-			ghost.height = 32;
-			RenderComponent ghostRenCom = new RenderComponent();
-			ghostRenCom.setCameraRelative(true);
-			ghostRenCom.setPriority(3);
-			GhostMovementGameComponent gm = new GhostMovementGameComponent();
-			gm.setRenderComponent(ghostRenCom);
-			ghost.add(gm);
-			ghost.add(ghostRenCom);
-			gameManager.add(ghost);
-			ghost.activationRadius = -1;
-			gameManager.setPlayer(ghost);
-			camera.setTarget(ghost);
+
+			 GameObject ghost = objectFactory.spawnPlayer(0, 0);
+			 gameManager.add(ghost);
+			 gameManager.setPlayer(ghost);
+			 camera.setTarget(ghost);
 
 			try {
 				InputStream in = context.getAssets().open("Skeleton.tmx");
