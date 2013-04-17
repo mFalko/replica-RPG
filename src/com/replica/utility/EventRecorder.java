@@ -14,16 +14,14 @@
  * limitations under the License.
  */
  
-package com.falko.android.snowball.utility;
-
-import com.falko.android.snowball.core.BaseObject;
+ package com.replica.replicaisland;
 
 public class EventRecorder extends BaseObject {
 	public final static int COUNTER_ROBOTS_DESTROYED = 0;
 	public final static int COUNTER_PEARLS_COLLECTED = 1;
 	public final static int COUNTER_PEARLS_TOTAL = 2;
 	
-	private Vector2D mLastDeathPosition = new Vector2D();
+	private Vector2 mLastDeathPosition = new Vector2();
 	private int mLastEnding = -1;
 	private int mRobotsDestroyed = 0;
 	private int mPearlsCollected = 0;
@@ -36,7 +34,7 @@ public class EventRecorder extends BaseObject {
 		mPearlsTotal = 0;
 	}
 	
-	synchronized void setLastDeathPosition(Vector2D position) {
+	synchronized void setLastDeathPosition(Vector2 position) {
 		mLastDeathPosition.set(position);
 	}
 	

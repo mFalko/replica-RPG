@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.falko.android.snowball.utility;
-
-import android.util.Log;
-
-import com.falko.android.snowball.core.BaseObject;
+package com.replica.replicaisland;
 
 /**
  * A general-purpose pool of objects.  Objects in the pool are allocated up front and then 
@@ -49,22 +45,14 @@ public abstract class ObjectPool extends BaseObject {
     /** Allocates an object from the pool */
     protected Object allocate() {
         Object result = mAvailable.removeLast();
-//        assert result != null : "Object pool of type " + this.getClass().getSimpleName()
-//                                + " exhausted!!";
-        if (result == null) {
-        	Log.e("SnowBall","Object pool of type " + this.getClass().getSimpleName()
-                    + " exhausted!!     " +  mAvailable.getCount() + " left!!");
-        }
-        
+        assert result != null : "Object pool of type " + this.getClass().getSimpleName()
+                                + " exhausted!!";
         return result;
     }
 
     /** Returns an object to the pool. */
     public void release(Object entry) {
         mAvailable.add(entry);
-        
-        
-        
     }
 
     /** Returns the number of pooled elements that have been allocated but not released. */

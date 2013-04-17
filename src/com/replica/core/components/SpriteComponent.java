@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.components;
-
-import android.util.Log;
-
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.PhasedObjectManager;
-import com.falko.android.snowball.core.graphics.AnimationFrame;
-import com.falko.android.snowball.core.graphics.DrawableBitmap;
-import com.falko.android.snowball.core.graphics.DrawableFactory;
-import com.falko.android.snowball.core.graphics.SpriteAnimation;
+package com.replica.replicaisland;
 
 /**
  * Provides an interface for controlling a sprite with animations.  Manages a list of animations
@@ -100,7 +90,7 @@ public class SpriteComponent extends GameComponent {
                     // We were asked to play an animation that doesn't exist.  Revert to our
                     // default animation. 
                     // TODO: throw an assert here?
-                    mCurrentAnimation = (SpriteAnimation) animations.get(0);
+                    mCurrentAnimation = (SpriteAnimation)animations.get(0);
                     currentAnimation = mCurrentAnimation;
                 } else {
                 	mCurrentAnimation = currentAnimation;
@@ -121,7 +111,6 @@ public class SpriteComponent extends GameComponent {
                         bitmap.setWidth(mWidth);
                         bitmap.setHeight(mHeight);
                         bitmap.setOpacity(mOpacity);
-                        bitmap.setPriority(3);
                         if (currentFrame.mCrop != null) {
                         	final int[] crop = currentFrame.mCrop;
                         	bitmap.setCrop(crop[0], crop[1], crop[2], crop[3]);
@@ -129,12 +118,9 @@ public class SpriteComponent extends GameComponent {
                         } else {
                         	updateFlip(bitmap, parentObject.facingDirection.x < 0.0f, 
                                 parentObject.facingDirection.y < 0.0f);
-                        }
-                        
                         bitmap.setTexture(currentFrame.texture);
                         render.setDrawable(bitmap);
                     } else {
-                    	
                     	render.setDrawable(null);
                     }
                 }

@@ -14,31 +14,24 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.components;
-
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.systems.CollisionSystem;
-import com.falko.android.snowball.utility.TimeSystem;
-import com.falko.android.snowball.utility.Utils;
-import com.falko.android.snowball.utility.Vector2D;
+package com.replica.replicaisland;
 
 // Simple collision detection component for objects not requiring complex collision (projectiles, etc)
 public class SimpleCollisionComponent extends GameComponent {
-	private Vector2D mPreviousPosition;
-	private Vector2D mCurrentPosition;
-	private Vector2D mMovementDirection;
-	private Vector2D mHitPoint;
-	private Vector2D mHitNormal;
+	private Vector2 mPreviousPosition;
+	private Vector2 mCurrentPosition;
+	private Vector2 mMovementDirection;
+	private Vector2 mHitPoint;
+	private Vector2 mHitNormal;
 	
 	public SimpleCollisionComponent() {
 		super();
 		setPhase(ComponentPhases.COLLISION_DETECTION.ordinal());
-		mPreviousPosition = new Vector2D();
-		mCurrentPosition = new Vector2D();
-		mMovementDirection = new Vector2D();
-		mHitPoint = new Vector2D();
-		mHitNormal = new Vector2D();
+		mPreviousPosition = new Vector2();
+		mCurrentPosition = new Vector2();
+		mMovementDirection = new Vector2();
+		mHitPoint = new Vector2();
+		mHitNormal = new Vector2();
 	}
 	
 	@Override

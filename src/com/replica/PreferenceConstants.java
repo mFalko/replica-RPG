@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball;
+package com.replica.replicaisland;
 
 public class PreferenceConstants {
 

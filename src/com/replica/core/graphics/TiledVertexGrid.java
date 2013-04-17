@@ -14,12 +14,9 @@
  * limitations under the License.
  */
  
-package com.falko.android.snowball.core.graphics;
+package com.replica.replicaisland;
 
 import javax.microedition.khronos.opengles.GL10;
-
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.systems.OpenGLSystem;
 
 public class TiledVertexGrid extends BaseObject {
 	private static final float GL_MAGIC_OFFSET = 0.375f;

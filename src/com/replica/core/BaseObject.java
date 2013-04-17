@@ -15,7 +15,7 @@
  */
 
 
-package com.falko.android.snowball.core;
+package com.replica.replicaisland;
 
 /**
  * The core object from which most other objects are derived.  Anything that will be managed by

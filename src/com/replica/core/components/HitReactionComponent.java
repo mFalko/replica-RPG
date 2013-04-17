@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.components;
+package com.replica.replicaisland;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.GameObject.ActionType;
-import com.falko.android.snowball.core.GameObject.Team;
-import com.falko.android.snowball.core.GameObjectFactory;
-import com.falko.android.snowball.core.GameObjectFactory.GameObjectType;
-import com.falko.android.snowball.core.GameObjectManager;
-import com.falko.android.snowball.core.collision.CollisionParameters;
-import com.falko.android.snowball.core.collision.CollisionParameters.HitType;
-import com.falko.android.snowball.core.systems.SoundSystem;
-import com.falko.android.snowball.utility.TimeSystem;
-import com.falko.android.snowball.utility.Utils;
-import com.falko.android.snowball.utility.Vector2D;
-import com.falko.android.snowball.utility.VectorPool;
+import com.replica.replicaisland.CollisionParameters.HitType;
+import com.replica.replicaisland.GameObject.ActionType;
+import com.replica.replicaisland.GameObject.Team;
+import com.replica.replicaisland.GameObjectFactory.GameObjectType;
 
 /** 
  * A general-purpose component that responds to dynamic collision notifications.  This component

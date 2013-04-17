@@ -54,8 +54,8 @@ public abstract class CollisionVolume extends AllocationGuard {
     }
     
     
-    public abstract boolean intersects(Vector2D position, FlipInfo flip, CollisionVolume other, 
-            Vector2D otherPosition, FlipInfo otherFlip);
+    public abstract boolean intersects(Vector2 position, FlipInfo flip, CollisionVolume other, 
+            Vector2 otherPosition, FlipInfo otherFlip);
     
     public float getMinXPosition(FlipInfo flip) {
         float value = 0;
@@ -101,6 +101,7 @@ public abstract class CollisionVolume extends AllocationGuard {
         return value;
     }
     
+	//changed to public
     public abstract float getMinX();
     public abstract float getMaxX();
     public abstract float getMinY();

@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.components;
+package com.replica.replicaisland;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.ContextParameters;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.GameObjectFactory;
-import com.falko.android.snowball.core.GameObjectManager;
-import com.falko.android.snowball.core.systems.CameraSystem;
-import com.falko.android.snowball.core.systems.SoundSystem;
-import com.falko.android.snowball.core.systems.SoundSystem.Sound;
-import com.falko.android.snowball.utility.EventRecorder;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.replicaisland.SoundSystem.Sound;
 
 /** 
  * This component allows objects to die and be deleted when their life is reduced to zero or they
@@ -36,7 +27,7 @@ public class LifetimeComponent extends GameComponent {
     private float mTimeUntilDeath;
     private GameObjectFactory.GameObjectType mSpawnOnDeathType;
     private LaunchProjectileComponent mTrackingSpawner;
-    private Vector2D mHotSpotTestPoint;
+    private Vector2 mHotSpotTestPoint;
     private boolean mDieOnHitBackground;
     private Sound mDeathSound;
     private boolean mIncrementEventCounter;
@@ -44,7 +35,7 @@ public class LifetimeComponent extends GameComponent {
     
     public LifetimeComponent() {
         super();
-        mHotSpotTestPoint = new Vector2D();
+        mHotSpotTestPoint = new Vector2();
         reset();
         setPhase(ComponentPhases.THINK.ordinal());
     }

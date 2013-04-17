@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.graphics;
-
-import com.falko.android.snowball.core.AllocationGuard;
-import com.falko.android.snowball.core.collision.CollisionVolume;
-import com.falko.android.snowball.utility.FixedSizeArray;
+package com.replica.replicaisland;
 
 /**
  * A single animation frame.  Frames contain a texture, a hold time, and collision volumes to

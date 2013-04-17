@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.components;
+
+package com.replica.replicaisland;
 
 import java.util.Comparator;
 

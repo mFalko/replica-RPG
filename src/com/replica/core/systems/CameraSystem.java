@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.systems;
-
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.zoneloder.Zone;
-import com.falko.android.snowball.utility.Lerp;
-import com.falko.android.snowball.utility.TimeSystem;
-import com.falko.android.snowball.utility.Utils;
-import com.falko.android.snowball.utility.Vector2D;
+package com.replica.replicaisland;
 
 /**
  * Manages the position of the camera based on a target game object.
@@ -32,11 +24,11 @@ public class CameraSystem extends BaseObject {
     private float mShakeTime;
     private float mShakeMagnitude;
     private float mShakeOffsetY;
-    private Vector2D mCurrentCameraPosition;
-    private Vector2D mFocalPosition;
-    private Vector2D mPreInterpolateCameraPosition;
-    private Vector2D mTargetPosition;
-    private Vector2D mBias;
+    private Vector2 mCurrentCameraPosition;
+    private Vector2 mFocalPosition;
+    private Vector2 mPreInterpolateCameraPosition;
+    private Vector2 mTargetPosition;
+    private Vector2 mBias;
     private float mTargetChangedTime;
     
     private static final float X_FOLLOW_DISTANCE = 0.0f;
@@ -51,11 +43,11 @@ public class CameraSystem extends BaseObject {
     
     public CameraSystem() {
         super();
-        mCurrentCameraPosition = new Vector2D();
-        mFocalPosition = new Vector2D();
-        mPreInterpolateCameraPosition = new Vector2D();
-        mTargetPosition = new Vector2D();
-        mBias = new Vector2D();
+        mCurrentCameraPosition = new Vector2();
+        mFocalPosition = new Vector2();
+        mPreInterpolateCameraPosition = new Vector2();
+        mTargetPosition = new Vector2();
+        mBias = new Vector2();
     }
     
     @Override
@@ -114,7 +106,7 @@ public class CameraSystem extends BaseObject {
         
         if (mTarget != null) {
         	mTargetPosition.set(mTarget.getCenteredPositionX(), mTarget.getCenteredPositionY());
-            final Vector2D targetPosition = mTargetPosition;
+            final Vector2 targetPosition = mTargetPosition;
             
             if (mTargetChangedTime > 0.0f) {
                 final TimeSystem time = sSystemRegistry.timeSystem;
@@ -173,7 +165,7 @@ public class CameraSystem extends BaseObject {
         return mFocalPosition.y;
     }
     
-    public boolean pointVisible(Vector2D point, float radius) {
+    public boolean pointVisible(Vector2 point, float radius) {
         boolean visible = false;
         final float width = sSystemRegistry.contextParameters.gameWidth / 2.0f;
         final float height = sSystemRegistry.contextParameters.gameHeight / 2.0f;
@@ -233,7 +225,7 @@ public class CameraSystem extends BaseObject {
         return focalPositionY;
     }
 
-	public void addCameraBias(Vector2D bias) {
+	public void addCameraBias(Vector2 bias) {
 		final float x = bias.x - mFocalPosition.x;
 		final float y = bias.y - mFocalPosition.y;
 		final float biasX = mBias.x;

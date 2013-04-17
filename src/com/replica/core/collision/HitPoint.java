@@ -20,8 +20,8 @@ import com.falko.android.snowball.core.AllocationGuard;
 import com.falko.android.snowball.utility.Vector2D;
 
 public class HitPoint extends AllocationGuard {
-    public Vector2D hitPoint;
-    public Vector2D hitNormal;
+    public Vector2 hitPoint;
+    public Vector2 hitNormal;
     
     public HitPoint() {
         super();

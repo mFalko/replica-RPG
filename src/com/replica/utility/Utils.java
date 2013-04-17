@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.utility;
+package com.replica.replicaisland;
 
 import java.lang.reflect.Field;
 

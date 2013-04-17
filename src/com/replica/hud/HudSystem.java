@@ -14,21 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.hud;
-
-import com.falko.android.snowball.R;
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.ContextParameters;
-import com.falko.android.snowball.core.GameObjectManager;
-import com.falko.android.snowball.core.graphics.DrawableBitmap;
-import com.falko.android.snowball.core.graphics.DrawableFactory;
-import com.falko.android.snowball.core.graphics.Texture;
-import com.falko.android.snowball.core.systems.RenderSystem;
-import com.falko.android.snowball.input.InputGameInterface;
-import com.falko.android.snowball.input.InputDPad;
-import com.falko.android.snowball.utility.SortConstants;
-import com.falko.android.snowball.utility.Vector2D;
-import com.falko.android.snowball.utility.VectorPool;
+package com.replica.replicaisland;
 
 /**
  * A very simple manager for orthographic in-game UI elements. TODO: This should

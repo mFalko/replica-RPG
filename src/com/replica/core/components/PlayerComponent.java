@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.components;
-
+package com.replica.replicaisland;
 import com.falko.android.snowball.core.BaseObject;
 import com.falko.android.snowball.core.GameObject;
 import com.falko.android.snowball.core.GameObject.ActionType;

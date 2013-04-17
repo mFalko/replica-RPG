@@ -14,29 +14,9 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core;
+package com.replica.replicaisland;
 
 import java.util.ArrayList;
-
-import com.falko.android.snowball.core.collision.HitPointPool;
-import com.falko.android.snowball.core.graphics.BufferLibrary;
-import com.falko.android.snowball.core.graphics.DrawableFactory;
-import com.falko.android.snowball.core.graphics.TextureLibrary;
-import com.falko.android.snowball.core.systems.CameraSystem;
-import com.falko.android.snowball.core.systems.CollisionSystem;
-import com.falko.android.snowball.core.systems.GameObjectCollisionSystem;
-import com.falko.android.snowball.core.systems.OpenGLSystem;
-import com.falko.android.snowball.core.systems.RenderSystem;
-import com.falko.android.snowball.core.systems.SoundSystem;
-import com.falko.android.snowball.core.systems.VibrationSystem;
-import com.falko.android.snowball.core.zoneloder.Zone;
-import com.falko.android.snowball.hud.HudSystem;
-import com.falko.android.snowball.input.InputGameInterface;
-import com.falko.android.snowball.input.InputSystem;
-import com.falko.android.snowball.utility.DebugSystem;
-import com.falko.android.snowball.utility.EventRecorder;
-import com.falko.android.snowball.utility.TimeSystem;
-import com.falko.android.snowball.utility.VectorPool;
 
 /**
  * The object registry manages a collection of global singleton objects.  However, it differs from

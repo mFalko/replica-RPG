@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core;
+package com.replica.replicaisland;
 
 import android.os.SystemClock;
-
-import com.falko.android.snowball.core.graphics.GameRenderer;
-import com.falko.android.snowball.core.systems.CameraSystem;
-import com.falko.android.snowball.core.systems.SoundSystem;
-import com.falko.android.snowball.utility.DebugLog;
+import android.view.KeyEvent;
 
 
 /** 

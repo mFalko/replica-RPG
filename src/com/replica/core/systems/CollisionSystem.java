@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.systems;
+package com.replica.replicaisland;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.collision.HitPoint;
-import com.falko.android.snowball.core.collision.HitPointPool;
-import com.falko.android.snowball.core.collision.LineSegment;
-import com.falko.android.snowball.utility.FixedSizeArray;
-import com.falko.android.snowball.utility.QuadTree;
-import com.falko.android.snowball.utility.TObjectPool;
-import com.falko.android.snowball.utility.Vector2D;
-import com.falko.android.snowball.utility.VectorPool;
+import android.content.res.AssetManager;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Collision detection system.  Provides a ray-based interface for finding surfaces in the collision

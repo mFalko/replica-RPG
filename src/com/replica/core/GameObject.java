@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core;
+package com.replica.replicaisland;
 
-import com.falko.android.snowball.utility.TimeSystem;
-import com.falko.android.snowball.utility.Utils;
-import com.falko.android.snowball.utility.Vector2D;
-
-//import com.replica.replicaisland.CollisionParameters.HitType;
+import com.replica.replicaisland.CollisionParameters.HitType;
 
 /**
  * GameObject defines any object that resides in the game world (character, background, special
@@ -31,13 +27,13 @@ import com.falko.android.snowball.utility.Vector2D;
 public class GameObject extends PhasedObjectManager {
     private final static float COLLISION_SURFACE_DECAY_TIME = 0.3f;
     // These fields are managed by components.
-    private Vector2D mPosition;
-    private Vector2D mVelocity;
-    private Vector2D mTargetVelocity;
-    private Vector2D mAcceleration;
-    private Vector2D mImpulse;
+    private Vector2 mPosition;
+    private Vector2 mVelocity;
+    private Vector2 mTargetVelocity;
+    private Vector2 mAcceleration;
+    private Vector2 mImpulse;
 
-    private Vector2D mBackgroundCollisionNormal;
+    private Vector2 mBackgroundCollisionNormal;
 
     private float mLastTouchedFloorTime;
     private float mLastTouchedCeilingTime;
@@ -53,7 +49,7 @@ public class GameObject extends PhasedObjectManager {
     
     public int lastReceivedHitType;
     
-    public Vector2D facingDirection;
+    public Vector2 facingDirection;
     public float width;
     public float height;
     
@@ -83,14 +79,14 @@ public class GameObject extends PhasedObjectManager {
     public GameObject() {
         super();
 
-        mPosition = new Vector2D();
-        mVelocity = new Vector2D();
-        mTargetVelocity = new Vector2D();
-        mAcceleration = new Vector2D();
-        mImpulse = new Vector2D();
-        mBackgroundCollisionNormal = new Vector2D();
+        mPosition = new Vector2();
+        mVelocity = new Vector2();
+        mTargetVelocity = new Vector2();
+        mAcceleration = new Vector2();
+        mImpulse = new Vector2();
+        mBackgroundCollisionNormal = new Vector2();
         
-        facingDirection = new Vector2D(1, 0);
+        facingDirection = new Vector2(1, 0);
         
         reset();
     }
@@ -153,11 +149,11 @@ public class GameObject extends PhasedObjectManager {
         return touching;
     }
 
-    public final Vector2D getPosition() {
+    public final Vector2 getPosition() {
         return mPosition;
     }
 
-    public final void setPosition(Vector2D position) {
+    public final void setPosition(Vector2 position) {
         mPosition.set(position);
     }
     
@@ -169,43 +165,43 @@ public class GameObject extends PhasedObjectManager {
         return mPosition.y + (height / 2.0f);
     }
 
-    public final Vector2D getVelocity() {
+    public final Vector2 getVelocity() {
         return mVelocity;
     }
 
-    public final void setVelocity(Vector2D velocity) {
+    public final void setVelocity(Vector2 velocity) {
         mVelocity.set(velocity);
     }
 
-    public final Vector2D getTargetVelocity() {
+    public final Vector2 getTargetVelocity() {
         return mTargetVelocity;
     }
 
-    public final void setTargetVelocity(Vector2D targetVelocity) {
+    public final void setTargetVelocity(Vector2 targetVelocity) {
         mTargetVelocity.set(targetVelocity);
     }
 
-    public final Vector2D getAcceleration() {
+    public final Vector2 getAcceleration() {
         return mAcceleration;
     }
 
-    public final void setAcceleration(Vector2D acceleration) {
+    public final void setAcceleration(Vector2 acceleration) {
         mAcceleration.set(acceleration);
     }
 
-    public final Vector2D getImpulse() {
+    public final Vector2 getImpulse() {
         return mImpulse;
     }
 
-    public final void setImpulse(Vector2D impulse) {
+    public final void setImpulse(Vector2 impulse) {
         mImpulse.set(impulse);
     }
 
-    public final Vector2D getBackgroundCollisionNormal() {
+    public final Vector2 getBackgroundCollisionNormal() {
         return mBackgroundCollisionNormal;
     }
 
-    public final void setBackgroundCollisionNormal(Vector2D normal) {
+    public final void setBackgroundCollisionNormal(Vector2 normal) {
         mBackgroundCollisionNormal.set(normal);
     }
 

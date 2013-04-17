@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.components;
+package com.replica.replicaisland;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.GameObject.ActionType;
-import com.falko.android.snowball.input.InputDPad;
-import com.falko.android.snowball.input.InputGameInterface;
-import com.falko.android.snowball.utility.TimeSystem;
+
+import com.replica.replicaisland.CollisionParameters.HitType;
+import com.replica.replicaisland.GameObject.ActionType;
+import com.replica.replicaisland.SoundSystem.Sound;
 
 /**
  * Player Animation game object component. Responsible for selecting an

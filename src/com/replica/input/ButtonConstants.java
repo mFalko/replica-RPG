@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.input;
+package com.replica.replicaisland;
 
 public final class ButtonConstants {
     

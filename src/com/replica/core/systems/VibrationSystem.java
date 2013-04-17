@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.falko.android.snowball.core.systems;
+package com.replica.replicaisland;
 
 import android.content.Context;
 import android.os.Vibrator;
-
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.ContextParameters;
+import android.content.Context;
 
 /** A system for accessing the Android vibrator.  Note that this system requires the app's 
  * AndroidManifest.xml to contain permissions for the Vibrator service.

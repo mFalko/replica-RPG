@@ -15,12 +15,7 @@
  */
 
 
-package com.falko.android.snowball.core.graphics;
-
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.ContextParameters;
-import com.falko.android.snowball.utility.ObjectPool;
-import com.falko.android.snowball.utility.TObjectPool;
+package com.replica.replicaisland;
 
 /** 
  * This class manages drawable objects that have short lifetimes (one or two frames).  It provides

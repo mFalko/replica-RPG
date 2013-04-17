@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core;
-
-import com.falko.android.snowball.utility.DebugLog;
+package com.replica.core;
 
 /**
  * AllocationGuard is a utility class for tracking down memory leaks.  It implements a 
