@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.hud;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObjectManager;
 
 /**
  * A very simple manager for orthographic in-game UI elements. TODO: This should
@@ -24,9 +27,13 @@ package com.replica.replicaisland;
  */
 public class HudSystem extends BaseObject {
 
+	//TODO: extend objectManager instead of baseObject
+	
 	public HudSystem() {
 		super();
-		
+		for (int i = 0; i < attackButtons_.length; ++i) {
+			attackButtons_[i] = new HUDVirtualButton();
+		}
 
 		reset();
 	}
@@ -55,23 +62,35 @@ public class HudSystem extends BaseObject {
 		if (useTouchInterface_) {
 
 			dpad.update(timeDelta, this);
-
+			for (int i = 0; i < attackButtons_.length; ++i) {
+				attackButtons_[i].update(timeDelta, this);
+			}
 		}
 
 	}
 
 	private void init() {
 		dpad.init();
+		for (int i = 0; i < attackButtons_.length; ++i) {
+			attackButtons_[i].init();
+		}
 	}
 	
 	public void setTouchDPadBounds(float x, float y, float width, float height) {
 		dpad.setBounds(x, y, width, height);
+	}
+	
+	public void setAttackButtonBounds(int button, float x, float y, float width, float height) {
+		attackButtons_[button].setBounds(x, y, width, height);
 	}
 
 	// Begin private members
 	private boolean useTouchInterface_ = true;
 	private boolean firstRun_ = true;
 	private HUDVirtualDPad dpad = new HUDVirtualDPad();
+	
+	private HUDVirtualButton[] attackButtons_ = new HUDVirtualButton[4];
+	
 	// End private members
 
 }

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.PhasedObject;
 
 /**
  * A game component implements a single feature of a game object.  Components are run once per frame

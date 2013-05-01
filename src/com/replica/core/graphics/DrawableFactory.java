@@ -15,7 +15,14 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
+
+import android.util.Log;
+
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
+import com.replica.utility.ObjectPool;
+import com.replica.utility.TObjectPool;
 
 /** 
  * This class manages drawable objects that have short lifetimes (one or two frames).  It provides
@@ -29,15 +36,12 @@ public class DrawableFactory extends BaseObject {
     private ScrollableBitmapPool mScrollableBitmapPool;
     private TiledBackgroundVertexGridPool mTiledBackgroundVertexGridPool;
     
-    private BackgroundDrawablePool backgroundDrawablePool;
-    
     // This class wraps several object pools and provides a type-sensitive release function.
     public DrawableFactory() {
         super();
         mBitmapPool = new DrawableBitmapPool(BITMAP_POOL_SIZE);
         mTiledBackgroundVertexGridPool = new TiledBackgroundVertexGridPool();
         mScrollableBitmapPool = new ScrollableBitmapPool();
-        backgroundDrawablePool = new BackgroundDrawablePool();
     }
     
     @Override
@@ -54,10 +58,6 @@ public class DrawableFactory extends BaseObject {
 
     public ScrollableBitmap allocateScrollableBitmap() {
         return mScrollableBitmapPool.allocate();
-    }
-    
-    public BackgroundDrawable allocateBackgroundDrawable() {
-        return backgroundDrawablePool.allocate();
     }
 
     public void release(DrawableObject object) {
@@ -157,35 +157,6 @@ public class DrawableFactory extends BaseObject {
         @Override
         public void release(Object entry) {
             TiledBackgroundVertexGrid bg = (TiledBackgroundVertexGrid)entry;
-            bg.reset();
-            super.release(entry);
-        }
-       
-    }
-    
-	private class BackgroundDrawablePool extends TObjectPool<BackgroundDrawable> {
-        
-        public BackgroundDrawablePool() {
-            super(60);
-        }
-        
-        @Override
-        public void reset() {
-        }
-        
-        @Override
-        protected void fill() {
-            int size = getSize();
-            for (int x = 0; x < size; x++) {
-            	BackgroundDrawable entry = new BackgroundDrawable();
-                entry.setParentPool(this);
-                getAvailable().add(entry);
-            }
-        }
-
-        @Override
-        public void release(Object entry) {
-        	BackgroundDrawable bg = (BackgroundDrawable)entry;
             bg.reset();
             super.release(entry);
         }

@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
+
+import com.replica.core.AllocationGuard;
+import com.replica.utility.ObjectPool;
+import com.replica.utility.Vector2;
 
 /**
  * DrawableObject is the base object interface for objects that can be rendered to the screen.

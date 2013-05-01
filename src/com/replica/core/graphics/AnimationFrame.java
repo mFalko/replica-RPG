@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
+
+import com.replica.core.AllocationGuard;
+import com.replica.core.collision.CollisionVolume;
+import com.replica.utility.FixedSizeArray;
 
 /**
  * A single animation frame.  Frames contain a texture, a hold time, and collision volumes to

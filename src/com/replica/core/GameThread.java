@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core;
 
 import android.os.SystemClock;
-import android.view.KeyEvent;
+
+import com.replica.core.graphics.GameRenderer;
+import com.replica.core.systems.CameraSystem;
+import com.replica.core.systems.SoundSystem;
+import com.replica.utility.DebugLog;
 
 
 /** 

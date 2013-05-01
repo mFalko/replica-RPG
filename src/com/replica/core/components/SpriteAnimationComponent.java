@@ -1,4 +1,4 @@
-package com.falko.android.snowball.core.components;
+package com.replica.core.components;
 
 public class SpriteAnimationComponent extends GameComponent {
 

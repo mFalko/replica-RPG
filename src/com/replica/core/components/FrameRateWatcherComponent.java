@@ -15,7 +15,10 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.graphics.DrawableObject;
 
 public class FrameRateWatcherComponent extends GameComponent {
 	private RenderComponent mRenderComponent;

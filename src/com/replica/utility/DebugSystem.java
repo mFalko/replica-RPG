@@ -15,7 +15,17 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.utility;
+
+import com.replica.R;
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
+import com.replica.core.graphics.DrawableBitmap;
+import com.replica.core.graphics.DrawableFactory;
+import com.replica.core.graphics.Texture;
+import com.replica.core.graphics.TextureLibrary;
+import com.replica.core.systems.CameraSystem;
+import com.replica.core.systems.RenderSystem;
 
 public final class DebugSystem extends BaseObject {
 	public static final int COLOR_RED = 0;
@@ -38,7 +48,7 @@ public final class DebugSystem extends BaseObject {
 		if (library != null) {
 			mRedBoxTexture = library.allocateTexture(R.drawable.debug_box_red);
 			mBlueBoxTexture = library.allocateTexture(R.drawable.debug_box_blue);
-			mOutlineBoxTexture = library.allocateTexture(R.drawable.debug_box_outline);
+			mOutlineBoxTexture = library.allocateTexture(R.drawable.rect);
 			mRedCircleTexture = library.allocateTexture(R.drawable.debug_circle_red);
 			mBlueCircleTexture = library.allocateTexture(R.drawable.debug_circle_blue);
 			mOutlineCircleTexture = library.allocateTexture(R.drawable.debug_circle_outline);
@@ -63,7 +73,7 @@ public final class DebugSystem extends BaseObject {
         mWorkVector.y = (mWorkVector.y - camera.getFocusPositionY()
                         + (params.gameHeight / 2));
 
-        if (mWorkVector.x + width >= 0.0f && mWorkVector.x < params.gameWidth 
+        if (mWorkVector.x + width >= 0.0f && mWorkVector.x <= params.gameWidth 
                 && mWorkVector.y + height >= 0.0f && mWorkVector.y < params.gameHeight) {
 	        DrawableBitmap bitmap = factory.allocateDrawableBitmap();
 	        if (bitmap != null) {

@@ -14,7 +14,20 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.systems;
+
+import com.replica.core.BaseObject;
+import com.replica.core.ObjectManager;
+import com.replica.core.PhasedObject;
+import com.replica.core.PhasedObjectManager;
+import com.replica.core.graphics.DrawableObject;
+import com.replica.core.graphics.GameRenderer;
+import com.replica.core.graphics.Texture;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.ObjectPool;
+import com.replica.utility.TObjectPool;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 
 /**

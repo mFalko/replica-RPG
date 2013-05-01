@@ -1,6 +1,8 @@
-package com.replica.replicaisland;
+package com.replica.input;
 
 import android.view.MotionEvent;
+
+import com.replica.core.ContextParameters;
 
 public class SingleTouchFilter extends TouchFilter {
 

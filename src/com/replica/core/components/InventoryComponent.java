@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
 public class InventoryComponent extends GameComponent {
 

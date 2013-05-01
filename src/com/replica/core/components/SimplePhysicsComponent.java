@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 /** A light-weight physics implementation for use with non-complex characters (enemies, etc). */
 public class SimplePhysicsComponent extends GameComponent {
@@ -44,23 +49,6 @@ public class SimplePhysicsComponent extends GameComponent {
         float velocityX = parentObject.getVelocity().x + impulse.x;
         float velocityY = parentObject.getVelocity().y + impulse.y;
         
-        if ((parentObject.touchingCeiling() && velocityY > 0.0f) 
-            || (parentObject.touchingGround() && velocityY < 0.0f)) {
-            velocityY = -velocityY * mBounciness;
-            
-            if (Utils.close(velocityY, 0.0f)) {
-                velocityY = 0.0f;
-            }
-        }
-        
-        if ((parentObject.touchingRightWall() && velocityX > 0.0f)
-            || (parentObject.touchingLeftWall() && velocityX < 0.0f)){
-            velocityX = -velocityX * mBounciness;
-            
-            if (Utils.close(velocityX, 0.0f)) {
-                velocityX = 0.0f;
-            }
-        }
 
         parentObject.getVelocity().set(velocityX, velocityY);
         impulse.zero();

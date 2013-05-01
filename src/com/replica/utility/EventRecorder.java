@@ -14,7 +14,9 @@
  * limitations under the License.
  */
  
- package com.replica.replicaisland;
+package com.replica.utility;
+
+import com.replica.core.BaseObject;
 
 public class EventRecorder extends BaseObject {
 	public final static int COUNTER_ROBOTS_DESTROYED = 0;
@@ -38,7 +40,7 @@ public class EventRecorder extends BaseObject {
 		mLastDeathPosition.set(position);
 	}
 	
-	public synchronized Vector2D getLastDeathPosition() {
+	public synchronized Vector2 getLastDeathPosition() {
 		return mLastDeathPosition;
 	}
 	

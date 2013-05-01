@@ -17,17 +17,19 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.falko.android.snowball;
+package com.replica;
+
+
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 
-import com.falko.android.snowball.core.Game;
-import com.falko.android.snowball.core.graphics.GLSurfaceView;
-import com.falko.android.snowball.utility.DebugLog;
-import com.falko.android.snowball.utility.EventReporter;
+import com.replica.core.Game;
+import com.replica.core.graphics.GLSurfaceView;
+import com.replica.utility.DebugLog;
+import com.replica.utility.EventReporter;
 
 /**
  * @author matt

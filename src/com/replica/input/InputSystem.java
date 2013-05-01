@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.input;
+
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
+import com.replica.utility.TimeSystem;
 
 /** 
  * Manages input from a roller wheel and touch screen.  Reduces frequent UI messages to

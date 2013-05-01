@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.utility;
 
 /** 
  * TObjectPool is a generic version of ObjectPool that automatically casts to type T on

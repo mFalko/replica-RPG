@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.collision;
+package com.replica.core.collision;
 
-import com.falko.android.snowball.core.AllocationGuard;
-import com.falko.android.snowball.core.collision.CollisionParameters.HitType;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.core.AllocationGuard;
+import com.replica.core.collision.CollisionParameters.HitType;
+import com.replica.utility.Vector2;
 
 /** 
  * CollisionVolume describes a volume (rectangle, sphere, etc) used for dynamic collision detection.

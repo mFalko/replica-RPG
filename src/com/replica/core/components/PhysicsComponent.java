@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
+import com.replica.utility.VectorPool;
 
 /**
  * Component that adds physics to its parent game object.  This component implements force
@@ -79,7 +85,7 @@ public class PhysicsComponent extends GameComponent {
             physicsCausesMovement = false;
         }
 
-        final boolean touchingFloor = parentObject.touchingGround();
+        final boolean touchingFloor = true;//parentObject.touchingGround();
 
         GravityComponent gravity = parentObject.findByClass(GravityComponent.class);
 

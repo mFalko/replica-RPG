@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.systems.CollisionSystem;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 // Simple collision detection component for objects not requiring complex collision (projectiles, etc)
 public class SimpleCollisionComponent extends GameComponent {
@@ -70,22 +77,7 @@ public class SimpleCollisionComponent extends GameComponent {
         					parentObject.getPosition().y = mHitPoint.y - halfHeight;
         				}
         				
-        				final TimeSystem timeSystem = sSystemRegistry.timeSystem;
-
-    	                if (timeSystem != null) {
-    	                    float time = timeSystem.getGameTime();
-    	                   if (mHitNormal.x > 0.0f) {
-	                            parentObject.setLastTouchedLeftWallTime(time);
-	                        } else if (mHitNormal.x < 0.0) {
-	                            parentObject.setLastTouchedRightWallTime(time);
-	                        }
-	                   
-	                        if (mHitNormal.y > 0.0f) {
-	                            parentObject.setLastTouchedFloorTime(time);
-	                        } else if (mHitNormal.y < 0.0f) {
-	                            parentObject.setLastTouchedCeilingTime(time);
-	                        }
-    	                }
+        				
     	                    
     	                parentObject.setBackgroundCollisionNormal(mHitNormal);
     	                    

@@ -17,19 +17,19 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.falko.android.snowball.core.zoneloder;
+package com.replica.core.zoneloder;
 
 import java.util.ArrayList;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.graphics.Texture;
-import com.falko.android.snowball.core.graphics.TextureLibrary;
-import com.falko.android.snowball.utility.FixedSizeArray;
+import com.replica.core.BaseObject;
+import com.replica.core.graphics.Texture;
+import com.replica.core.graphics.TextureLibrary;
+import com.replica.utility.FixedSizeArray;
 
 public class TileSet extends BaseObject{
 
 	public TileSet() {
-		sheets_ = new FixedSizeArray<Sheet>(3);
+		sheets_ = new FixedSizeArray<Sheet>(6);
 	}
 	
 	@Override
@@ -40,17 +40,14 @@ public class TileSet extends BaseObject{
 
 		Sheet tileSheet = null;
 		long id = GID &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
-		int sheetIndex = getSheetIndex(GID);
+		int sheetIndex = getSheetIndex(GID, sheets);
 		tileSheet = sheets[sheetIndex];
 		
 		assert tileSheet != null;
 
-		final int tileHeight = tileSheet.tileHeight_;
-		final int tileWidth = tileSheet.tileWidth_;
-
 		final int pixelWidth = tileSheet.texture_.width;
 		final int pixelHeight = tileSheet.texture_.height;
-		final int width = pixelWidth / tileWidth;
+		final int width = pixelWidth / tileWidth_;
 
 //		final boolean flippedHorizontally = (GID & FLIPPED_HORIZONTALLY_FLAG) > 1;
 //		final boolean flippedVertically = (GID & FLIPPED_VERTICALLY_FLAG) > 1;
@@ -58,19 +55,19 @@ public class TileSet extends BaseObject{
 
 		long gid = id - tileSheet.firstGID_;// zero based
 		if (gid < 0) gid = 0;
-		final float y = (gid / width) * tileHeight;
-		final float x = (gid % width) * tileWidth;
+		final float y = (gid / width) * tileHeight_;
+		final float x = (gid % width) * tileWidth_;
 
 		float[] uv0 = { (x + GL_MAGIC_OFFSET) / pixelWidth ,
 						(y + GL_MAGIC_OFFSET) / pixelHeight};
 		
 		float[] uv1 = { (x + GL_MAGIC_OFFSET) / pixelWidth, 
-						(y + tileHeight - GL_MAGIC_OFFSET) / pixelHeight};
+						(y + tileHeight_ - GL_MAGIC_OFFSET) / pixelHeight};
 		
-		float[] uv2 = { (x + tileWidth - GL_MAGIC_OFFSET) / pixelWidth,
-						(y + tileHeight - GL_MAGIC_OFFSET) / pixelHeight };
+		float[] uv2 = { (x + tileWidth_ - GL_MAGIC_OFFSET) / pixelWidth,
+						(y + tileHeight_ - GL_MAGIC_OFFSET) / pixelHeight };
 		
-		float[] uv3 = { (x + tileWidth - GL_MAGIC_OFFSET) / pixelWidth,
+		float[] uv3 = { (x + tileWidth_ - GL_MAGIC_OFFSET) / pixelWidth,
 						(y + GL_MAGIC_OFFSET) / pixelHeight };
 
 		uv[0] = uv0;
@@ -81,25 +78,24 @@ public class TileSet extends BaseObject{
 		return sheetIndex;
 	}
 
-	public void addSheet(int firstGID, int tileWidth, int tileHeight,
-			int resourceID, int width, int height) {
+	public void addSheet(int firstGID, int resourceID, int width, int height) {
 		TextureLibrary library = sSystemRegistry.shortTermTextureLibrary; 
 		Texture texture = library.allocateTexture(resourceID);
 		texture.width = width;
 		texture.height = height;
 		
-		Sheet sheet = new Sheet(firstGID, texture, tileWidth, tileHeight);
+		Sheet sheet = new Sheet(firstGID, texture);
 		sheets_.add(sheet);
 	}
 	
-	private int getSheetIndex(long GID) {
+	private int getSheetIndex(long GID, Sheet[] sheets) {
 		long id = GID &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
 		int retVal = 0;
 
-		for (int i = 0; i < sheets_.getCount(); ++i) {	
-			if (i + 1 < sheets_.getCount()) {		
-				int fid = sheets_.get(i).firstGID_;
-				int eid = sheets_.get(i + 1).firstGID_;
+		for (int i = 0; i < sheets.length; ++i) {	
+			if (i + 1 < sheets.length) {		
+				int fid = sheets[i].firstGID_;
+				int eid = sheets[i+1].firstGID_;
 				
 				if (id >= fid && id < eid) {
 					retVal = i;
@@ -116,9 +112,15 @@ public class TileSet extends BaseObject{
 	public Sheet[] getSheets(long[][] data) {
 		boolean[] totalShets = new boolean[sheets_.getCount()];
 		ArrayList<Sheet> list = new ArrayList<Sheet>();
+		
+		//TODO: fix this
+		Sheet[] sheets = new Sheet[sheets_.getCount()];
+		for (int i = 0; i < sheets_.getCount(); ++i)
+			sheets[i] = sheets_.get(i);
+		
 		for (int i = 0; i < data.length; ++i) {
 			for (int j = 0; j < data[i].length; ++j) {
-				totalShets[getSheetIndex(data[i][j])] = true;
+				totalShets[getSheetIndex(data[i][j], sheets)] = true;
 			}
 		}
 		
@@ -130,17 +132,25 @@ public class TileSet extends BaseObject{
 				
 			}
 		}
-		Sheet[] sheets = new Sheet[retVal];
-		list.toArray(sheets);
+		Sheet[] retSheets = new Sheet[retVal];
+		list.toArray(retSheets);
 		return sheets;
 	}
 	
-	public int getTileWidth(long GID) {
-		return sheets_.get(getSheetIndex(GID)).tileWidth_;
+	public int getTileWidth() {
+		return tileWidth_;
 	}
 	
-	public int getTileHeight(long GID) {
-		return sheets_.get(getSheetIndex(GID)).tileHeight_;
+	public int getTileHeight() {
+		return tileHeight_;
+	}
+	
+	public void setTileWidth(int tileWidth) {
+		tileWidth_ = tileWidth;
+	}
+	
+	public void setTileHeight(int tileHeight) {
+		tileHeight_ = tileHeight;
 	}
 	
 	public Texture[] getTextures() {
@@ -153,24 +163,20 @@ public class TileSet extends BaseObject{
 	
 	private static final float GL_MAGIC_OFFSET = 0.45f;
 	private FixedSizeArray<Sheet> sheets_;
+	private int tileWidth_;
+	private int tileHeight_;
 	
 	private static long FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
 	private static long FLIPPED_VERTICALLY_FLAG = 0x40000000;
 	private static long FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 
 	protected class Sheet {
-		
-		public Sheet(int firstGID, Texture texture, int tileWidth, int tileHeight) {
+		public Sheet(int firstGID, Texture texture) {
 			firstGID_ = firstGID;
 			texture_ = texture;
-			tileWidth_ = tileWidth;
-			tileHeight_ = tileHeight;
 		}
-		
 		public int firstGID_;
 		public Texture texture_;
-		public int tileWidth_;
-		public int tileHeight_;
 	}
 
 	

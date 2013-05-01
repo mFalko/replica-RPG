@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core;
 
-import com.replica.replicaisland.CollisionParameters.HitType;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 /**
  * GameObject defines any object that resides in the game world (character, background, special
@@ -35,10 +37,6 @@ public class GameObject extends PhasedObjectManager {
 
     private Vector2 mBackgroundCollisionNormal;
 
-    private float mLastTouchedFloorTime;
-    private float mLastTouchedCeilingTime;
-    private float mLastTouchedLeftWallTime;
-    private float mLastTouchedRightWallTime;
   
     public boolean positionLocked;
     
@@ -116,38 +114,7 @@ public class GameObject extends PhasedObjectManager {
 //        lastReceivedHitType = HitType.INVALID;
     }
     
-    // Utility functions
-    public final boolean touchingGround() {
-        final TimeSystem time = sSystemRegistry.timeSystem;
-        final float gameTime = time.getGameTime();
-        final boolean touching = gameTime > 0.1f &&
-            Utils.close(mLastTouchedFloorTime, time.getGameTime(), COLLISION_SURFACE_DECAY_TIME);
-        return touching;
-    }
-    
-    public final boolean touchingCeiling() {
-        final TimeSystem time = sSystemRegistry.timeSystem;
-        final float gameTime = time.getGameTime();
-        final boolean touching = gameTime > 0.1f && 
-            Utils.close(mLastTouchedCeilingTime, time.getGameTime(), COLLISION_SURFACE_DECAY_TIME);
-        return touching;
-    }
-    
-    public final boolean touchingLeftWall() {
-        final TimeSystem time = sSystemRegistry.timeSystem;
-        final float gameTime = time.getGameTime();
-        final boolean touching = gameTime > 0.1f &&
-            Utils.close(mLastTouchedLeftWallTime, time.getGameTime(), COLLISION_SURFACE_DECAY_TIME);
-        return touching;
-    }
-    
-    public final boolean touchingRightWall() {
-        final TimeSystem time = sSystemRegistry.timeSystem;
-        final float gameTime = time.getGameTime();
-        final boolean touching = gameTime > 0.1f &&
-            Utils.close(mLastTouchedRightWallTime, time.getGameTime(), COLLISION_SURFACE_DECAY_TIME);
-        return touching;
-    }
+
 
     public final Vector2 getPosition() {
         return mPosition;
@@ -205,37 +172,7 @@ public class GameObject extends PhasedObjectManager {
         mBackgroundCollisionNormal.set(normal);
     }
 
-    public final float getLastTouchedFloorTime() {
-        return mLastTouchedFloorTime;
-    }
 
-    public final void setLastTouchedFloorTime(float lastTouchedFloorTime) {
-        mLastTouchedFloorTime = lastTouchedFloorTime;
-    }
-
-    public final float getLastTouchedCeilingTime() {
-        return mLastTouchedCeilingTime;
-    }
-
-    public final void setLastTouchedCeilingTime(float lastTouchedCeilingTime) {
-        mLastTouchedCeilingTime = lastTouchedCeilingTime;
-    }
-
-    public final float getLastTouchedLeftWallTime() {
-        return mLastTouchedLeftWallTime;
-    }
-
-    public final void setLastTouchedLeftWallTime(float lastTouchedLeftWallTime) {
-        mLastTouchedLeftWallTime = lastTouchedLeftWallTime;
-    }
-
-    public final float getLastTouchedRightWallTime() {
-        return mLastTouchedRightWallTime;
-    }
-
-    public final void setLastTouchedRightWallTime(float lastTouchedRightWallTime) {
-        mLastTouchedRightWallTime = lastTouchedRightWallTime;
-    }
     
     public final ActionType getCurrentAction() {
         return mCurrentAction;

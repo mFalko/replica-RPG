@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core;
+package com.replica.core;
 
 import java.util.Comparator;
 
 import android.util.Log;
 
-import com.falko.android.snowball.GhostMovementGameComponent;
-import com.falko.android.snowball.R;
-import com.falko.android.snowball.core.GameObject.ActionType;
-import com.falko.android.snowball.core.components.AnimationComponent;
-import com.falko.android.snowball.core.components.AnimationComponent.PlayerAnimations;
-import com.falko.android.snowball.core.components.GameComponent;
-import com.falko.android.snowball.core.components.GameComponentPool;
-import com.falko.android.snowball.core.components.MotionBlurComponent;
-import com.falko.android.snowball.core.components.RenderComponent;
-import com.falko.android.snowball.core.components.SpriteComponent;
-import com.falko.android.snowball.core.graphics.AnimationFrame;
-import com.falko.android.snowball.core.graphics.SpriteAnimation;
-import com.falko.android.snowball.core.graphics.Texture;
-import com.falko.android.snowball.core.graphics.TextureLibrary;
-import com.falko.android.snowball.utility.FixedSizeArray;
-import com.falko.android.snowball.utility.TObjectPool;
+import com.replica.GhostMovementGameComponent;
+import com.replica.R;
+import com.replica.core.GameObject.ActionType;
+import com.replica.core.components.AnimationComponent;
+import com.replica.core.components.AnimationComponent.PlayerAnimations;
+import com.replica.core.components.BackgroundCollisionComponent;
+import com.replica.core.components.GameComponent;
+import com.replica.core.components.GameComponentPool;
+import com.replica.core.components.MotionBlurComponent;
+import com.replica.core.components.RenderComponent;
+import com.replica.core.components.SpriteComponent;
+import com.replica.core.graphics.AnimationFrame;
+import com.replica.core.graphics.SpriteAnimation;
+import com.replica.core.graphics.Texture;
+import com.replica.core.graphics.TextureLibrary;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.TObjectPool;
 
 /**
  * A class for generating game objects at runtime. This should really be
@@ -195,7 +196,7 @@ public class GameObjectFactory extends BaseObject {
 		return component;
 	}
 
-	protected void releaseComponent(GameComponent component) {
+	public void releaseComponent(GameComponent component) {
 		GameComponentPool pool = getComponentPool(component.getClass());
 		assert pool != null;
 		if (pool != null) {
@@ -256,7 +257,7 @@ public class GameObjectFactory extends BaseObject {
 		SpriteComponent objectSpriteComponent = new SpriteComponent();
 		RenderComponent objectRenCom = new RenderComponent();
 		GhostMovementGameComponent gm = new GhostMovementGameComponent();
-//		MotionBlurComponent mbc = new MotionBlurComponent();
+		BackgroundCollisionComponent backgroundCollisionComponent = new BackgroundCollisionComponent(10, 10, 20, 0);
 
 		SpriteAnimation moveNorth = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_north,
@@ -300,16 +301,16 @@ public class GameObjectFactory extends BaseObject {
 
 		objectAnimationComponent.setSprite(objectSpriteComponent);
 
-		objectRenCom.setCameraRelative(true);
 		objectRenCom.setPriority(3);
 		
-//		mbc.setTarget(objectRenCom);
 
+		
 		object.add(objectAnimationComponent);
 		object.add(objectSpriteComponent);
-//		object.add(mbc);
 		object.add(gm);
 		object.add(objectRenCom);
+		object.add(backgroundCollisionComponent);
+		
 		
 		object.setCurrentAction(ActionType.IDLE);
 		return object;

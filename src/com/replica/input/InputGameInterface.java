@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.input;
+package com.replica.input;
 
-import com.falko.android.snowball.core.BaseObject;
+import com.replica.core.BaseObject;
 
 public class InputGameInterface extends BaseObject {
 

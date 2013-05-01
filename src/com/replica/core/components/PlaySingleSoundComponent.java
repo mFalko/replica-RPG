@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.systems.SoundSystem;
 
 public class PlaySingleSoundComponent extends GameComponent {
 	private SoundSystem.Sound mSound;

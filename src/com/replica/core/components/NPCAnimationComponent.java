@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.ChannelSystem.Channel;
-import com.replica.replicaisland.GameObject.ActionType;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
+import com.replica.core.systems.ChannelSystem;
+import com.replica.core.systems.ChannelSystem.Channel;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Vector2;
 
 public class NPCAnimationComponent extends GameComponent {
 
@@ -120,13 +125,13 @@ public class NPCAnimationComponent extends GameComponent {
     protected boolean shouldFall(GameObject parentObject) {
         boolean result = false;
         TimeSystem time = sSystemRegistry.timeSystem;
-        final float airTime = time.getGameTime() - parentObject.getLastTouchedFloorTime();
-        if (!mFlying && !parentObject.touchingGround() && airTime > FALL_TIME_THRESHOLD) {
-            final Vector2 velocity = parentObject.getVelocity();
-            if (velocity.y < FALL_SPEED_THRESHOLD) {
-                result = true;
-            }
-        }
+//        final float airTime = time.getGameTime() - parentObject.getLastTouchedFloorTime();
+//        if (!mFlying && !parentObject.touchingGround() && airTime > FALL_TIME_THRESHOLD) {
+//            final Vector2 velocity = parentObject.getVelocity();
+//            if (velocity.y < FALL_SPEED_THRESHOLD) {
+//                result = true;
+//            }
+//        }
         return result;
     }
     
@@ -144,12 +149,12 @@ public class NPCAnimationComponent extends GameComponent {
     
     protected boolean shouldRun(GameObject parentObject) {
         boolean result = false;
-        if (!mFlying && parentObject.touchingGround()) {
-            final Vector2 velocity = parentObject.getVelocity();
-            if (Math.abs(velocity.x) >= RUN_SPEED_THRESHOLD) {
-                result = true;
-            }
-        }
+//        if (!mFlying && parentObject.touchingGround()) {
+//            final Vector2 velocity = parentObject.getVelocity();
+//            if (Math.abs(velocity.x) >= RUN_SPEED_THRESHOLD) {
+//                result = true;
+//            }
+//        }
         return result;
     }
     
@@ -157,12 +162,12 @@ public class NPCAnimationComponent extends GameComponent {
         boolean result = true;
         final Vector2 velocity = parentObject.getVelocity();
         
-        if (mStopAtWalls) {
-	        if ((velocity.x < 0.0f && parentObject.touchingLeftWall()) 
-	                || (velocity.x > 0.0f && parentObject.touchingRightWall())) {
-	            result = false;
-	        }
-        }
+//        if (mStopAtWalls) {
+//	        if ((velocity.x < 0.0f && parentObject.touchingLeftWall()) 
+//	                || (velocity.x > 0.0f && parentObject.touchingRightWall())) {
+//	            result = false;
+//	        }
+//        }
         return result;
     }
     
@@ -317,31 +322,31 @@ public class NPCAnimationComponent extends GameComponent {
     
     protected void jumpAir(GameObject parentObject) {
         final GameObject.ActionType currentAction = parentObject.getCurrentAction();
-        if (currentAction == ActionType.MOVE) {
-            final Vector2 velocity = parentObject.getVelocity();
-
-            if (parentObject.touchingGround()) {
-                if (Math.abs(velocity.x) > 0.0f) {
-                    if (shouldRun(parentObject)) {
-                        mCurrentAnimation = RUN;
-                    } else {
-                        mCurrentAnimation = WALK;
-                    }
-                } else {
-                    mCurrentAnimation = IDLE;
-                }
-            } else {
-                
-                if (velocity.x > 0.0f) {
-                    parentObject.facingDirection.x = 1;
-                } else if (velocity.x < 0.0f) {
-                    parentObject.facingDirection.x = -1; 
-                }
-                
-            }
-        } else {
-            mCurrentAnimation = IDLE;
-        }
+//        if (currentAction == ActionType.MOVE) {
+//            final Vector2 velocity = parentObject.getVelocity();
+//
+//            if (parentObject.touchingGround()) {
+//                if (Math.abs(velocity.x) > 0.0f) {
+//                    if (shouldRun(parentObject)) {
+//                        mCurrentAnimation = RUN;
+//                    } else {
+//                        mCurrentAnimation = WALK;
+//                    }
+//                } else {
+//                    mCurrentAnimation = IDLE;
+//                }
+//            } else {
+//                
+//                if (velocity.x > 0.0f) {
+//                    parentObject.facingDirection.x = 1;
+//                } else if (velocity.x < 0.0f) {
+//                    parentObject.facingDirection.x = -1; 
+//                }
+//                
+//            }
+//        } else {
+//            mCurrentAnimation = IDLE;
+//        }
     }
       
     protected void takeHit(GameObject parentObject) {

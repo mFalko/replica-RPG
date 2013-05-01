@@ -14,7 +14,9 @@
  * limitations under the License.
  */
  
- package com.replica.replicaisland;
+package com.replica.core.collision;
+
+import com.replica.utility.TObjectPool;
 
 public class HitPointPool extends TObjectPool<HitPoint> {
 

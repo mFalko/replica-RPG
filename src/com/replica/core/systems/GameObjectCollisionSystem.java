@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.systems;
 
 import java.util.Comparator;
 
-import com.replica.replicaisland.CollisionParameters.HitType;
+import com.replica.core.AllocationGuard;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.collision.AABoxCollisionVolume;
+import com.replica.core.collision.CollisionParameters.HitType;
+import com.replica.core.collision.CollisionVolume;
+import com.replica.core.components.HitReactionComponent;
+import com.replica.utility.DebugSystem;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.TObjectPool;
+import com.replica.utility.Vector2;
 
 /**
  * A system for calculating collisions between moving game objects.  This system accepts collision

@@ -1,11 +1,11 @@
 /*
  * LList.java
  */
-package com.falko.android.snowball.utility;
+package com.replica.utility;
 
 import java.util.Iterator;
 
-import com.falko.android.snowball.core.AllocationGuard;
+import com.replica.core.AllocationGuard;
 
 /**
  * LList<T> </br> This Class contains the definition of a circular doubly linked
@@ -72,6 +72,9 @@ public class LList<T> implements Iterable<T> {
 		while (length_ > 0) {
 			remove(0);
 		}
+		
+		iterator_.reset();
+		reverseIterator_.reset();
 	}
 
 	public int getLength() {

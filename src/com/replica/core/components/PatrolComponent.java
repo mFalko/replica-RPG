@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.GameObject.ActionType;
-import com.replica.replicaisland.HotSpotSystem.HotSpotType;
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
+import com.replica.core.GameObject;
+import com.replica.core.systems.CameraSystem;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 /**
  * This component implements the "patrolling" behavior for AI characters.  Patrolling characters
@@ -67,135 +72,135 @@ public class PatrolComponent extends GameComponent {
     
     @Override
     public void update(float timeDelta, BaseObject parent) {   
-        GameObject parentObject = (GameObject) parent;
-        
-        if (parentObject.getCurrentAction() == ActionType.INVALID
-        	|| parentObject.getCurrentAction() == ActionType.HIT_REACT) {
-            parentObject.setCurrentAction(GameObject.ActionType.MOVE);
-        }
-        
-        if ((mFlying || parentObject.touchingGround()) && parentObject.life > 0) {
-            GameObjectManager manager = sSystemRegistry.gameObjectManager;
-            GameObject player = null;
-            if (manager != null) {
-                player = manager.getPlayer();
-            }
-            
-            if (mAttack) {
-                updateAttack(player, parentObject);
-            }
-            
-            
-            if (parentObject.getCurrentAction() == GameObject.ActionType.MOVE
-                    && mMaxSpeed > 0.0f) {
-                int hotSpot = HotSpotSystem.HotSpotType.NONE;
-                HotSpotSystem hotSpotSystem = sSystemRegistry.hotSpotSystem;
-                if (hotSpotSystem != null) {
-                    // TODO: ack, magic number
-                    hotSpot = hotSpotSystem.getHotSpot(parentObject.getCenteredPositionX(), 
-                            parentObject.getPosition().y + 10.0f);
-                }
-                final float targetVelocityX = parentObject.getTargetVelocity().x;
-                final float targetVelocityY = parentObject.getTargetVelocity().y;
-
-                boolean goLeft = (parentObject.touchingRightWall() 
-                        || hotSpot == HotSpotType.GO_LEFT) && targetVelocityX >= 0.0f;
-                    
-                boolean goRight = (parentObject.touchingLeftWall() 
-                        || hotSpot == HotSpotType.GO_RIGHT) && targetVelocityX <= 0.0f;
-                    
-                boolean pause = (mMaxSpeed == 0.0f) || hotSpot == HotSpotType.GO_DOWN;
-                
-                if (mTurnToFacePlayer && player != null && player.life > 0) {
-                    final float horizontalDelta = player.getCenteredPositionX() 
-                        - parentObject.getCenteredPositionX();
-                    final int targetFacingDirection = Utils.sign(horizontalDelta);
-                    final float closestDistance = player.width / 2.0f;
-                    
-                    if (targetFacingDirection < 0.0f) { // we want to turn to the left
-                        if (goRight) {
-                            goRight = false;
-                            pause = true;
-                        } else if (targetFacingDirection 
-                                != Utils.sign(parentObject.facingDirection.x)) {
-                            goLeft = true;
-                        }
-                    } else if (targetFacingDirection > 0.0f) { // we want to turn to the right
-                        if (goLeft) {
-                            goLeft = false;
-                            pause = true;
-                        } else if (targetFacingDirection 
-                                != Utils.sign(parentObject.facingDirection.x)) {
-                            goRight = true;
-                        }
-                    }
-                    
-                    if (Math.abs(horizontalDelta) < closestDistance) {
-                        goRight = false;
-                        goLeft = false;
-                        pause = true;
-                    }
-                }
-                
-                if (!mFlying) {
-                    if (!pause && !goLeft && !goRight && targetVelocityX == 0.0f) {
-                        if (parentObject.facingDirection.x < 0.0f) {
-                            goLeft = true;
-                        } else {
-                            goRight = true;
-                        }
-                    }
-                    
-                    
-                    if (goRight) {
-                        parentObject.getTargetVelocity().x = mMaxSpeed;
-                        parentObject.getAcceleration().x = mAcceleration;
-                    } else if (goLeft) {
-                        parentObject.getTargetVelocity().x = -mMaxSpeed;
-                        parentObject.getAcceleration().x = mAcceleration;
-                    } else if (pause) {
-                        parentObject.getTargetVelocity().x = 0;
-                        parentObject.getAcceleration().x = mAcceleration;
-                    }
-                } else {
-                    final boolean goUp = (parentObject.touchingGround() && targetVelocityY < 0.0f) 
-                    	|| hotSpot == HotSpotType.GO_UP;
-                        
-                    final boolean goDown = (parentObject.touchingCeiling() && targetVelocityY > 0.0f)
-                            || hotSpot == HotSpotType.GO_DOWN;
-                            
-                    if (goUp) {
-                        parentObject.getTargetVelocity().x = 0.0f;
-                        parentObject.getTargetVelocity().y = mMaxSpeed;
-                        parentObject.getAcceleration().y = mAcceleration;
-                        parentObject.getAcceleration().x = mAcceleration;
-
-                    } else if (goDown) {
-                        parentObject.getTargetVelocity().x = 0.0f;
-                        parentObject.getTargetVelocity().y = -mMaxSpeed;
-                        parentObject.getAcceleration().y = mAcceleration;
-                        parentObject.getAcceleration().x = mAcceleration;
-
-                    } else if (goRight) {
-                        parentObject.getTargetVelocity().x = mMaxSpeed;
-                        parentObject.getAcceleration().x = mAcceleration;
-                        parentObject.getAcceleration().y = mAcceleration;
-                        parentObject.getTargetVelocity().y = 0.0f;
-                    } else if (goLeft) {
-                        parentObject.getTargetVelocity().x = -mMaxSpeed;
-                        parentObject.getAcceleration().x = mAcceleration;
-                        parentObject.getAcceleration().y = mAcceleration;
-                        parentObject.getTargetVelocity().y = 0.0f;
-                    } 
-                }
-            }
-        } else if (!mFlying && !parentObject.touchingGround() && parentObject.life > 0) {
-        	// A non-flying unit is in the air.  In this case, just watch for bounces off walls.
-        	if (Utils.sign(parentObject.getTargetVelocity().x) != Utils.sign(parentObject.getVelocity().x)) {
-        		// Todo: maybe the physics code should adjust target velocity instead in this case?
-        		parentObject.getTargetVelocity().x *= -1.0f;
-        	}
-        }
+//        GameObject parentObject = (GameObject) parent;
+//        
+//        if (parentObject.getCurrentAction() == ActionType.INVALID
+//        	|| parentObject.getCurrentAction() == ActionType.HIT_REACT) {
+//            parentObject.setCurrentAction(GameObject.ActionType.MOVE);
+//        }
+//        
+//        if ((mFlying || parentObject.touchingGround()) && parentObject.life > 0) {
+//            GameObjectManager manager = sSystemRegistry.gameObjectManager;
+//            GameObject player = null;
+//            if (manager != null) {
+//                player = manager.getPlayer();
+//            }
+//            
+//            if (mAttack) {
+//                updateAttack(player, parentObject);
+//            }
+//            
+//            
+//            if (parentObject.getCurrentAction() == GameObject.ActionType.MOVE
+//                    && mMaxSpeed > 0.0f) {
+//                int hotSpot = 0;// HotSpotSystem.HotSpotType.NONE;
+////                HotSpotSystem hotSpotSystem = sSystemRegistry.hotSpotSystem;
+////                if (hotSpotSystem != null) {
+////                    // TODO: ack, magic number
+////                    hotSpot = hotSpotSystem.getHotSpot(parentObject.getCenteredPositionX(), 
+////                            parentObject.getPosition().y + 10.0f);
+////                }
+//                final float targetVelocityX = parentObject.getTargetVelocity().x;
+//                final float targetVelocityY = parentObject.getTargetVelocity().y;
+//
+//                boolean goLeft = (parentObject.touchingRightWall() 
+//                        || hotSpot == HotSpotType.GO_LEFT) && targetVelocityX >= 0.0f;
+//                    
+//                boolean goRight = (parentObject.touchingLeftWall() 
+//                        || hotSpot == HotSpotType.GO_RIGHT) && targetVelocityX <= 0.0f;
+//                    
+//                boolean pause = (mMaxSpeed == 0.0f) || hotSpot == HotSpotType.GO_DOWN;
+//                
+//                if (mTurnToFacePlayer && player != null && player.life > 0) {
+//                    final float horizontalDelta = player.getCenteredPositionX() 
+//                        - parentObject.getCenteredPositionX();
+//                    final int targetFacingDirection = Utils.sign(horizontalDelta);
+//                    final float closestDistance = player.width / 2.0f;
+//                    
+//                    if (targetFacingDirection < 0.0f) { // we want to turn to the left
+//                        if (goRight) {
+//                            goRight = false;
+//                            pause = true;
+//                        } else if (targetFacingDirection 
+//                                != Utils.sign(parentObject.facingDirection.x)) {
+//                            goLeft = true;
+//                        }
+//                    } else if (targetFacingDirection > 0.0f) { // we want to turn to the right
+//                        if (goLeft) {
+//                            goLeft = false;
+//                            pause = true;
+//                        } else if (targetFacingDirection 
+//                                != Utils.sign(parentObject.facingDirection.x)) {
+//                            goRight = true;
+//                        }
+//                    }
+//                    
+//                    if (Math.abs(horizontalDelta) < closestDistance) {
+//                        goRight = false;
+//                        goLeft = false;
+//                        pause = true;
+//                    }
+//                }
+//                
+//                if (!mFlying) {
+//                    if (!pause && !goLeft && !goRight && targetVelocityX == 0.0f) {
+//                        if (parentObject.facingDirection.x < 0.0f) {
+//                            goLeft = true;
+//                        } else {
+//                            goRight = true;
+//                        }
+//                    }
+//                    
+//                    
+//                    if (goRight) {
+//                        parentObject.getTargetVelocity().x = mMaxSpeed;
+//                        parentObject.getAcceleration().x = mAcceleration;
+//                    } else if (goLeft) {
+//                        parentObject.getTargetVelocity().x = -mMaxSpeed;
+//                        parentObject.getAcceleration().x = mAcceleration;
+//                    } else if (pause) {
+//                        parentObject.getTargetVelocity().x = 0;
+//                        parentObject.getAcceleration().x = mAcceleration;
+//                    }
+//                } else {
+//                    final boolean goUp = (parentObject.touchingGround() && targetVelocityY < 0.0f) 
+//                    	|| hotSpot == HotSpotType.GO_UP;
+//                        
+//                    final boolean goDown = (parentObject.touchingCeiling() && targetVelocityY > 0.0f)
+//                            || hotSpot == HotSpotType.GO_DOWN;
+//                            
+//                    if (goUp) {
+//                        parentObject.getTargetVelocity().x = 0.0f;
+//                        parentObject.getTargetVelocity().y = mMaxSpeed;
+//                        parentObject.getAcceleration().y = mAcceleration;
+//                        parentObject.getAcceleration().x = mAcceleration;
+//
+//                    } else if (goDown) {
+//                        parentObject.getTargetVelocity().x = 0.0f;
+//                        parentObject.getTargetVelocity().y = -mMaxSpeed;
+//                        parentObject.getAcceleration().y = mAcceleration;
+//                        parentObject.getAcceleration().x = mAcceleration;
+//
+//                    } else if (goRight) {
+//                        parentObject.getTargetVelocity().x = mMaxSpeed;
+//                        parentObject.getAcceleration().x = mAcceleration;
+//                        parentObject.getAcceleration().y = mAcceleration;
+//                        parentObject.getTargetVelocity().y = 0.0f;
+//                    } else if (goLeft) {
+//                        parentObject.getTargetVelocity().x = -mMaxSpeed;
+//                        parentObject.getAcceleration().x = mAcceleration;
+//                        parentObject.getAcceleration().y = mAcceleration;
+//                        parentObject.getTargetVelocity().y = 0.0f;
+//                    } 
+//                }
+//            }
+//        } else if (!mFlying && !parentObject.touchingGround() && parentObject.life > 0) {
+//        	// A non-flying unit is in the air.  In this case, just watch for bounces off walls.
+//        	if (Utils.sign(parentObject.getTargetVelocity().x) != Utils.sign(parentObject.getVelocity().x)) {
+//        		// Todo: maybe the physics code should adjust target velocity instead in this case?
+//        		parentObject.getTargetVelocity().x *= -1.0f;
+//        	}
+//        }
     }
     
     private void updateAttack(GameObject player, GameObject parentObject) {

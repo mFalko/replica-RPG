@@ -15,7 +15,13 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObjectManager;
+import com.replica.core.collision.CollisionParameters;
+import com.replica.utility.Vector2;
 
 public class HitPlayerComponent extends GameComponent {
 	float mDistance2;

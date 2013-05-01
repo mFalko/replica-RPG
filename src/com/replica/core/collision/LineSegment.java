@@ -1,11 +1,11 @@
-package com.falko.android.snowball.core.collision;
+package com.replica.core.collision;
 
-import android.graphics.RectF;
 
-import com.falko.android.snowball.core.AllocationGuard;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.utility.HasBounds;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.core.AllocationGuard;
+import com.replica.core.GameObject;
+import com.replica.utility.HasBounds;
+import com.replica.utility.RectF;
+import com.replica.utility.Vector2;
 
 
   /**
@@ -14,20 +14,31 @@ import com.falko.android.snowball.utility.Vector2D;
      * describe the direction that the segment "pushes against" in a collision.
      */
     public class LineSegment extends AllocationGuard implements HasBounds{
-        private Vector2D mStartPoint;
-        private Vector2D mEndPoint;
+        private Vector2 mStartPoint;
+        private Vector2 mEndPoint;
+        private RectF bounds;
         public GameObject owner;
+        
         
         public LineSegment() {
             super();
-            mStartPoint = new Vector2D();
-            mEndPoint = new Vector2D();
+            bounds = new RectF();
+            mStartPoint = new Vector2();
+            mEndPoint = new Vector2();
+        }
+        
+        public LineSegment(int startx, int starty, int endx, int endy) {
+        	this();
+        	mStartPoint.set(startx, starty);
+        	mEndPoint.set(endx, endy);
+        	updateBounds();
         }
         
         /* Sets up the line segment.  Values are copied to local storage. */
-        public void set(Vector2D start, Vector2D end) {
+        public void set(Vector2 start, Vector2 end) {
             mStartPoint.set(start);
             mEndPoint.set(end);
+            updateBounds();
         }
         
         public void setOwner(GameObject ownerObject) {
@@ -35,21 +46,31 @@ import com.falko.android.snowball.utility.Vector2D;
         }
         
         public RectF getBounds() {
-			// TODO Auto-generated method stub
-			return null;
+			return bounds;
 		}
 
 		public void setBounds(RectF bounds) {
-			// TODO Auto-generated method stub
-			
+			bounds.set(bounds);
+		}
+		
+		private void updateBounds() {			
+			bounds.left_ = mStartPoint.x;
+			bounds.right_ = mEndPoint.x;
+			if (mStartPoint.y < mEndPoint.y) {
+				bounds.bottom_ = mStartPoint.y;
+				bounds.top_ = mEndPoint.y;
+			} else {
+				bounds.top_ = mStartPoint.y;
+				bounds.bottom_ = mEndPoint.y;
+			}
 		}
         
         /**
          * Checks to see if these lines intersect by projecting one onto the other and then
          * assuring that the collision point is within the range of each segment.
          */
-        public boolean calculateIntersection(Vector2D otherStart, Vector2D otherEnd,
-                Vector2D hitPoint, Vector2D hitPointNormal) {
+        public boolean calculateIntersection(Vector2 otherStart, Vector2 otherEnd,
+                Vector2 hitPoint) {
             boolean intersecting = false;
             
             // Reference: http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
@@ -79,7 +100,7 @@ import com.falko.android.snowball.utility.Vector2D;
         
         // Based on http://www.garagegames.com/community/resources/view/309
         public boolean calculateIntersectionBox(float left, float right, float top, float bottom, 
-                Vector2D hitPoint, Vector2D hitPointNormal) {
+                Vector2 hitPoint) {
             
             final float x1 = mStartPoint.x;
             final float x2 = mEndPoint.x;

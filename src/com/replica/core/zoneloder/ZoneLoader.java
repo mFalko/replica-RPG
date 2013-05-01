@@ -17,7 +17,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.falko.android.snowball.core.zoneloder;
+package com.replica.core.zoneloder;
 
 import java.io.InputStream;
 

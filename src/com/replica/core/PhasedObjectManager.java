@@ -15,7 +15,7 @@
  */
  
  
-package com.replica.replicaisland;
+package com.replica.core;
 
 import java.util.Comparator;
 

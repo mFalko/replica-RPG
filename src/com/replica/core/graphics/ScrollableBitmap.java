@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
 
 /**
  * Implements a bitmap that can be scrolled in place, such as the background of a scrolling

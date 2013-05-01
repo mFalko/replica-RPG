@@ -15,7 +15,9 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.core.collision;
+
+import com.replica.utility.Vector2;
 
 /** A sphere collision volume. */
 public class SphereCollisionVolume extends CollisionVolume {

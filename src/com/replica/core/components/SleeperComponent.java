@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.GameObject.ActionType;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
+import com.replica.core.systems.CameraSystem;
 
 /**
  * A component that implements the "pop-out" AI behavior.  Pop-out characters alternate between 
@@ -82,11 +85,11 @@ public class SleeperComponent extends GameComponent {
                 }
                 break;
             case STATE_ATTACKING:
-                if (parentObject.touchingGround() && parentObject.getVelocity().y < 0.0f) {
-                    mState = STATE_SLAM;
-                    camera.shake(mSlamDuration, mSlamMagnitude);
-                    parentObject.getVelocity().zero();
-                }
+//                if (parentObject.touchingGround() && parentObject.getVelocity().y < 0.0f) {
+//                    mState = STATE_SLAM;
+//                    camera.shake(mSlamDuration, mSlamMagnitude);
+//                    parentObject.getVelocity().zero();
+//                }
                 break;
             case STATE_SLAM:
                 if (!camera.shaking()) {

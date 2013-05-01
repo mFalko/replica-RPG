@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.systems;
 
 import java.util.Comparator;
+
+import com.replica.core.BaseObject;
+import com.replica.utility.FixedSizeArray;
 
 public class ChannelSystem extends BaseObject {
     private static final int CHANNEL_COUNT = 8;

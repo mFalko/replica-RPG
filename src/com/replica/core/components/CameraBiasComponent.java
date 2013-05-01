@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.systems.CameraSystem;
 
 public class CameraBiasComponent extends GameComponent {
 	 public CameraBiasComponent() {

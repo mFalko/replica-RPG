@@ -1,8 +1,11 @@
-package com.replica.replicaisland;
+package com.replica.input;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.view.MotionEvent;
+
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
 
 public class MultiTouchFilter extends SingleTouchFilter {
 	private boolean mCheckedForMultitouch = false;

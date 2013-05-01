@@ -15,7 +15,15 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.collision.CollisionVolume;
+import com.replica.core.collision.SphereCollisionVolume;
+import com.replica.core.systems.GameObjectCollisionSystem;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.Vector2;
 
 /**
  * A component to include dynamic collision volumes (such as those produced every frame from

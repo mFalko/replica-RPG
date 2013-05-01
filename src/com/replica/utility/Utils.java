@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.utility;
 
 import java.lang.reflect.Field;
 
@@ -25,8 +25,9 @@ import javax.microedition.khronos.opengles.GL11Ext;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLUtils;
+import android.util.Log;
 
-import com.falko.android.snowball.core.graphics.Texture;
+import com.replica.core.graphics.Texture;
 
 public class Utils {
 
@@ -35,7 +36,7 @@ public class Utils {
 			Field idField = c.getDeclaredField(variableName);
 			return idField.getInt(idField);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e("ERROR REPLICA", e.toString());
 			return -1;
 		}
 	}

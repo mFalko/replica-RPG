@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.collision;
+
+import com.replica.utility.Vector2;
 
 /**
  * An Axis-Aligned rectangular collision volume.  This code treats other volumes as if they are

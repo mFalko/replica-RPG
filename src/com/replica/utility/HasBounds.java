@@ -1,6 +1,5 @@
-package com.falko.android.snowball.utility;
+package com.replica.utility;
 
-import android.graphics.RectF;
 
 public interface HasBounds {
 	public RectF getBounds();

@@ -15,7 +15,14 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObjectManager;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 public class AttackAtDistanceComponent extends GameComponent {
     private static final int DEFAULT_ATTACK_DISTANCE = 100;

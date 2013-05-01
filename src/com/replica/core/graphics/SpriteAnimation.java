@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
 
 import java.util.Arrays;
+
+import com.replica.core.PhasedObject;
+import com.replica.utility.FixedSizeArray;
 
 /**
  * Describes a single animation for a sprite.

@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.utility.Vector2;
 
 /**
  * A game component that implements gravity.  Adding this component to a game object will cause

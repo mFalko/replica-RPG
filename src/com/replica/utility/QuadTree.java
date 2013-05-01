@@ -1,10 +1,9 @@
-package com.falko.android.snowball.utility;
+package com.replica.utility;
 
 import java.util.Iterator;
 
-import android.graphics.RectF;
-
-import com.falko.android.snowball.core.AllocationGuard;
+import com.replica.core.AllocationGuard;
+import com.replica.core.BaseObject;
 
 public class QuadTree<T extends HasBounds> extends AllocationGuard {
 
@@ -12,9 +11,9 @@ public class QuadTree<T extends HasBounds> extends AllocationGuard {
 	private QNodePool qNodePool_;
 	private LList<T>.LLNodePool listNodePool_;
 	private int minQNodeSize_;
-	private static final int MAX_DATA_COUNT = 4;
+	private static final int MAX_DATA_COUNT = 10;
 	private static final int NODE_COUNT = 4;
-	private static final int MAX_NODES = 200;
+	private static final int MAX_NODES = 500;
 	private final int MAX_ITEMS;
 
 	public QuadTree(int maxItems) {
@@ -28,7 +27,7 @@ public class QuadTree<T extends HasBounds> extends AllocationGuard {
 	public void setBounds(float x, float y, float width, float height) {
 		reset();
 		root_.getBounds().set(x, y, width, height);
-		minQNodeSize_ = (int) (width / 16);
+		minQNodeSize_ = (int) (width / 32);
 	}
 	
 	public RectF getBounds() {
@@ -39,8 +38,9 @@ public class QuadTree<T extends HasBounds> extends AllocationGuard {
 		return add(item, root_);
 	}
 
-	private boolean add(T item, QNode node) {
 
+	private boolean add(T item, QNode node) {
+		
 		if (!(node.contains(item) && listNodePool_.canAllocate())) {
 			return false;
 		}
@@ -67,18 +67,25 @@ public class QuadTree<T extends HasBounds> extends AllocationGuard {
 				node.nodes_.add(qNodePool_.allocate());
 			}
 			
-			float left = node.getBounds().left;
-			float top = node.getBounds().top;
-			float right = node.getBounds().right;
-			float bottom = node.getBounds().bottom;
+			float left = node.getBounds().left_;
+			float top = node.getBounds().top_;
+			float right = node.getBounds().right_;
+			float bottom = node.getBounds().bottom_;
 			float halfWidth = (right - left) / 2.0f;
 			float halfHeight = (top - bottom) / 2.0f;
 
-			node.nodes_.get(0).bounds_.set(left + halfWidth, top                , right           , bottom + halfHeight);
-			node.nodes_.get(1).bounds_.set(left            , top                , left + halfWidth, bottom + halfHeight);
-			node.nodes_.get(2).bounds_.set(left            , bottom + halfHeight, left + halfWidth, bottom);
-			node.nodes_.get(3).bounds_.set(left + halfWidth, bottom + halfHeight, right           , bottom);
+			
+			//public void set(float x, float y, float width, float height)
+			//1
+			node.nodes_.get(0).bounds_.set(left + halfWidth, bottom + halfHeight, halfWidth, halfHeight );
+			//2
+			node.nodes_.get(1).bounds_.set(left            , bottom + halfHeight, halfWidth, halfHeight);
+			//3
+			node.nodes_.get(2).bounds_.set(left            , bottom             , halfWidth, halfHeight);
+			//4
+			node.nodes_.get(3).bounds_.set(left + halfWidth, bottom             , halfWidth, halfHeight);
 
+			
 			node.partitioned_ = true;
 
 			Iterator<T> iter = node.data_.iterator();
@@ -140,6 +147,27 @@ public class QuadTree<T extends HasBounds> extends AllocationGuard {
 				reset(n);
 				if (root_ != n)
 					qNodePool_.release(n);
+			}
+		}
+	}
+	
+	public void debugDraw() {
+		debugDraw(root_);
+	}
+	
+	private void debugDraw(QNode node) {
+		
+		DebugSystem dsys = BaseObject.sSystemRegistry.debugSystem;
+		RectF r = node.getBounds();
+		dsys.drawShape(r.left_, r.bottom_, r.width(),
+				r.height(), DebugSystem.SHAPE_BOX,
+				DebugSystem.COLOR_OUTLINE);
+		
+
+		if (node.partitioned_) {
+			for (int i = 0; i < NODE_COUNT; ++i) {
+				final QNode n = node.nodes_.get(i);
+				debugDraw(n);
 			}
 		}
 	}

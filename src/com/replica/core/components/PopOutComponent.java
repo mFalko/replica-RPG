@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObjectManager;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Vector2;
 
 /**
  * A component that implements the "pop-out" AI behavior.  Pop-out characters alternate between 

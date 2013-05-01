@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObjectManager;
+import com.replica.utility.Utils;
 
 /**
  * A general-purpose animation selection system for animating enemy characters.  Most enemy

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
 
 public class TiledBackgroundVertexGrid extends ScrollableBitmap {
     private TiledVertexGrid mGrid;

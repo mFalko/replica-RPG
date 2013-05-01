@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core;
+
+import com.replica.utility.FixedSizeArray;
 
 /** 
  * ObjectManagers are "group nodes" in the game graph.  They contain child objects, and updating

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core;
+
+import com.replica.utility.TimeSystem;
 
 /**
  * Main game loop.  Updates the time system and passes the result down to the rest of the game

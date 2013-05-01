@@ -1,4 +1,4 @@
-package com.falko.android.snowball.utility;
+package com.replica.utility;
 
 public class Edge {
 

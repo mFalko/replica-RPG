@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.utility.TObjectPool;
 
 public class GameComponentPool extends TObjectPool<GameComponent> {
     public Class<?> objectClass;

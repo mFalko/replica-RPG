@@ -14,13 +14,17 @@
  * limitations under the License.
  */
  
-package com.replica.replicaisland;
+package com.replica.core.systems;
 
 import java.util.Comparator;
 
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
+
+import com.replica.core.AllocationGuard;
+import com.replica.core.BaseObject;
+import com.replica.utility.FixedSizeArray;
 
 public class SoundSystem extends BaseObject {
     private static final int MAX_STREAMS = 8;

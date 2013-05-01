@@ -17,18 +17,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.falko.android.snowball.core.zoneloder;
+package com.replica.core.zoneloder;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.PhasedObjectManager;
-import com.falko.android.snowball.core.collision.LineSegment;
-import com.falko.android.snowball.core.graphics.BackgroundDrawable;
-import com.falko.android.snowball.core.graphics.DrawableFactory;
-import com.falko.android.snowball.core.graphics.Layer;
-import com.falko.android.snowball.core.systems.CameraSystem;
-import com.falko.android.snowball.core.systems.RenderSystem;
-import com.falko.android.snowball.utility.FixedSizeArray;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.PhasedObjectManager;
+import com.replica.core.collision.LineSegment;
+import com.replica.core.graphics.Layer;
+import com.replica.utility.FixedSizeArray;
 
 /**
  * @author matt
@@ -36,9 +32,7 @@ import com.falko.android.snowball.utility.Vector2D;
  */
 public class Zone extends PhasedObjectManager{
 
-	public Zone(int layerCount, int collisionCount) {
-		drawLayers_ = new FixedSizeArray<Layer>(layerCount);
-//		collisionLayers_ = new FixedSizeArray<LineSegment>(collisionCount); 
+	public Zone() {
 	}
 
 	/*
@@ -49,26 +43,12 @@ public class Zone extends PhasedObjectManager{
 	 */
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
-		final int count = drawLayers_.getCount();
-		final DrawableFactory factory = sSystemRegistry.drawableFactory;
-		final CameraSystem camera = sSystemRegistry.cameraSystem;
-		final RenderSystem renderer = sSystemRegistry.renderSystem;
-		final float cameraX = camera.getFocusPositionX();
-		final float cameraY = camera.getFocusPositionY();
-
-		final float viewWidth = sSystemRegistry.contextParameters.viewWidth;
-		final float viewHeight = sSystemRegistry.contextParameters.viewHeight;
-		// TODO: Refactor code to use TiledBackgroundVertexGrid
-		Vector2D v = new Vector2D(0, 0);
-		for (int i = 0; i < count; ++i) {
-			final Layer layer = drawLayers_.get(i);
-			BackgroundDrawable drawable = factory.allocateBackgroundDrawable();
-			drawable.init(layer, cameraX, cameraY, viewWidth, viewHeight);
-			drawable.setPriority(layer.getPriority());
-			renderer.scheduleForDraw(drawable, v, i, false);
-		}
+		
+		
+		background.update(timeDelta, parent);
+		
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -86,10 +66,6 @@ public class Zone extends PhasedObjectManager{
 	public int getWorldWidth() {
 		return worldWidth_;
 	}
-	
-	protected void addLayer(Layer layer) {
-		drawLayers_.add(layer);
-	}
 
 	protected void setWorldHeight(int height) {
 		worldHeight_ = height;
@@ -98,9 +74,18 @@ public class Zone extends PhasedObjectManager{
 	protected void setWorldWidth(int width) {
 		worldWidth_ = width;
 	}
-
-	private FixedSizeArray<Layer> drawLayers_;
-	private FixedSizeArray<LineSegment> backgrouundCollisionLines_;
+	
+	protected void setcollisionLines(FixedSizeArray<LineSegment> collisionLines) {
+		backgroundCollisionLines_ = collisionLines;
+	}
+	
+	public FixedSizeArray<LineSegment> getCollisionLines() {
+		return backgroundCollisionLines_;
+	}
+	
+	private FixedSizeArray<LineSegment> backgroundCollisionLines_;
 	private int worldWidth_;
 	private int worldHeight_;
+	
+	GameObject background;
 }

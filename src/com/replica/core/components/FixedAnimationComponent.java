@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
 
 public class FixedAnimationComponent extends GameComponent {
     private int mAnimationIndex;

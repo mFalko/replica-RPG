@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.systems;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.zoneloder.Zone;
+import com.replica.utility.Lerp;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 /**
  * Manages the position of the camera based on a target game object.
@@ -85,7 +93,7 @@ public class CameraSystem extends BaseObject {
 		return mTarget;
 	}
     
-    void shake(float duration, float magnitude) {
+    public void shake(float duration, float magnitude) {
         mShakeTime = duration;
         mShakeMagnitude = magnitude;
     }
@@ -143,7 +151,7 @@ public class CameraSystem extends BaseObject {
                 }
 
             }
-//            Log.v("Snowball", "xpsx = " + mCurrentCameraPosition.x);
+            
         	mBias.zero();
 
         }
@@ -188,13 +196,13 @@ public class CameraSystem extends BaseObject {
         final Zone level = sSystemRegistry.zone;
         if (level != null) {
             final float worldPixelWidth = Math.max(level.getWorldWidth(), width);
-            final float rightEdge = focalPositionX + width;// + (width / 2.0f);
-            final float leftEdge = focalPositionX;// - (width / 4.0f);
+            final float rightEdge = focalPositionX  + (width / 2.0f);
+            final float leftEdge = focalPositionX - (width / 2.0f);
     
             if (rightEdge > worldPixelWidth) {
-                focalPositionX = worldPixelWidth- width;// - (width / 2.0f);
+                focalPositionX = worldPixelWidth- (width / 2.0f);
             } else if (leftEdge < 0) {
-                focalPositionX = 0;//width / 4.0f;
+                focalPositionX = width / 2.0f;
             }
         }
         return focalPositionX;
@@ -212,13 +220,13 @@ public class CameraSystem extends BaseObject {
         final Zone level = sSystemRegistry.zone;
         if (level != null) {
             final float worldPixelHeight = Math.max(level.getWorldHeight(), sSystemRegistry.contextParameters.gameHeight);
-            final float topEdge = focalPositionY + height;//(height / 2.0f);
-            final float bottomEdge = focalPositionY;// - (height / 2.0f);
+            final float topEdge = focalPositionY + (height / 2.0f);
+            final float bottomEdge = focalPositionY - (height / 2.0f);
     
             if (topEdge > worldPixelHeight) {
-                focalPositionY = worldPixelHeight - height;//(height / 2.0f);
+                focalPositionY = worldPixelHeight -(height / 2.0f);
             } else if (bottomEdge < 0) {
-                focalPositionY = 0;//height / 2.0f;
+                focalPositionY = height / 2.0f;
             }
         }
         

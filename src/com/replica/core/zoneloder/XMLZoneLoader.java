@@ -17,7 +17,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.falko.android.snowball.core.zoneloder;
+package com.replica.core.zoneloder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,14 +29,20 @@ import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
 
-import com.falko.android.snowball.R;
-import com.falko.android.snowball.core.graphics.Layer;
-import com.falko.android.snowball.core.graphics.Texture;
-import com.falko.android.snowball.core.graphics.VertexGrid;
-import com.falko.android.snowball.core.zoneloder.TileSet.Sheet;
-import com.falko.android.snowball.utility.FixedSizeArray;
-import com.falko.android.snowball.utility.Utils;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.R;
+import com.replica.core.GameObject;
+import com.replica.core.collision.LineSegment;
+import com.replica.core.components.RenderComponent;
+import com.replica.core.components.ScrollerComponent;
+import com.replica.core.graphics.Layer;
+import com.replica.core.graphics.Texture;
+import com.replica.core.graphics.TiledVertexGrid;
+import com.replica.core.graphics.VertexGrid;
+import com.replica.core.zoneloder.TileSet.Sheet;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.SortConstants;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 /**
  * @author matt
@@ -44,10 +50,11 @@ import com.falko.android.snowball.utility.Vector2D;
  */
 public class XMLZoneLoader implements ZoneLoader {
 
-	public XMLZoneLoader() {
-		layers_ = new FixedSizeArray<Layer>(MAX_LAYERS);
+	public XMLZoneLoader(int viewWidth, int viewHeight) {
 		tileSet_ = new TileSet();
-
+		drawLevel_ = new int[MAX_LAYERS][2];
+		viewWidth_ = viewWidth;
+		viewHeight_ = viewHeight;
 	}
 
 	/*
@@ -83,6 +90,9 @@ public class XMLZoneLoader implements ZoneLoader {
 
 	private Zone buildMap() {
 		float[][] uvWorkspace = new float[4][2];
+		
+		GameObject background = new GameObject();
+		
 		for (int i = 0; i < layerCount_; ++i) {
 			Sheet[] sheets = tileSet_.getSheets(mapData_[i]);
 			int gridCount = sheets.length;
@@ -95,8 +105,8 @@ public class XMLZoneLoader implements ZoneLoader {
 				textures[j] = sheets[j].texture_;
 			}
 
-			final int tileHeight = tileSet_.getTileHeight(mapData_[i][0][0]);
-			final int tileWidth = tileSet_.getTileWidth(mapData_[i][0][0]);
+			final int tileHeight = tileSet_.getTileHeight();
+			final int tileWidth = tileSet_.getTileWidth();
 
 			for (int tileY = 0; tileY < worldHeight_; tileY++) {
 				for (int tileX = 0; tileX < worldWidth_; tileX++) {
@@ -116,21 +126,53 @@ public class XMLZoneLoader implements ZoneLoader {
 					grids[gridIndex].set(tileX, tileY, positions, uvWorkspace);
 				}
 			}
+			
+			TiledVertexGrid layer = new TiledVertexGrid(textures, 
+														grids,
+														viewWidth_,
+    													viewHeight_,
+														tileWidth, 
+														tileHeight,
+														worldWidth_,
+														worldHeight_);
+			
+			RenderComponent backgroundRender = new RenderComponent();
+			int priority = drawLevel_[i][1];
+			if (drawLevel_[i][0] == BACKGROUND)
+				priority += SortConstants.BACKGROUND_START;
+			else
+				priority += SortConstants.HIGHGROUND_START;
+	        backgroundRender.setPriority(priority);
+	        
+	        //TODO: The map format should really just output independent speeds for x and y,
+	        // but as a short term solution we can assume parallax layers lock in the smaller
+	        // direction of movement.
+	        // 4/25: this needs to allow for different scroll speeds, so far no parallax scrolling
+	        float xScrollSpeed = 1.0f;
+	        float yScrollSpeed = 1.0f;
+	        
+	        ScrollerComponent scroller = new ScrollerComponent(xScrollSpeed,
+	        													yScrollSpeed,
+	        													viewWidth_,
+	        													viewHeight_,
+	        													layer);
+	        scroller.setRenderComponent(backgroundRender);
 
-			Vector2D bottomLeft = new Vector2D();
-			Vector2D topRight = new Vector2D(tileWidth * worldWidth_,
-					tileHeight * worldHeight_);
-			layers_.add(new Layer(bottomLeft, topRight, tileWidth, tileHeight,
-					grids, textures, 0));
+	        background.add(scroller);
+	        background.add(backgroundRender);
+	        backgroundRender.setCameraRelative(false);
+			
 		}
 
-		Zone map = new Zone(layerCount_, 0);
-		for (int i = 0; i < layers_.getCount(); ++i) {
-			map.addLayer(layers_.get(i));
-		}
+		Zone map = new Zone();
 
-		map.setWorldHeight(worldHeight_ * tileSet_.getTileHeight(0));
-		map.setWorldWidth(worldWidth_ * tileSet_.getTileWidth(0));
+		map.setWorldHeight(worldHeight_ * tileSet_.getTileHeight());
+		map.setWorldWidth(worldWidth_ * tileSet_.getTileWidth());
+		
+		map.setcollisionLines(backgroundCollisionLines_);
+
+		map.background = background;
+
 		return map;
 	}
 
@@ -155,9 +197,9 @@ public class XMLZoneLoader implements ZoneLoader {
 
 				parseLayer(parser);
 
-			} else if (tagName.equals("objectgroup")) {
+			} else if (tagName.equals("collision")) {
 
-//				parseObjectGroup(parser);
+				parseCollisionGroup(parser);
 
 			}
 		}
@@ -169,10 +211,18 @@ public class XMLZoneLoader implements ZoneLoader {
 		int ac = parser.getAttributeCount();
 		for (int i = 0; i < ac; ++i) {
 			attributeName = parser.getAttributeName(i);
-			if (attributeName.equals("width")) {
+			if (attributeName.equals("MapTileWidth")) {
 				worldWidth_ = Integer.parseInt(parser.getAttributeValue(i));
-			} else if (attributeName.equals("height")) {
+			} else if (attributeName.equals("MapTileHeight")) {
 				worldHeight_ = Integer.parseInt(parser.getAttributeValue(i));
+			} else if (attributeName.equals("TilePixilHeight")) {
+				
+				tileSet_.setTileHeight(Integer.parseInt(parser.getAttributeValue(i)));
+				
+			} else if (attributeName.equals("TilePixilWidth")) {
+				
+				tileSet_.setTileWidth(Integer.parseInt(parser.getAttributeValue(i)));
+				
 			}
 		}
 		mapData_ = new long[MAX_LAYERS][worldHeight_][worldWidth_];
@@ -181,8 +231,6 @@ public class XMLZoneLoader implements ZoneLoader {
 	private void parseTileSet(XmlPullParser parser)
 			throws XmlPullParserException, IOException {
 		int firstGID = 0;
-		int tileWidth = 0;
-		int tileHeight = 0;
 		int resourceID = 0;
 		int imageWidth = 0;
 		int imageHeight = 0;
@@ -194,35 +242,33 @@ public class XMLZoneLoader implements ZoneLoader {
 			if (attributeName.equals("name")) {
 				resourceID = Utils.getResId(parser.getAttributeValue(i),
 						context_, R.drawable.class);
-			} else if (attributeName.equals("tilewidth")) {
-				tileWidth = Integer.parseInt(parser.getAttributeValue(i));
-			} else if (attributeName.equals("tileheight")) {
-				tileHeight = Integer.parseInt(parser.getAttributeValue(i));
-			} else if (attributeName.equals("firstgid")) {
+			} else if (attributeName.equals("firstGID")) {
 				firstGID = Integer.parseInt(parser.getAttributeValue(i));
-			}
-
-		}
-
-		parser.nextTag();
-		assert (parser.getEventType() == XmlPullParser.START_TAG);
-
-		ac = parser.getAttributeCount();
-		for (int i = 0; i < ac; ++i) {
-			attributeName = parser.getAttributeName(i);
-			if (attributeName.equals("width")) {
-				imageWidth = Integer.parseInt(parser.getAttributeValue(i));
-			} else if (attributeName.equals("height")) {
+			} else if (attributeName.equals("imageHeight")) {
 				imageHeight = Integer.parseInt(parser.getAttributeValue(i));
+			} else if (attributeName.equals("imageWidth")) {
+				imageWidth = Integer.parseInt(parser.getAttributeValue(i));
 			}
 		}
-
-		tileSet_.addSheet(firstGID, tileWidth, tileHeight, resourceID,
-				imageWidth, imageHeight);
+		tileSet_.addSheet(firstGID, resourceID, imageWidth, imageHeight);
 	}
 
 	private void parseLayer(XmlPullParser parser) throws IOException,
 			XmlPullParserException {
+		
+		String attributeName = "";
+		int ac = parser.getAttributeCount();
+		for (int i = 0; i < ac; ++i) {
+			attributeName = parser.getAttributeName(i);
+			if (attributeName.equals("drawLevel")) {
+				
+				drawLevel_[layerCount_][0] = parser.getAttributeValue(i)
+						.equalsIgnoreCase("background")? BACKGROUND : HIGHGROUND;
+			} else if (attributeName.equals("priority")) {
+				drawLevel_[layerCount_][1] = Integer.parseInt(parser.getAttributeValue(i));
+			}
+		}
+		
 
 		parser.nextTag();
 		if (parser.next() != XmlPullParser.TEXT) {
@@ -242,51 +288,57 @@ public class XMLZoneLoader implements ZoneLoader {
 		layerCount_++;
 	}
 
-	private void parseObjectGroup(XmlPullParser parser) throws XmlPullParserException, IOException {
+	private void parseCollisionGroup(XmlPullParser parser) throws XmlPullParserException, IOException {
 		
+		String lineCountAttrName = parser.getAttributeName(0);
+		if (!lineCountAttrName.equals("lineCount")) {
+			Log.e("Replica", "Collision");
+			return;
+		}
+		
+		int lineCount = Integer.parseInt(parser.getAttributeValue(0));
+		backgroundCollisionLines_ = new FixedSizeArray<LineSegment>(lineCount);
 		String attributeName = "";
-		int ac = parser.getAttributeCount();
-		for (int i = 0; i < ac; ++i) {
-			attributeName = parser.getAttributeName(i);
-			if (attributeName.equals("name")) {
-				
-			} else if (attributeName.equals("width")) {
-//				imageWidth = Integer.parseInt(parser.getAttributeValue(i));
-			} else if (attributeName.equals("height")) {
-//				imageHeight = Integer.parseInt(parser.getAttributeValue(i));
-			}	
-		}
-		
-		parser.nextTag();
-		assert (parser.getEventType() == XmlPullParser.START_TAG);
-		int xoffset;
-		int yoffset;
-		
-		ac = parser.getAttributeCount();
-		for (int i = 0; i < ac; ++i) {
-			attributeName = parser.getAttributeName(i);
-			if (attributeName.equals("x")) {
-				xoffset = Integer.parseInt(parser.getAttributeValue(i));
-			} else if (attributeName.equals("y")) {
-				yoffset = Integer.parseInt(parser.getAttributeValue(i));
-			}	
-		}
-		
-		parser.nextTag();
-		assert (parser.getEventType() == XmlPullParser.START_TAG);
-		
-		String pointStr = parser.getAttributeValue(0);
-		String pointstrarray[] = pointStr.split(" ");
-		
-		
+		for (int i = 0; i < lineCount; ++i) {
+			
+			parser.nextTag();
+			
+			int startx = 0;
+			int starty = 0;
+			int endx = 0;
+			int endy = 0;
+			
+			int ac = parser.getAttributeCount();
+			for (int j = 0; j < ac; ++j) {
+				attributeName = parser.getAttributeName(j);
+				if (attributeName.equals("startX")) {
+					startx = Integer.parseInt(parser.getAttributeValue(j));
+				} else if (attributeName.equals("startY")) {
+					starty = Integer.parseInt(parser.getAttributeValue(j));
+				} else if (attributeName.equals("endX")) {
+					endx = Integer.parseInt(parser.getAttributeValue(j));
+				} else if (attributeName.equals("endY")) {
+					endy = Integer.parseInt(parser.getAttributeValue(j));
+				}
+			}
+			
+			backgroundCollisionLines_.add(new LineSegment(startx, starty, endx, endy));
+			parser.nextTag();
+		}	
 	}
 
+	private FixedSizeArray<LineSegment> backgroundCollisionLines_;
 	private static final int MAX_LAYERS = 6;
-	private FixedSizeArray<Layer> layers_;
+	private static final int BACKGROUND = 0;
+	private static final int HIGHGROUND = 1;
 	private long[][][] mapData_;
+	private int[][] drawLevel_;
 	private TileSet tileSet_;
 	private Context context_;
 	private int worldWidth_;
 	private int worldHeight_;
 	private int layerCount_;
+	
+	private int viewWidth_;
+	private int viewHeight_;
 }

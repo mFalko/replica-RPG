@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core;
+package com.replica.core;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,38 +27,32 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.falko.android.snowball.R;
-import com.falko.android.snowball.core.GameObject.ActionType;
-import com.falko.android.snowball.core.components.GameComponent;
-import com.falko.android.snowball.core.components.RenderComponent;
-import com.falko.android.snowball.core.components.SpriteComponent;
-import com.falko.android.snowball.core.components.AnimationComponent.PlayerAnimations;
-import com.falko.android.snowball.core.graphics.AnimationFrame;
-import com.falko.android.snowball.core.graphics.BufferLibrary;
-import com.falko.android.snowball.core.graphics.DrawableBitmap;
-import com.falko.android.snowball.core.graphics.DrawableFactory;
-import com.falko.android.snowball.core.graphics.GLSurfaceView;
-import com.falko.android.snowball.core.graphics.GameRenderer;
-import com.falko.android.snowball.core.graphics.SpriteAnimation;
-import com.falko.android.snowball.core.graphics.Texture;
-import com.falko.android.snowball.core.graphics.TextureLibrary;
-import com.falko.android.snowball.core.systems.CameraSystem;
-import com.falko.android.snowball.core.systems.OpenGLSystem;
-import com.falko.android.snowball.core.systems.RenderSystem;
-import com.falko.android.snowball.core.zoneloder.XMLZoneLoader;
-import com.falko.android.snowball.core.zoneloder.Zone;
-import com.falko.android.snowball.core.zoneloder.ZoneLoader;
-import com.falko.android.snowball.hud.HudSystem;
-import com.falko.android.snowball.input.ButtonConstants;
-import com.falko.android.snowball.input.InputDPad;
-import com.falko.android.snowball.input.InputGameInterface;
-import com.falko.android.snowball.input.InputSystem;
-import com.falko.android.snowball.input.MultiTouchFilter;
-import com.falko.android.snowball.input.SingleTouchFilter;
-import com.falko.android.snowball.input.TouchFilter;
-import com.falko.android.snowball.utility.DebugLog;
-import com.falko.android.snowball.utility.TimeSystem;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.R;
+import com.replica.core.collision.HitPointPool;
+import com.replica.core.graphics.BufferLibrary;
+import com.replica.core.graphics.DrawableFactory;
+import com.replica.core.graphics.GLSurfaceView;
+import com.replica.core.graphics.GameRenderer;
+import com.replica.core.graphics.TextureLibrary;
+import com.replica.core.systems.CameraSystem;
+import com.replica.core.systems.CollisionSystem;
+import com.replica.core.systems.OpenGLSystem;
+import com.replica.core.systems.RenderSystem;
+import com.replica.core.zoneloder.XMLZoneLoader;
+import com.replica.core.zoneloder.Zone;
+import com.replica.core.zoneloder.ZoneLoader;
+import com.replica.hud.HudSystem;
+import com.replica.input.ButtonConstants;
+import com.replica.input.InputGameInterface;
+import com.replica.input.InputSystem;
+import com.replica.input.MultiTouchFilter;
+import com.replica.input.SingleTouchFilter;
+import com.replica.input.TouchFilter;
+import com.replica.utility.DebugLog;
+import com.replica.utility.DebugSystem;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Vector2;
+import com.replica.utility.VectorPool;
 
 /**
  * High-level setup object for the AndouKun game engine. This class sets up the
@@ -165,7 +159,7 @@ public class Game extends AllocationGuard {
 
 			// CollisionSystem collision = new CollisionSystem();
 			// BaseObject.sSystemRegistry.collisionSystem = collision;
-			// BaseObject.sSystemRegistry.hitPointPool = new HitPointPool();
+			 BaseObject.sSystemRegistry.hitPointPool = new HitPointPool();
 
 			GameObjectManager gameManager = new GameObjectManager(
 					params.viewWidth * 2);
@@ -186,14 +180,10 @@ public class Game extends AllocationGuard {
 			BaseObject.sSystemRegistry.cameraSystem = camera;
 			BaseObject.sSystemRegistry.registerForReset(camera);
 
-			// collision.loadCollisionTiles(context.getResources().openRawResource(R.raw.collision));
-
 			gameRoot.add(gameManager);
 
 			// Camera must come after the game manager so that the camera target
-			// moves before the camera
-			// centers.
-
+			// moves before the cameracenters.
 			gameRoot.add(camera);
 
 			// More basic systems.
@@ -206,20 +196,35 @@ public class Game extends AllocationGuard {
 
 			RenderSystem renderer = new RenderSystem();
 			BaseObject.sSystemRegistry.renderSystem = renderer;
-			// BaseObject.sSystemRegistry.vectorPool = new VectorPool();
+			 BaseObject.sSystemRegistry.vectorPool = new VectorPool();
 			BaseObject.sSystemRegistry.drawableFactory = new DrawableFactory();
 
 			// hud system
+			//TODO: Refactor HUD code
 			 HudSystem hud = new HudSystem();
-			 hud.setTouchDPadBounds(ButtonConstants.D_PAD_REGION_X,
-			 ButtonConstants.D_PAD_REGION_Y,
-			 ButtonConstants.D_PAD_REGION_WIDTH,
-			 ButtonConstants.D_PAD_REGION_HEIGHT);
-			
+			hud.setTouchDPadBounds(ButtonConstants.D_PAD_REGION_X,
+					ButtonConstants.D_PAD_REGION_Y,
+					ButtonConstants.D_PAD_REGION_WIDTH,
+					ButtonConstants.D_PAD_REGION_HEIGHT);
+			 
+			 int buttonWidth = 32;
+			 int buttonHeight = 32;
+			 int buttonStartX = params.gameWidth - buttonWidth - 10;
+			 int buttonStartY = 10;
+			 
+			 hud.setAttackButtonBounds(0, buttonStartX, buttonStartY, buttonWidth, buttonHeight);
+			 hud.setAttackButtonBounds(1, buttonStartX - buttonWidth - 10, buttonStartY, buttonWidth, buttonHeight);
+			 hud.setAttackButtonBounds(2, buttonStartX, buttonStartY + buttonHeight + 10, buttonWidth, buttonHeight);
+			 hud.setAttackButtonBounds(3, buttonStartX - buttonWidth - 10, buttonStartY + buttonHeight + 10, buttonWidth, buttonHeight);
+			 
 			 BaseObject.sSystemRegistry.shortTermTextureLibrary
-			 .allocateTexture(R.drawable.joystick_circle_outer);
+				.allocateTexture(R.drawable.buttongloss);
 			 BaseObject.sSystemRegistry.shortTermTextureLibrary
-			 .allocateTexture(R.drawable.joystick_circle_inner);
+				.allocateTexture(R.drawable.buttonbackground);
+			BaseObject.sSystemRegistry.shortTermTextureLibrary
+					.allocateTexture(R.drawable.joystick_circle_outer);
+			BaseObject.sSystemRegistry.shortTermTextureLibrary
+					.allocateTexture(R.drawable.joystick_circle_inner);
 			
 			 BaseObject.sSystemRegistry.hudSystem = hud;
 			 gameRoot.add(hud);
@@ -234,21 +239,20 @@ public class Game extends AllocationGuard {
 			// gameRoot.add(collision);
 
 			// debug systems
-			// BaseObject.sSystemRegistry.debugSystem = new
-			// DebugSystem(longTermTextureLibrary);
+			 BaseObject.sSystemRegistry.debugSystem = new DebugSystem(longTermTextureLibrary);
 			// dynamicCollision.setDebugPrefs(false, true);
 
 			// objectFactory.preloadEffects();
 
 
-			 GameObject ghost = objectFactory.spawnPlayer(0, 0);
+			 GameObject ghost = objectFactory.spawnPlayer(100, 100);
 			 gameManager.add(ghost);
 			 gameManager.setPlayer(ghost);
 			 camera.setTarget(ghost);
 
 			try {
-				InputStream in = context.getAssets().open("Skeleton.tmx");
-				ZoneLoader loader = new XMLZoneLoader();
+				InputStream in = context.getAssets().open("town.xml");
+				ZoneLoader loader = new XMLZoneLoader(params.viewWidth, params.viewHeight);
 				zone_ = loader.loadZone(in, context);
 			} catch (IOException e) {
 
@@ -256,6 +260,10 @@ public class Game extends AllocationGuard {
 			gameRoot.add(zone_);
 			BaseObject.sSystemRegistry.zone = zone_;
 
+			CollisionSystem collision = new CollisionSystem();
+			collision.initialize(zone_.getCollisionLines(), zone_.getWorldWidth(), zone_.getWorldHeight());
+			BaseObject.sSystemRegistry.collisionSystem = collision;
+			gameRoot.add(collision);
 			mGameRoot = gameRoot;
 
 			mGameThread = new GameThread(mRenderer);
@@ -554,7 +562,7 @@ public class Game extends AllocationGuard {
 		return BaseObject.sSystemRegistry.timeSystem.getGameTime();
 	}
 
-	public Vector2D getLastDeathPosition() {
+	public Vector2 getLastDeathPosition() {
 		return BaseObject.sSystemRegistry.eventRecorder.getLastDeathPosition();
 	}
 

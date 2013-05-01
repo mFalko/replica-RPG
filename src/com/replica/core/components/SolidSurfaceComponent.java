@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.systems.CollisionSystem;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.Vector2;
 
 /**
  * A component that allows a game object to act like a solid object by submitting surfaces to the

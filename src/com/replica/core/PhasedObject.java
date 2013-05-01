@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core;
 
 /**
  * A basic object that adds an execution phase.  When PhasedObjects are combined with

@@ -16,6 +16,8 @@
 
 package com.replica.core;
 
+import com.replica.utility.DebugLog;
+
 /**
  * AllocationGuard is a utility class for tracking down memory leaks.  It implements a 
  * "checkpoint" memory scheme.  After the static sGuardActive flag has been set, any further

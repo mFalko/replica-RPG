@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.SoundSystem.Sound;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.collision.CollisionParameters;
+import com.replica.core.systems.ChannelSystem;
+import com.replica.core.systems.SoundSystem;
+import com.replica.core.systems.SoundSystem.Sound;
+import com.replica.utility.TimeSystem;
 
 public class ButtonAnimationComponent extends GameComponent {
     public static final class Animation {

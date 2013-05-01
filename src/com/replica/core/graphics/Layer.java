@@ -17,12 +17,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.falko.android.snowball.core.graphics;
+package com.replica.core.graphics;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import com.falko.android.snowball.core.systems.OpenGLSystem;
-import com.falko.android.snowball.utility.Vector2D;
+import android.util.Log;
+
+import com.replica.core.systems.OpenGLSystem;
+import com.replica.utility.Vector2;
 
 /**
  * @author matt
@@ -30,7 +32,7 @@ import com.falko.android.snowball.utility.Vector2D;
  */
 public class Layer {
 
-	public Layer(Vector2D bottomLeft, Vector2D topRight, int tileWidth,
+	public Layer(Vector2 bottomLeft, Vector2 topRight, int tileWidth,
 			int tileHeight, VertexGrid[] grids, Texture[] textures, int priority) {
 		bottomLeft_ = bottomLeft;
 		topRight_ = topRight;
@@ -53,7 +55,15 @@ public class Layer {
 		final int horizontalTileCount = (int) (layerPixelLength / tileWidth_);
 		final int verticalTileCount = (int) (layerPixelHeight / tileHeight_);
 
-		final float offsetX = cameraX - bottomLeft_.x;
+		float orginX = (viewWidth /2) - cameraX;
+		float orginY = (viewHeight /2) - cameraY;
+		
+//		final float offsetX = cameraX - bottomLeft_.x;
+		final float offsetX = orginX - bottomLeft_.x;
+		
+		
+		Log.v("Replica", "offsetX = " + offsetX);
+		
 		int startX = 0;
 		if (offsetX > tileWidth_) {
 			final float XoffsetPrecent = offsetX / layerPixelLength;
@@ -61,14 +71,23 @@ public class Layer {
 					* (layerPixelLength / tileWidth_));
 		}
 
-		final float offsetY = cameraY - bottomLeft_.y;
+//		final float offsetY = cameraY - bottomLeft_.y;
+		final float offsetY = orginY - bottomLeft_.y;
+		
+		Log.v("Replica", "offsetY = " + offsetY);
+		
 		int startY = 0;
 		if (offsetY > tileHeight_) {
 			final float YoffsetPrecent = offsetY / layerPixelHeight;
 			startY = (int)Math.floor(YoffsetPrecent
 					* (layerPixelHeight / tileHeight_));
 		}
-
+		
+		
+		Log.v("Replica", "startX = " + startX);
+		Log.v("Replica", "startY = " + startY);
+		
+		
 		int DrawCountX = (int) Math.ceil(viewWidth / tileWidth_) +1;
 		DrawCountX = startX + DrawCountX < horizontalTileCount ? DrawCountX
 				: horizontalTileCount - startX;
@@ -92,7 +111,12 @@ public class Layer {
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 
-		gl.glTranslatef(-cameraX, -cameraY, 0.0f);
+//		gl.glTranslatef(-cameraX, -cameraY, 0.0f);
+		
+		gl.glTranslatef(orginX, orginY, 0.0f);
+		
+//		gl.glTranslatef(-(viewWidth/2 -cameraX),-(viewHeight/2 -cameraY), 0.0f);
+		
 
 		for (int g = 0; g < grids_.length; ++g) {
 			OpenGLSystem.bindTexture(GL10.GL_TEXTURE_2D, textures_[g].name);
@@ -108,8 +132,8 @@ public class Layer {
 		VertexGrid.EndDrawingVertexGrid(gl);
 	}
 
-	private Vector2D bottomLeft_; // the bottom left corner in pixel coords
-	private Vector2D topRight_; // the top right corner in pixel coords
+	private Vector2 bottomLeft_; // the bottom left corner in pixel coords
+	private Vector2 topRight_; // the top right corner in pixel coords
 	private int tileWidth_;
 	private int tileHeight_;
 	private int priority_;

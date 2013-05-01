@@ -15,7 +15,7 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.hud;
 
 import java.lang.reflect.Method;
 

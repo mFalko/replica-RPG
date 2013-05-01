@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
+
+import com.replica.core.AllocationGuard;
 
 /**
  * Simple container class for textures.  Serves as a mapping between Android resource ids and

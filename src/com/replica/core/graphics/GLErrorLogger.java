@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
- package com.replica.replicaisland;
+package com.replica.core.graphics;
 
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
@@ -29,7 +29,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
 
 import android.opengl.GLU;
 
-import com.falko.android.snowball.utility.DebugLog;
+import com.replica.utility.DebugLog;
 
 public class GLErrorLogger implements GLSurfaceView.GLWrapper {
 

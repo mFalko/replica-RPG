@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.systems;
 
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
+
+import com.replica.core.BaseObject;
 
 /** 
  * An object wrapper for a pointer to the OpenGL context.  Note that the context is only valid

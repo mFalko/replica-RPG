@@ -1,4 +1,4 @@
-package com.replica.replicaisland;
+package com.replica.utility;
 
 import java.net.HttpURLConnection;
 import java.net.URL;

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.collision;
+package com.replica.core.collision;
 
-import com.falko.android.snowball.core.AllocationGuard;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.core.AllocationGuard;
+import com.replica.utility.Vector2;
 
 public class HitPoint extends AllocationGuard {
     public Vector2 hitPoint;

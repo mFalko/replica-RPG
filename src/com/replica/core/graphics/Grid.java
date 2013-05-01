@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -25,6 +25,8 @@ import java.nio.IntBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
+
+import com.replica.utility.DebugLog;
 
 /**
  * A 2D rectangular mesh. Can be drawn textured or untextured.

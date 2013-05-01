@@ -1,7 +1,8 @@
-package com.falko.android.snowball.input;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.utility.Vector2D;
+package com.replica.input;
+
+import com.replica.core.BaseObject;
+import com.replica.utility.Vector2;
 
 public class InputDPad extends BaseObject {
 
@@ -75,7 +76,7 @@ public class InputDPad extends BaseObject {
 	}
 	
 	private InputXY dpadXY_ = new InputXY();
-	private Vector2D position_ = new Vector2D();
+	private Vector2 position_ = new Vector2();
 	private float width_;
 	private float height_;
 

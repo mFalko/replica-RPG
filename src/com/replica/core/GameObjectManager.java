@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core;
+package com.replica.core;
 
 import java.util.Comparator;
 
-import com.falko.android.snowball.core.systems.CameraSystem;
-import com.falko.android.snowball.utility.FixedSizeArray;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.core.systems.CameraSystem;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.Vector2;
 
 /**
  * A node in the game graph that manages the activation status of its children.
@@ -44,7 +44,7 @@ public class GameObjectManager extends ObjectManager {
 	private FixedSizeArray<GameObject> mMarkedForDeathObjects;
 	private GameObject mPlayer;
 	private boolean mVisitingGraph;
-	private Vector2D mCameraFocus;
+	private Vector2 mCameraFocus;
 
 	public GameObjectManager(float maxActivationRadius) {
 		super(MAX_GAME_OBJECTS);
@@ -57,7 +57,7 @@ public class GameObjectManager extends ObjectManager {
 				MAX_GAME_OBJECTS);
 		mVisitingGraph = false;
 
-		mCameraFocus = new Vector2D();
+		mCameraFocus = new Vector2();
 
 	}
 
@@ -120,7 +120,7 @@ public class GameObjectManager extends ObjectManager {
 			for (int i = inactiveCount - 1; i >= 0; i--) {
 				GameObject gameObject = (GameObject) inactiveArray[i];
 
-				final Vector2D position = gameObject.getPosition();
+				final Vector2 position = gameObject.getPosition();
 				final float distance2 = mCameraFocus.distance2(position);
 				final float xDistance = position.x - mCameraFocus.x;
 				if (distance2 < (gameObject.activationRadius * gameObject.activationRadius)

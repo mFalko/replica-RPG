@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.graphics.DrawableFactory;
+import com.replica.core.graphics.ScrollableBitmap;
+import com.replica.core.graphics.Texture;
+import com.replica.core.graphics.TiledBackgroundVertexGrid;
+import com.replica.core.graphics.TiledVertexGrid;
+import com.replica.core.systems.CameraSystem;
 
 /**
  * Adjusts the scroll position of a drawable object based on the camera's focus position.

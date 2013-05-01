@@ -1,4 +1,7 @@
-package com.replica.replicaisland;
+package com.replica.input;
+
+import com.replica.core.BaseObject;
+import com.replica.utility.Vector2;
 
 public class InputTouchScreen extends BaseObject {
 	

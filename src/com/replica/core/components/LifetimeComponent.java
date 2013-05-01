@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.SoundSystem.Sound;
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
+import com.replica.core.GameObject;
+import com.replica.core.GameObjectFactory;
+import com.replica.core.GameObjectManager;
+import com.replica.core.systems.CameraSystem;
+import com.replica.core.systems.SoundSystem;
+import com.replica.core.systems.SoundSystem.Sound;
+import com.replica.utility.EventRecorder;
+import com.replica.utility.Vector2;
 
 /** 
  * This component allows objects to die and be deleted when their life is reduced to zero or they

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +28,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
+
+import com.replica.core.BaseObject;
+import com.replica.utility.DebugLog;
 
 /**
  * The Texture Library manages all textures in the game.  Textures are pooled and handed out to

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.GameObject.ActionType;
-import com.falko.android.snowball.core.collision.CollisionParameters;
-import com.falko.android.snowball.core.collision.CollisionParameters.HitType;
-import com.falko.android.snowball.input.InputDPad;
-import com.falko.android.snowball.input.InputGameInterface;
-import com.falko.android.snowball.utility.TimeSystem;
-import com.falko.android.snowball.utility.Vector2D;
-import com.falko.android.snowball.utility.VectorPool;
+package com.replica.core.components;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
+import com.replica.core.collision.CollisionParameters;
+import com.replica.core.collision.CollisionParameters.HitType;
+import com.replica.input.InputDPad;
+import com.replica.input.InputGameInterface;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Vector2;
+import com.replica.utility.VectorPool;
 
 public class PlayerComponent extends GameComponent {
 
@@ -40,13 +40,13 @@ public class PlayerComponent extends GameComponent {
 	private float mTimer2;
 
 	private InventoryComponent mInventory;
-	private Vector2D mHotSpotTestPoint;
+	private Vector2 mHotSpotTestPoint;
 	private HitReactionComponent mHitReaction;
 	
 
 	public PlayerComponent() {
 		super();
-		mHotSpotTestPoint = new Vector2D();
+		mHotSpotTestPoint = new Vector2();
 		reset();
 		setPhase(ComponentPhases.THINK.ordinal());
 	}
@@ -67,7 +67,7 @@ public class PlayerComponent extends GameComponent {
 
 		if (pool != null && input != null) {
 			
-			Vector2D pos = ((GameObject) parentObject).getPosition();
+			Vector2 pos = ((GameObject) parentObject).getPosition();
 
 			float deltaX = 0;
 			float deltaY = 0;
@@ -85,7 +85,7 @@ public class PlayerComponent extends GameComponent {
 					deltaX += GHOST_MOVEMENT_SPEED;
 				}
 
-				Vector2D d = pool.allocate();
+				Vector2 d = pool.allocate();
 				d.set(deltaX, deltaY);
 				d.normalize();
 				d.multiply(GHOST_MOVEMENT_SPEED);

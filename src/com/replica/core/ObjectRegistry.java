@@ -14,9 +14,29 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core;
 
 import java.util.ArrayList;
+
+import com.replica.core.collision.HitPointPool;
+import com.replica.core.graphics.BufferLibrary;
+import com.replica.core.graphics.DrawableFactory;
+import com.replica.core.graphics.TextureLibrary;
+import com.replica.core.systems.CameraSystem;
+import com.replica.core.systems.CollisionSystem;
+import com.replica.core.systems.GameObjectCollisionSystem;
+import com.replica.core.systems.OpenGLSystem;
+import com.replica.core.systems.RenderSystem;
+import com.replica.core.systems.SoundSystem;
+import com.replica.core.systems.VibrationSystem;
+import com.replica.core.zoneloder.Zone;
+import com.replica.hud.HudSystem;
+import com.replica.input.InputGameInterface;
+import com.replica.input.InputSystem;
+import com.replica.utility.DebugSystem;
+import com.replica.utility.EventRecorder;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.VectorPool;
 
 /**
  * The object registry manages a collection of global singleton objects.  However, it differs from

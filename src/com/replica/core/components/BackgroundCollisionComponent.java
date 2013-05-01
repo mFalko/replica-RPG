@@ -14,38 +14,33 @@
  * limitations under the License.
  */
 
-
-package com.replica.replicaisland;
+package com.replica.core.components;
 
 import java.util.Comparator;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.GameObject;
-import com.falko.android.snowball.core.collision.HitPoint;
-import com.falko.android.snowball.core.systems.CollisionSystem;
-import com.falko.android.snowball.core.zoneloder.Zone;
-import com.falko.android.snowball.utility.TimeSystem;
-import com.falko.android.snowball.utility.Utils;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.collision.HitPoint;
+import com.replica.core.collision.LineSegment;
+import com.replica.core.systems.CollisionSystem;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.RectF;
+import com.replica.utility.Vector2;
 
 /**
  * Handles collision against the background. Snaps colliding objects out of
  * collision and reports the hit to the parent game object.
  */
 public class BackgroundCollisionComponent extends GameComponent {
-	private Vector2D mPreviousPosition;
+	private Vector2 mPreviousPosition;
 	private int mWidth;
 	private int mHeight;
 	private int mHorizontalOffset;
 	private int mVerticalOffset;
 
 	// Workspace vectors. Allocated up front for speed.
-	private Vector2D mHorizontalHitPoint;
-	private Vector2D mHorizontalHitNormal;
-	private Vector2D mVerticalHitPoint;
-	private Vector2D mVerticalHitNormal;
-	
-	private Vector2D mMergedNormal;
+	private RectF queryRect;
+	private Vector2 mMergedNormal;
 
 	/**
 	 * Sets up the collision bounding box. This box may be a different size than
@@ -66,30 +61,26 @@ public class BackgroundCollisionComponent extends GameComponent {
 			int vertOffset) {
 		super();
 		setPhase(ComponentPhases.COLLISION_RESPONSE.ordinal());
-		
-		mPreviousPosition = new Vector2D();
+
+		mPreviousPosition = new Vector2();
 		mWidth = width;
 		mHeight = height;
 		mHorizontalOffset = horzOffset;
 		mVerticalOffset = vertOffset;
 
-		
-		mHorizontalHitPoint = new Vector2D();
-		mHorizontalHitNormal = new Vector2D();
-		mVerticalHitPoint = new Vector2D();
-		mVerticalHitNormal = new Vector2D();
-		mMergedNormal = new Vector2D();
+		queryRect = new RectF();
+		mMergedNormal = new Vector2();
+
+		queryRect.set(0, 0, mWidth, mHeight);
 	}
 
 	public BackgroundCollisionComponent() {
 		super();
 		setPhase(ComponentPhases.COLLISION_RESPONSE.ordinal());
-		mPreviousPosition = new Vector2D();
-		mHorizontalHitPoint = new Vector2D();
-		mHorizontalHitNormal = new Vector2D();
-		mVerticalHitPoint = new Vector2D();
-		mVerticalHitNormal = new Vector2D();
-		mMergedNormal = new Vector2D();
+		mPreviousPosition = new Vector2();
+
+		queryRect = new RectF();
+		mMergedNormal = new Vector2();
 	}
 
 	@Override
@@ -101,6 +92,7 @@ public class BackgroundCollisionComponent extends GameComponent {
 		mWidth = width;
 		mHeight = height;
 		// TODO: Resize might cause new collisions.
+
 	}
 
 	public void setOffset(int horzOffset, int vertOffset) {
@@ -109,31 +101,60 @@ public class BackgroundCollisionComponent extends GameComponent {
 	}
 
 	/**
-	 * This function is the meat of the collision response logic. 
+	 * This function is the meat of the collision response logic.
 	 */
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
+		
+		CollisionSystem collision = sSystemRegistry.collisionSystem;
 		GameObject parentObject = (GameObject) parent;
-		parentObject.setBackgroundCollisionNormal(Vector2D.ZERO);
-		if (mPreviousPosition.length2() != 0) {
-			
-		}
-		mPreviousPosition.set(parentObject.getPosition());
-	}
+		parentObject.setBackgroundCollisionNormal(Vector2.ZERO);
 
+		float x = parentObject.getCenteredPositionX() - parentObject.width / 2;
+		float y = parentObject.getCenteredPositionY() - parentObject.height / 2;
+		queryRect.offsetTo(x + mHorizontalOffset, y + mVerticalOffset);
+
+		FixedSizeArray<LineSegment> queryResult = collision.query(queryRect);
+
+		boolean hit = CollisionSystem.testBoxAgainstList(queryResult,
+				queryRect.left_, queryRect.right_, queryRect.top_,
+				queryRect.bottom_, null, null, null);
+		
+		if (hit) {
+			parentObject.getPosition().set(mPreviousPosition);
+		} else {
+			mPreviousPosition.set(parentObject.getPosition());
+		}
+		
+		
+		//draw debug boxes
+//		FixedSizeArray<LineSegment> segments = sSystemRegistry.zone
+//				.getCollisionLines();
+//		DebugSystem dsys = sSystemRegistry.debugSystem;
+//		for (int i = 0; i < segments.getCount(); ++i) {
+//			RectF segBound = segments.get(i).getBounds();
+//			dsys.drawShape(segBound.left_, segBound.bottom_, segBound.width(),
+//					segBound.height(), DebugSystem.SHAPE_BOX,
+//					DebugSystem.COLOR_OUTLINE);
+//		}
+//		
+//		dsys.drawShape(queryRect.left_, queryRect.bottom_, queryRect.width(),
+//				queryRect.height(), DebugSystem.SHAPE_BOX,
+//				DebugSystem.COLOR_OUTLINE);
+	}
 
 	/** Comparator for hit points. */
 	@SuppressWarnings("unused")
 	private static class HitPointDistanceComparator implements
 			Comparator<HitPoint> {
-		private Vector2D mOrigin;
+		private Vector2 mOrigin;
 
 		public HitPointDistanceComparator() {
 			super();
-			mOrigin = new Vector2D();
+			mOrigin = new Vector2();
 		}
 
-		public final void setOrigin(Vector2D origin) {
+		public final void setOrigin(Vector2 origin) {
 			mOrigin.set(origin);
 		}
 

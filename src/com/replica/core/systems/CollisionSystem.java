@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.systems;
 
-import android.content.res.AssetManager;
-
-import java.io.IOException;
-import java.io.InputStream;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.collision.HitPoint;
+import com.replica.core.collision.LineSegment;
+import com.replica.utility.FixedSizeArray;
+import com.replica.utility.QuadTree;
+import com.replica.utility.RectF;
+import com.replica.utility.TObjectPool;
+import com.replica.utility.Vector2;
+import com.replica.utility.VectorPool;
 
 /**
- * Collision detection system.  Provides a ray-based interface for finding surfaces in the collision
- * world.   This version is based on a collision world of line segments, organized into an array of
- * tiles.  The underlying detection algorithm isn't relevant to calling code, however, so this class
- * may be extended to provide a completely different collision detection scheme.  
- * 
- * This class also provides a system for runtime-generated collision segments.  These temporary
- * segments are cleared each frame, and consequently must be constantly re-submitted if they are
- * intended to persist.  Temporary segments are useful for dynamic solid objects, such as moving
- * platforms.
- * 
- * CollisionSystem.TileVisitor is an interface for traversing individual collision tiles.  Ray casts
- * can be used to run user code over the collision world by passing different TileVisitor
- * implementations to executeRay.  Provided is TileTestVisitor, a visitor that compares the segments
- * of each tile visited with the ray and searches for points of intersection.
+ * Collision detection system. 
  *
  */
 public class CollisionSystem extends BaseObject {
@@ -48,14 +41,14 @@ public class CollisionSystem extends BaseObject {
     
     private LineSegmentPool lineSegmentPool_;
     
-    private static final int MAX_LINE_SEGMENTS = 1000;
+    private static final int MAX_LINE_SEGMENTS = 2000;
     private static final int MAX_TEMPORARY_LINE_SEGMENTS = 256;
     
     public CollisionSystem() {
         super();
         lineSegmentQuadtree_ = new QuadTree<LineSegment>(MAX_LINE_SEGMENTS);
-        temporaryLineSegmentQuadtree_ = new QuadTree<LineSegment>(MAX_TEMPORARY_LINE_SEGMENTS);
-        lineSegmentPool_ = new LineSegmentPool(MAX_LINE_SEGMENTS + MAX_TEMPORARY_LINE_SEGMENTS);
+        temporaryLineSegmentQuadtree_ = new QuadTree<LineSegment>(MAX_TEMPORARY_LINE_SEGMENTS); 
+        lineSegmentPool_ = new LineSegmentPool(MAX_TEMPORARY_LINE_SEGMENTS * 2);
         pendingTemporaryLineSegments_ = new FixedSizeArray<LineSegment>(MAX_TEMPORARY_LINE_SEGMENTS);
         lineSegmentsQuery_ = new FixedSizeArray<LineSegment>(MAX_LINE_SEGMENTS + MAX_TEMPORARY_LINE_SEGMENTS);
     }
@@ -63,7 +56,7 @@ public class CollisionSystem extends BaseObject {
     @Override
     public void reset() {
     	
-    	clearTree(lineSegmentQuadtree_);
+    	lineSegmentQuadtree_.reset();
     	clearTree(temporaryLineSegmentQuadtree_);
     	
         final int pendingCount = pendingTemporaryLineSegments_.getCount();
@@ -88,21 +81,31 @@ public class CollisionSystem extends BaseObject {
     }
     
     /* Sets the current collision world to the supplied tile world. */
-    public void initialize(int tileWidth, int tileHeight) {
-//        mWorld = world;
-        //TODO: load map data here.
-        // Unlike Replica Island, this program will have to reload all
-        // of the collision files every time a new zone loads. The line segments
-        // will be map specific and will be part of the map file
-   
+    public void initialize(FixedSizeArray<LineSegment> segments, int width, int height) {
+    	reset();
+    	lineSegmentQuadtree_.setBounds(0, 0, width, height);
+    	temporaryLineSegmentQuadtree_.setBounds(0, 0, width, height);
+    	
+    	if (segments == null) {
+    		return;
+    	}
+    	
+    	final int count = segments.getCount();
+    	for (int i = 0; i < count; ++i) {
+    		lineSegmentQuadtree_.add(segments.get(i));
+    	}
     }
     
-  
+    public FixedSizeArray<LineSegment> query(RectF queryRect) {
+    	lineSegmentsQuery_.clear();
+    	lineSegmentQuadtree_.Query(queryRect, lineSegmentsQuery_);
+    	temporaryLineSegmentQuadtree_.Query(queryRect, lineSegmentsQuery_);
+    	return lineSegmentsQuery_;
+    }
     
- 
     
     /* Inserts a temporary surface into the collision world.  It will persist for one frame. */
-    public void addTemporarySurface(Vector2D startPoint, Vector2D endPoint, Vector2D normal, 
+    public void addTemporarySurface(Vector2 startPoint, Vector2 endPoint, Vector2 normal, 
             GameObject ownerObject) {
         LineSegment newSegment = lineSegmentPool_.allocate();
         
@@ -124,20 +127,16 @@ public class CollisionSystem extends BaseObject {
         }
         pendingTemporaryLineSegments_.clear();
         
-        
-
+//        lineSegmentQuadtree_.debugDraw();
     }
 
-    
-   
-    
     /* 
      * Given a list of segments and a ray, this function performs an intersection search and
      * returns the closest intersecting segment, if any exists.
      */
-    protected static boolean testSegmentAgainstList(FixedSizeArray<LineSegment> segments, 
-            Vector2D startPoint, Vector2D endPoint, Vector2D hitPoint, Vector2D hitNormal, 
-            Vector2D movementDirection, GameObject excludeObject) {
+    public static boolean testSegmentAgainstList(FixedSizeArray<LineSegment> segments, 
+            Vector2 startPoint, Vector2 endPoint, Vector2 hitPoint, Vector2 hitNormal, 
+            Vector2 movementDirection, GameObject excludeObject) {
         boolean foundHit = false;
         float closestDistance = -1;
         float hitX = 0;
@@ -148,28 +147,23 @@ public class CollisionSystem extends BaseObject {
         final Object[] segmentArray = segments.getArray();
         for (int x = 0; x < count; x++) {
             LineSegment segment = (LineSegment)segmentArray[x];
-            // If a movement direction has been passed, filter out invalid surfaces by ignoring
-            // those that do not oppose movement.  If no direction has been passed, accept all
-            // surfaces.
-//            final float dot = movementDirection.length2() > 0.0f ? 
-//                    movementDirection.dot(segment.mNormal) : -1.0f;
-                    
-//            if (//dot < 0.0f &&
-//                    (excludeObject == null || segment.owner != excludeObject) &&
-//                    segment.calculateIntersection(startPoint, endPoint, hitPoint, segment.mNormal)) {
-//                final float distance = hitPoint.distance2(startPoint);
-//
-//                if (!foundHit || closestDistance > distance) {
-//                    closestDistance = distance;
-//                    foundHit = true;
-////                    normalX = segment.mNormal.x;
-////                    normalY = segment.mNormal.y;
-//                    // Store the components on their own so we don't have to allocate a vector
-//                    // in this loop.
-//                    hitX = hitPoint.x;
-//                    hitY = hitPoint.y;
-//                }
-//            }
+                                
+            if ((excludeObject == null || segment.owner != excludeObject) &&
+                    segment.calculateIntersection(startPoint, endPoint, hitPoint)) {
+            	
+                final float distance = hitPoint.distance2(startPoint);
+
+                if (!foundHit || closestDistance > distance) {
+                    closestDistance = distance;
+                    foundHit = true;
+//                    normalX = segment.mNormal.x;
+//                    normalY = segment.mNormal.y;
+                    // Store the components on their own so we don't have to allocate a vector
+                    // in this loop.
+                    hitX = hitPoint.x;
+                    hitY = hitPoint.y;
+                }
+            }
         }
         
         if (foundHit) {
@@ -179,34 +173,31 @@ public class CollisionSystem extends BaseObject {
         return foundHit;
     }
     
-    protected static boolean testBoxAgainstList(FixedSizeArray<LineSegment> segments, 
-            float left, float right, float top, float bottom,
-            Vector2D movementDirection, GameObject excludeObject, Vector2D outputOffset, 
+    public static boolean testBoxAgainstList(FixedSizeArray<LineSegment> segments, 
+            float left, float right, float top, float bottom, GameObject excludeObject, Vector2 outputOffset, 
             FixedSizeArray<HitPoint> outputHitPoints) {
         int hitCount = 0;
-        final int maxSegments = outputHitPoints.getCapacity() - outputHitPoints.getCount();
+        final int maxSegments = 1; //outputHitPoints.getCapacity() - outputHitPoints.getCount();
         final int count = segments.getCount();
         final Object[] segmentArray = segments.getArray();
         
         VectorPool vectorPool = sSystemRegistry.vectorPool;
-        HitPointPool hitPool = sSystemRegistry.hitPointPool;
+//        HitPointPool hitPool = sSystemRegistry.hitPointPool;
 
-        Vector2D tempHitPoint = vectorPool.allocate();
+        Vector2 tempHitPoint = vectorPool.allocate();
         
         for (int x = 0; x < count && hitCount < maxSegments; x++) {
             LineSegment segment = (LineSegment)segmentArray[x];
-            // If a movement direction has been passed, filter out invalid surfaces by ignoring
-            // those that do not oppose movement.  If no direction has been passed, accept all
-            // surfaces.
-//            final float dot = movementDirection.length2() > 0.0f ? 
-//                    movementDirection.dot(segment.mNormal) : -1.0f;
+    
                     
-//            if (//dot < 0.0f &&
-//                    (excludeObject == null || segment.owner != excludeObject) &&
-//                    segment.calculateIntersectionBox(left, right, top, bottom, tempHitPoint, segment.mNormal)) {
-//
-//                Vector2D hitPoint = vectorPool.allocate(tempHitPoint);
-//                Vector2D hitNormal = vectorPool.allocate();
+            if ((excludeObject == null || segment.owner != excludeObject) &&
+                    segment.calculateIntersectionBox(left, right, top, bottom, tempHitPoint)) {
+
+            	
+            	//TODO: implement runtime normal calculation to allow for collision smoothing
+            	
+//                Vector2 hitPoint = vectorPool.allocate(tempHitPoint);
+//                Vector2 hitNormal = vectorPool.allocate();
 //               
 //                hitPoint.add(outputOffset);
 //                HitPoint hit = hitPool.allocate();
@@ -215,22 +206,16 @@ public class CollisionSystem extends BaseObject {
 //                hit.hitNormal = hitNormal;
 //                
 //                outputHitPoints.add(hit);
-//                
-//                hitCount++;
-//            }
+                
+                hitCount++;
+            }
         }
         
         vectorPool.release(tempHitPoint);
         
         return hitCount > 0;
     }
-    
-    
-    
-    
-    
-  
-    
+
     /**
      * A pool of line segments.
      */

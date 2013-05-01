@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.input.InputSystem;
 
 public class CrusherAndouComponent extends GameComponent {
     private ChangeComponentsComponent mSwap;
@@ -34,17 +38,7 @@ public class CrusherAndouComponent extends GameComponent {
     public void update(float timeDelta, BaseObject parent) {
         GameObject parentObject = (GameObject)parent;
         
-    	if (mSwap.getCurrentlySwapped()) {
-    		if (parentObject.touchingGround()) {
-    			parentObject.setCurrentAction(GameObject.ActionType.IDLE);
-    		}
-        } else {
-        	InputSystem input = sSystemRegistry.inputSystem;
-        	if (input.getTouchScreen().getTriggered(sSystemRegistry.timeSystem.getGameTime())) {
-        		parentObject.setCurrentAction(GameObject.ActionType.ATTACK);
-        		mSwap.activate(parentObject);
-        	}
-        }
+    	
     }
     
     public void setSwap(ChangeComponentsComponent swap) {

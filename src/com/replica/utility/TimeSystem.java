@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.utility;
+
+import com.replica.core.BaseObject;
 
 /**
  * Maintains a canonical time step, in seconds, for the entire game engine.  This time step

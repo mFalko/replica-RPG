@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.replica.replicaisland;
+package com.replica.core.systems;
 
 import android.content.Context;
 import android.os.Vibrator;
-import android.content.Context;
+
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
 
 /** A system for accessing the Android vibrator.  Note that this system requires the app's 
  * AndroidManifest.xml to contain permissions for the Vibrator service.

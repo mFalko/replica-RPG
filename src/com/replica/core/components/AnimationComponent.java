@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
 
-import com.replica.replicaisland.CollisionParameters.HitType;
-import com.replica.replicaisland.GameObject.ActionType;
-import com.replica.replicaisland.SoundSystem.Sound;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
+import com.replica.input.InputDPad;
+import com.replica.input.InputGameInterface;
+import com.replica.utility.TimeSystem;
 
 /**
  * Player Animation game object component. Responsible for selecting an
@@ -29,10 +32,19 @@ import com.replica.replicaisland.SoundSystem.Sound;
 public class AnimationComponent extends GameComponent {
 
 	public enum PlayerAnimations {
-		IDLE_NORTH, IDLE_SOUTH, IDLE_WEST, IDLE_EAST,  MOVE_NORTH, MOVE_SOUTH, MOVE_WEST, MOVE_EAST,
-		// HIT_REACT,
-		// DEATH,
-		// FROZEN
+		IDLE_NORTH,
+		IDLE_SOUTH,
+		IDLE_WEST,
+		IDLE_EAST, 
+		MOVE_NORTH,
+		MOVE_SOUTH,
+		MOVE_WEST,
+		MOVE_EAST,
+		DEATH,
+		ATTACK_SPELL,
+		ATTACK_SWORD,
+		ATTACK_POLE,
+		ATTACK_ARROW
 	}
 
 	private SpriteComponent mSprite;

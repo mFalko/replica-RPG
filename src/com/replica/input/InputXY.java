@@ -15,7 +15,9 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.input;
+
+import com.replica.utility.Vector2;
 
 
 public class InputXY {

@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.GameObject.ActionType;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
+import com.replica.core.GameObjectFactory;
+import com.replica.core.GameObjectManager;
+import com.replica.core.systems.CameraSystem;
+import com.replica.core.systems.ChannelSystem;
+import com.replica.hud.HudSystem;
 
 public class TheSourceComponent extends GameComponent {
 	public final static float SHAKE_TIME = 0.6f;
@@ -102,14 +109,14 @@ public class TheSourceComponent extends GameComponent {
 				if (factory != null) {
 					float x = ((float)Math.random() - 0.5f) * (parentObject.width * 0.75f);
 					float y = ((float)Math.random() - 0.5f) * (parentObject.height * 0.75f);
-					GameObject object =
-						factory.spawn(GameObjectFactory.GameObjectType.EXPLOSION_GIANT, 
-							parentObject.getCenteredPositionX() + x, 
-							parentObject.getCenteredPositionY() + y, 
-							false);
-					if (object != null) {
-						manager.add(object);
-					}
+//					GameObject object =
+//						factory.spawn(GameObjectFactory.GameObjectType.EXPLOSION_GIANT, 
+//							parentObject.getCenteredPositionX() + x, 
+//							parentObject.getCenteredPositionY() + y, 
+//							false);
+//					if (object != null) {
+//						manager.add(object);
+//					}
 					mExplosionTimer = EXPLOSION_TIME;
 				}
 			}
@@ -119,9 +126,9 @@ public class TheSourceComponent extends GameComponent {
 				if (mGameEvent != -1) {
 					HudSystem hud = sSystemRegistry.hudSystem;
     	        	if (hud != null) {
-    	        		hud.startFade(false, 1.5f);
-    	        		hud.sendGameEventOnFadeComplete(mGameEvent, mGameEventIndex);
-    	        		mGameEvent = -1;
+//    	        		hud.startFade(false, 1.5f);
+//    	        		hud.sendGameEventOnFadeComplete(mGameEvent, mGameEventIndex);
+//    	        		mGameEvent = -1;
     	        	}
 	    		}
 			}

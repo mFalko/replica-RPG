@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.utility;
 
 /**
  * A pool of 2D vectors.

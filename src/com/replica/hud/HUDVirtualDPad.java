@@ -1,13 +1,13 @@
-package com.falko.android.snowball.hud;
+package com.replica.hud;
 
-import com.falko.android.snowball.R;
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.graphics.DrawableBitmap;
-import com.falko.android.snowball.core.graphics.Texture;
-import com.falko.android.snowball.core.systems.RenderSystem;
-import com.falko.android.snowball.input.InputGameInterface;
-import com.falko.android.snowball.utility.SortConstants;
-import com.falko.android.snowball.utility.Vector2D;
+import com.replica.R;
+import com.replica.core.BaseObject;
+import com.replica.core.graphics.DrawableBitmap;
+import com.replica.core.graphics.Texture;
+import com.replica.core.systems.RenderSystem;
+import com.replica.input.InputGameInterface;
+import com.replica.utility.SortConstants;
+import com.replica.utility.Vector2;
 
 public class HUDVirtualDPad extends BaseObject {
 
@@ -81,10 +81,10 @@ public class HUDVirtualDPad extends BaseObject {
 
 	DrawableBitmap circleInner_;
 	DrawableBitmap circleOuter_;
-	Vector2D circleInnerLocation_ = new Vector2D();
-	Vector2D circleLocation_ = new Vector2D();
+	Vector2 circleInnerLocation_ = new Vector2();
+	Vector2 circleLocation_ = new Vector2();
 
-	private Vector2D position_ = new Vector2D();
+	private Vector2 position_ = new Vector2();
 	private float width_;
 	private float height_;
 }

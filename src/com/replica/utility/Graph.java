@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.falko.android.snowball.utility;
+package com.replica.utility;
 
 import java.util.Iterator;
 

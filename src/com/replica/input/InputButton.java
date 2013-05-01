@@ -15,7 +15,9 @@
  */
 
 
-package com.replica.replicaisland;
+package com.replica.input;
+
+import com.replica.core.BaseObject;
 
 public class InputButton {
 	private boolean mDown;

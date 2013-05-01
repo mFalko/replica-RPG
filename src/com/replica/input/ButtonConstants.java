@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.input;
 
 public final class ButtonConstants {
     
     public static final int D_PAD_REGION_X = 10;
     public static final int D_PAD_REGION_Y = 10;
-    public static final int D_PAD_REGION_WIDTH = 130;
-    public static final int D_PAD_REGION_HEIGHT = 130;
+    public static final int D_PAD_REGION_WIDTH = 100;
+    public static final int D_PAD_REGION_HEIGHT = 100;
     
 }

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.input;
 
 import android.content.Context;
 import android.view.MotionEvent;
+
+import com.replica.core.BaseObject;
 
 public abstract class TouchFilter extends BaseObject {
 

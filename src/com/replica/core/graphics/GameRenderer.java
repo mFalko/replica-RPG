@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.graphics;
+package com.replica.core.graphics;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -22,13 +22,13 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.os.SystemClock;
 
-import com.falko.android.snowball.core.BaseObject;
-import com.falko.android.snowball.core.ContextParameters;
-import com.falko.android.snowball.core.Game;
-import com.falko.android.snowball.core.ObjectManager;
-import com.falko.android.snowball.core.systems.OpenGLSystem;
-import com.falko.android.snowball.core.systems.RenderSystem.RenderElement;
-import com.falko.android.snowball.utility.FixedSizeArray;
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
+import com.replica.core.Game;
+import com.replica.core.ObjectManager;
+import com.replica.core.systems.OpenGLSystem;
+import com.replica.core.systems.RenderSystem.RenderElement;
+import com.replica.utility.FixedSizeArray;
 
 /**
  * @author matt
@@ -182,7 +182,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                     float x = element.x;
                     float y = element.y;
                     if (element.cameraRelative) {
-                    	x = (x - cameraX_) + halfWidth;
+                    	x = (x - cameraX_) + halfWidth;  
                     	y = (y - cameraY_) + halfHeight;
                     }
                     element.mDrawable.draw(x, y, scaleX, scaleY);

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.utility;
 
 import java.util.Arrays;
 import java.util.Comparator;
+
+import com.replica.core.AllocationGuard;
 
 /**
  * FixedSizeArray is an alternative to a standard Java collection like ArrayList.  It is designed

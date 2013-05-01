@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.graphics.DrawableBitmap;
+import com.replica.core.graphics.DrawableFactory;
+import com.replica.core.graphics.DrawableObject;
+import com.replica.core.graphics.Texture;
+import com.replica.utility.Lerp;
+import com.replica.utility.TimeSystem;
 
 public class FadeDrawableComponent extends GameComponent {
 	public static final int LOOP_TYPE_NONE = 0;

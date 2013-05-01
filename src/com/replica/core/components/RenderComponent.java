@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.ContextParameters;
+import com.replica.core.GameObject;
+import com.replica.core.graphics.DrawableObject;
+import com.replica.core.systems.CameraSystem;
+import com.replica.core.systems.RenderSystem;
+import com.replica.utility.Vector2;
 
 /** 
  * Implements rendering of a drawable object for a game object.  If a drawable is set on this
@@ -22,6 +30,9 @@ package com.replica.replicaisland;
  * objects may be set to be "camera-relative" (meaning their screen position is relative to the
  * location of the camera focus in the scene) or not (meaning their screen position is relative to
  * the origin at the lower-left corner of the display).
+ * 
+ * 4/25: I think that the camera relative is causing a bug w/ the quadtree collision detection
+ * 	
  */
 public class RenderComponent extends GameComponent {
     private DrawableObject mDrawable;

@@ -1,7 +1,7 @@
 /**
  * ListInterface.java
  */
-package com.falko.android.snowball.utility;
+package com.replica.utility;
 
 
 /**

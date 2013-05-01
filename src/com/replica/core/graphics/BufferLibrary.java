@@ -14,9 +14,12 @@
  * limitations under the License.
  */
  
- package com.replica.replicaisland;
+package com.replica.core.graphics;
 
 import javax.microedition.khronos.opengles.GL10;
+
+import com.replica.core.BaseObject;
+import com.replica.utility.FixedSizeArray;
 
 public class BufferLibrary extends BaseObject {
     private static final int GRID_LIST_SIZE = 256;

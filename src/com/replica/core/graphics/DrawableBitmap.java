@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.graphics;
 
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11Ext;
+
+import com.replica.core.systems.OpenGLSystem;
+import com.replica.utility.Vector2;
 
 /** 
  * Draws a screen-aligned bitmap to the screen.
@@ -32,7 +35,7 @@ public class DrawableBitmap extends DrawableObject {
     private int mViewHeight;
     private float mOpacity;
     
-    DrawableBitmap(Texture texture, int width, int height) {
+    public DrawableBitmap(Texture texture, int width, int height) {
         super();
         mTexture = texture;
         mWidth = width;
@@ -224,7 +227,7 @@ public class DrawableBitmap extends DrawableObject {
        return !cull;
    }
    
-   protected final void setFlip(boolean horzFlip, boolean vertFlip) {
+   public final void setFlip(boolean horzFlip, boolean vertFlip) {
        setCrop(horzFlip ? mWidth : 0, 
                vertFlip ? 0 : mHeight, 
                horzFlip ? -mWidth : mWidth,

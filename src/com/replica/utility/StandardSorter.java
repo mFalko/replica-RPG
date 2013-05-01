@@ -14,7 +14,7 @@
  * limitations under the License.
  */
  
-package com.falko.android.snowball.utility;
+package com.replica.utility;
 
 import java.util.Arrays;
 import java.util.Comparator;

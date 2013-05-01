@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.SoundSystem.Sound;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.systems.SoundSystem.Sound;
 
 public class GhostComponent extends GameComponent {
     private float mMovementSpeed;
@@ -56,144 +58,144 @@ public class GhostComponent extends GameComponent {
     
     @Override
     public void update(float timeDelta, BaseObject parent) {   
-        GameObject parentObject = (GameObject) parent;
-        boolean timeToRelease = false;
-        final InputGameInterface input = sSystemRegistry.inputGameInterface;
-        final CameraSystem camera = sSystemRegistry.cameraSystem;
-
-        if (parentObject.life > 0) {
-            
-            if (mLifeTime > 0.0f) {
-                mLifeTime -= timeDelta;
-                if (mLifeTime <= 0.0f) {
-                    timeToRelease = true;
-                } else if (mLifeTime < 1.0f) {
-                    // Do we have a sprite we can fade out?
-                    SpriteComponent sprite = parentObject.findByClass(SpriteComponent.class);
-                    if (sprite != null) {
-                        sprite.setOpacity(mLifeTime);
-                    }
-                }
-            }
-            
-            if (parentObject.getPosition().y < -parentObject.height) {
-                // we fell off the bottom of the screen, die.
-                parentObject.life = 0;
-                timeToRelease = true;
-            }
-            
-            parentObject.setCurrentAction(mTargetAction);
-            if (camera != null) {
-                camera.setTarget(parentObject);
-            }
-            
-            if (input != null) {
-                
-                if (mUseOrientationSensor) {
-                	final InputXY tilt = input.getTilt();
-                    parentObject.getTargetVelocity().x = 
-                    	tilt.getX() * mMovementSpeed;
-                    
-                    parentObject.getTargetVelocity().y = 
-                    	tilt.getY() * mMovementSpeed;
-                   
-                    parentObject.getAcceleration().x = mAcceleration;
-                    parentObject.getAcceleration().y = mAcceleration; 
-                } else {
-                	final InputXY dpad = input.getDirectionalPad();
-                    parentObject.getTargetVelocity().x = 
-                    	dpad.getX() * mMovementSpeed;
-               
-                    parentObject.getAcceleration().x = mAcceleration;
-                }
-
-                final InputButton jumpButton = input.getJumpButton();
-                final TimeSystem time = sSystemRegistry.timeSystem;
-                final float gameTime = time.getGameTime();
-                
-                if (jumpButton.getTriggered(gameTime) 
-                        && parentObject.touchingGround()
-                        && parentObject.getVelocity().y <= 0.0f
-                        && !mChangeActionOnButton) {
-                    parentObject.getImpulse().y += mJumpImpulse;
-                } else if (mChangeActionOnButton && jumpButton.getPressed()) {
-                	parentObject.setCurrentAction(mButtonPressedAction);
-                }
-                
-                final InputButton attackButton = input.getAttackButton();
-
-                if (attackButton.getTriggered(gameTime)) {
-                    timeToRelease = true;
-                }
-            }
-            
-            if (!timeToRelease && mAmbientSound != null && mAmbientSoundStream == -1) {
-            	SoundSystem sound = BaseObject.sSystemRegistry.soundSystem;
-            	if (sound != null) {
-            		mAmbientSoundStream = sound.play(mAmbientSound, true, SoundSystem.PRIORITY_NORMAL);
-            	}
-            }
-        } 
-        
-        if (parentObject.life == 0) {
-        	if (mAmbientSoundStream > -1) {
-            	SoundSystem sound = BaseObject.sSystemRegistry.soundSystem;
-            	if (sound != null) {
-            		sound.stop(mAmbientSoundStream);
-            		mAmbientSoundStream = -1;
-            	}
-            }
-        }
-        
-        if (timeToRelease) {
-            releaseControl(parentObject);
-        }
+//        GameObject parentObject = (GameObject) parent;
+//        boolean timeToRelease = false;
+//        final InputGameInterface input = sSystemRegistry.inputGameInterface;
+//        final CameraSystem camera = sSystemRegistry.cameraSystem;
+//
+//        if (parentObject.life > 0) {
+//            
+//            if (mLifeTime > 0.0f) {
+//                mLifeTime -= timeDelta;
+//                if (mLifeTime <= 0.0f) {
+//                    timeToRelease = true;
+//                } else if (mLifeTime < 1.0f) {
+//                    // Do we have a sprite we can fade out?
+//                    SpriteComponent sprite = parentObject.findByClass(SpriteComponent.class);
+//                    if (sprite != null) {
+//                        sprite.setOpacity(mLifeTime);
+//                    }
+//                }
+//            }
+//            
+//            if (parentObject.getPosition().y < -parentObject.height) {
+//                // we fell off the bottom of the screen, die.
+//                parentObject.life = 0;
+//                timeToRelease = true;
+//            }
+//            
+//            parentObject.setCurrentAction(mTargetAction);
+//            if (camera != null) {
+//                camera.setTarget(parentObject);
+//            }
+//            
+//            if (input != null) {
+//                
+//                if (mUseOrientationSensor) {
+//                	final InputXY tilt = input.getTilt();
+//                    parentObject.getTargetVelocity().x = 
+//                    	tilt.getX() * mMovementSpeed;
+//                    
+//                    parentObject.getTargetVelocity().y = 
+//                    	tilt.getY() * mMovementSpeed;
+//                   
+//                    parentObject.getAcceleration().x = mAcceleration;
+//                    parentObject.getAcceleration().y = mAcceleration; 
+//                } else {
+//                	final InputXY dpad = input.getDirectionalPad();
+//                    parentObject.getTargetVelocity().x = 
+//                    	dpad.getX() * mMovementSpeed;
+//               
+//                    parentObject.getAcceleration().x = mAcceleration;
+//                }
+//
+//                final InputButton jumpButton = input.getJumpButton();
+//                final TimeSystem time = sSystemRegistry.timeSystem;
+//                final float gameTime = time.getGameTime();
+//                
+//                if (jumpButton.getTriggered(gameTime) 
+//                        && parentObject.touchingGround()
+//                        && parentObject.getVelocity().y <= 0.0f
+//                        && !mChangeActionOnButton) {
+//                    parentObject.getImpulse().y += mJumpImpulse;
+//                } else if (mChangeActionOnButton && jumpButton.getPressed()) {
+//                	parentObject.setCurrentAction(mButtonPressedAction);
+//                }
+//                
+//                final InputButton attackButton = input.getAttackButton();
+//
+//                if (attackButton.getTriggered(gameTime)) {
+//                    timeToRelease = true;
+//                }
+//            }
+//            
+//            if (!timeToRelease && mAmbientSound != null && mAmbientSoundStream == -1) {
+//            	SoundSystem sound = BaseObject.sSystemRegistry.soundSystem;
+//            	if (sound != null) {
+//            		mAmbientSoundStream = sound.play(mAmbientSound, true, SoundSystem.PRIORITY_NORMAL);
+//            	}
+//            }
+//        } 
+//        
+//        if (parentObject.life == 0) {
+//        	if (mAmbientSoundStream > -1) {
+//            	SoundSystem sound = BaseObject.sSystemRegistry.soundSystem;
+//            	if (sound != null) {
+//            		sound.stop(mAmbientSoundStream);
+//            		mAmbientSoundStream = -1;
+//            	}
+//            }
+//        }
+//        
+//        if (timeToRelease) {
+//            releaseControl(parentObject);
+//        }
         
     }
     
     public final void releaseControl(GameObject parentObject) {
-        GameObjectManager manager = sSystemRegistry.gameObjectManager;
-        GameObject player = null;
-        if (manager != null) {
-            player = manager.getPlayer();
-        }
-        
-        final CameraSystem camera = sSystemRegistry.cameraSystem;
-        if (camera != null) {
-            camera.setTarget(null);
-        }
-        
-        if (player != null) {
-            
-            if (mKillOnRelease) {
-                parentObject.life = 0;
-            } else {
-                // See if there's a component swap we can run.
-                ChangeComponentsComponent swap = parentObject.findByClass(ChangeComponentsComponent.class);
-                if (swap != null) {
-                    swap.activate(parentObject);
-                }
-            }
-            
-            PlayerComponent control = player.findByClass(PlayerComponent.class);
-            if (camera.pointVisible(player.getPosition(), player.width)) {
-                control.deactivateGhost(0.0f);
-            } else {
-                control.deactivateGhost(mDelayOnRelease);
-            }
-           /* final InputSystem input = sSystemRegistry.inputSystem;
-            if (input != null) {
-                input.clearClickTriggered();
-            }*/
-        }
-        
-        if (mAmbientSoundStream > -1) {
-        	SoundSystem sound = BaseObject.sSystemRegistry.soundSystem;
-        	if (sound != null) {
-        		sound.stop(mAmbientSoundStream);
-        		mAmbientSoundStream = -1;
-        	}
-        }
+//        GameObjectManager manager = sSystemRegistry.gameObjectManager;
+//        GameObject player = null;
+//        if (manager != null) {
+//            player = manager.getPlayer();
+//        }
+//        
+//        final CameraSystem camera = sSystemRegistry.cameraSystem;
+//        if (camera != null) {
+//            camera.setTarget(null);
+//        }
+//        
+//        if (player != null) {
+//            
+//            if (mKillOnRelease) {
+//                parentObject.life = 0;
+//            } else {
+//                // See if there's a component swap we can run.
+//                ChangeComponentsComponent swap = parentObject.findByClass(ChangeComponentsComponent.class);
+//                if (swap != null) {
+//                    swap.activate(parentObject);
+//                }
+//            }
+//            
+//            PlayerComponent control = player.findByClass(PlayerComponent.class);
+//            if (camera.pointVisible(player.getPosition(), player.width)) {
+//                control.deactivateGhost(0.0f);
+//            } else {
+//                control.deactivateGhost(mDelayOnRelease);
+//            }
+//           /* final InputSystem input = sSystemRegistry.inputSystem;
+//            if (input != null) {
+//                input.clearClickTriggered();
+//            }*/
+//        }
+//        
+//        if (mAmbientSoundStream > -1) {
+//        	SoundSystem sound = BaseObject.sSystemRegistry.soundSystem;
+//        	if (sound != null) {
+//        		sound.stop(mAmbientSoundStream);
+//        		mAmbientSoundStream = -1;
+//        	}
+//        }
     }
 
     public final void setMovementSpeed(float movementSpeed) {

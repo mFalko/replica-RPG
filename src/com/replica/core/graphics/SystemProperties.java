@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.falko.android.snowball.core.graphics;
+package com.replica.core.graphics;
 
 import java.util.ArrayList;
 

@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
+
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObjectFactory;
+import com.replica.utility.FixedSizeArray;
 
 /** 
  * A game component that can swap other components in and out of its parent game object.  The

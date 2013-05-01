@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.collision;
 
 /** 
  * CollisionParamaters defines global parameters related to dynamic (object vs object) collisions.

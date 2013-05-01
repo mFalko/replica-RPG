@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.utility;
+
+import com.replica.core.AllocationGuard;
 
 /**
  * Helper class for interpolating velocity over time given a target velocity and acceleration.

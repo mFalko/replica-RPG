@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.CollisionParameters.HitType;
-import com.replica.replicaisland.GameObject.ActionType;
-import com.replica.replicaisland.GameObject.Team;
-import com.replica.replicaisland.GameObjectFactory.GameObjectType;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
+import com.replica.core.GameObject.Team;
+import com.replica.core.GameObjectFactory;
+import com.replica.core.GameObjectFactory.GameObjectType;
+import com.replica.core.GameObjectManager;
+import com.replica.core.collision.CollisionParameters;
+import com.replica.core.collision.CollisionParameters.HitType;
+import com.replica.core.systems.SoundSystem;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
+import com.replica.utility.VectorPool;
 
 /** 
  * A general-purpose component that responds to dynamic collision notifications.  This component
@@ -176,7 +186,7 @@ public class HitReactionComponent extends GameComponent {
 
                     if (mBounceOnHit && parent.life > 0) {
                         VectorPool pool = sSystemRegistry.vectorPool;
-                        Vector2D newVelocity = pool.allocate(parent.getPosition());
+                        Vector2 newVelocity = pool.allocate(parent.getPosition());
                         newVelocity.subtract(attacker.getPosition());
                         newVelocity.set(0.5f * Utils.sign(newVelocity.x), 
                                 0.5f * Utils.sign(newVelocity.y));

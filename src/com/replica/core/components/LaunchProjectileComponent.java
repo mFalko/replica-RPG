@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package com.replica.replicaisland;
+package com.replica.core.components;
 
-import com.replica.replicaisland.GameObject.ActionType;
+import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
+import com.replica.core.GameObjectFactory;
+import com.replica.core.GameObjectManager;
+import com.replica.core.systems.SoundSystem;
+import com.replica.utility.TimeSystem;
+import com.replica.utility.Utils;
+import com.replica.utility.Vector2;
 
 /**
  * A component that allows an object to spawn other objects and apply velocity to them at 
