@@ -122,6 +122,7 @@ public class BackgroundCollisionComponent extends GameComponent {
 		
 		if (hit) {
 			parentObject.getPosition().set(mPreviousPosition);
+			parentObject.touchingWall = true;
 		} else {
 			mPreviousPosition.set(parentObject.getPosition());
 		}

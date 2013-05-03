@@ -48,8 +48,8 @@ public class HUDVirtualDPad extends BaseObject {
 		} else {
 			circleInner_.setOpacity(0.65f);
 			
-			render.scheduleForDraw(circleOuter_, circleLocation_,
-					SortConstants.HUD+1, false);
+//			render.scheduleForDraw(circleOuter_, circleLocation_,
+//					SortConstants.HUD+1, false);
 		}
 		
 		render.scheduleForDraw(circleInner_, circleInnerLocation_,
@@ -58,25 +58,37 @@ public class HUDVirtualDPad extends BaseObject {
 	}
 
 	void init() {
+		
+		
 		if (circleInner_.getWidth() == 0) {
 			// first time init
 			circleInner_.setTexture(sSystemRegistry.shortTermTextureLibrary
-					.getTextureByResource(R.drawable.joystick_circle_inner));
+					.getTextureByResource(R.drawable.dpad));
 			Texture tex = circleInner_.getTexture();
 			circleInner_.resize(tex.width, tex.height);
 			circleInner_.setWidth((int) width_);
 			circleInner_.setHeight((int) height_);
 		}
-
-		if (circleOuter_.getWidth() == 0) {
-			// first time init
-			circleOuter_.setTexture(sSystemRegistry.shortTermTextureLibrary
-					.getTextureByResource(R.drawable.joystick_circle_outer));
-			Texture tex = circleOuter_.getTexture();
-			circleOuter_.resize(tex.width, tex.height);
-			circleOuter_.setWidth((int) width_);
-			circleOuter_.setHeight((int) height_);
-		}
+		
+//		if (circleInner_.getWidth() == 0) {
+//			// first time init
+//			circleInner_.setTexture(sSystemRegistry.shortTermTextureLibrary
+//					.getTextureByResource(R.drawable.joystick_circle_inner));
+//			Texture tex = circleInner_.getTexture();
+//			circleInner_.resize(tex.width, tex.height);
+//			circleInner_.setWidth((int) width_);
+//			circleInner_.setHeight((int) height_);
+//		}
+//
+//		if (circleOuter_.getWidth() == 0) {
+//			// first time init
+//			circleOuter_.setTexture(sSystemRegistry.shortTermTextureLibrary
+//					.getTextureByResource(R.drawable.joystick_circle_outer));
+//			Texture tex = circleOuter_.getTexture();
+//			circleOuter_.resize(tex.width, tex.height);
+//			circleOuter_.setWidth((int) width_);
+//			circleOuter_.setHeight((int) height_);
+//		}
 	}
 
 	DrawableBitmap circleInner_;

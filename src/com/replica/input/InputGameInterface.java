@@ -21,6 +21,7 @@ import com.replica.core.BaseObject;
 public class InputGameInterface extends BaseObject {
 
 	private InputDPad dpad_ = new InputDPad();
+	private InputTouchButton touchButton = new InputTouchButton();
 
 	public InputGameInterface() {
 		super();
@@ -30,10 +31,7 @@ public class InputGameInterface extends BaseObject {
 	@Override
 	public void reset() {
 		dpad_.reset();
-	}
-
-	public void setDpadLocation(float x, float y, float width, float height) {
-		dpad_.setBounds(x, y, height, width);
+		touchButton.reset();
 	}
 
 	@Override
@@ -42,6 +40,11 @@ public class InputGameInterface extends BaseObject {
 		final float gameTime = sSystemRegistry.timeSystem.getGameTime();
 
 		dpad_.update(gameTime, this);
+		touchButton.update(gameTime, this);
+	}
+	
+	public void setDpadLocation(float x, float y, float width, float height) {
+		dpad_.setBounds(x, y, height, width);
 	}
 
 	public InputDPad getDpad() {
@@ -51,9 +54,20 @@ public class InputGameInterface extends BaseObject {
 	public boolean getDpadPressed() {
 		return dpad_ != null && dpad_.pressed();
 	}
+	
+	public void setButtonLocation(float x, float y, float width, float height) {
+		touchButton.setBounds(x, y, height, width);
+	}
+	
+	
 
 	public void setUseOnScreenControls(boolean onscreen) {
 		// mUseOnScreenControls = onscreen;
+	}
+
+	public boolean getButtonPressed() {
+		// TODO Auto-generated method stub
+		return touchButton.pressed();
 	}
 
 }

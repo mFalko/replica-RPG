@@ -52,6 +52,7 @@ public class SnowBall extends Activity {
 		GLView_ = (GLSurfaceView) findViewById(R.id.glsurfaceview);
 		GLView_.setEGLConfigChooser(false); // 16 bit, no z-buffer
 		GLView_.setKeepScreenOn(true);
+		GLView_.setPreserveEGLContextOnPause(true);
 		game_ = new Game();
 		game_.setSurfaceView(GLView_);
 

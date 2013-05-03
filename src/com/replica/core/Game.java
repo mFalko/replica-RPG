@@ -119,6 +119,8 @@ public class Game extends AllocationGuard {
 				mTouchFilter = new MultiTouchFilter();
 				Log.v("SNowBAll", "Multitouch");
 			}
+			
+			
 
 			// Short-term textures are cleared between levels.
 			TextureLibrary shortTermTextureLibrary = new TextureLibrary();
@@ -147,10 +149,7 @@ public class Game extends AllocationGuard {
 			// input.setScreenRotation(rotationIndex);
 
 			InputGameInterface inputInterface = new InputGameInterface();
-			inputInterface.setDpadLocation(ButtonConstants.D_PAD_REGION_X,
-					ButtonConstants.D_PAD_REGION_Y,
-					ButtonConstants.D_PAD_REGION_WIDTH,
-					ButtonConstants.D_PAD_REGION_HEIGHT);
+			
 			gameRoot.add(inputInterface);
 			BaseObject.sSystemRegistry.inputGameInterface = inputInterface;
 
@@ -207,28 +206,35 @@ public class Game extends AllocationGuard {
 					ButtonConstants.D_PAD_REGION_WIDTH,
 					ButtonConstants.D_PAD_REGION_HEIGHT);
 			 
-			 int buttonWidth = 32;
-			 int buttonHeight = 32;
-			 int buttonStartX = params.gameWidth - buttonWidth - 10;
-			 int buttonStartY = 10;
+			 int buttonWidth = ButtonConstants.buttonWidth;
+			 int buttonHeight = ButtonConstants.buttonHeight;
+			 int buttonStartX = ButtonConstants.buttonStartX;
+			 int buttonStartY = ButtonConstants.buttonStartY;
 			 
 			 hud.setAttackButtonBounds(0, buttonStartX, buttonStartY, buttonWidth, buttonHeight);
-			 hud.setAttackButtonBounds(1, buttonStartX - buttonWidth - 10, buttonStartY, buttonWidth, buttonHeight);
-			 hud.setAttackButtonBounds(2, buttonStartX, buttonStartY + buttonHeight + 10, buttonWidth, buttonHeight);
-			 hud.setAttackButtonBounds(3, buttonStartX - buttonWidth - 10, buttonStartY + buttonHeight + 10, buttonWidth, buttonHeight);
 			 
 			 BaseObject.sSystemRegistry.shortTermTextureLibrary
-				.allocateTexture(R.drawable.buttongloss);
-			 BaseObject.sSystemRegistry.shortTermTextureLibrary
-				.allocateTexture(R.drawable.buttonbackground);
+				.allocateTexture(R.drawable.sq_butotn);
+
 			BaseObject.sSystemRegistry.shortTermTextureLibrary
-					.allocateTexture(R.drawable.joystick_circle_outer);
-			BaseObject.sSystemRegistry.shortTermTextureLibrary
-					.allocateTexture(R.drawable.joystick_circle_inner);
+					.allocateTexture(R.drawable.dpad);
 			
 			 BaseObject.sSystemRegistry.hudSystem = hud;
 			 gameRoot.add(hud);
 
+			 
+			 
+			 
+			inputInterface.setDpadLocation(ButtonConstants.D_PAD_REGION_X,
+					ButtonConstants.D_PAD_REGION_Y,
+					ButtonConstants.D_PAD_REGION_WIDTH,
+					ButtonConstants.D_PAD_REGION_HEIGHT);
+
+			inputInterface.setButtonLocation(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
+			 
+			 
+			 
+			 
 			// BaseObject.sSystemRegistry.vibrationSystem = new
 			// VibrationSystem();
 

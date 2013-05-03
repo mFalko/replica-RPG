@@ -28,13 +28,18 @@ import com.replica.utility.VectorPool;
 
 public class PlayerComponent extends GameComponent {
 
-	public enum State {
-		MOVE, ATTACK, HIT_REACT, DEAD, FROZEN
-	}
 
 	private static final float HIT_REACT_TIME = 0;
-	private final float GHOST_MOVEMENT_SPEED = 3.0f;
+	private final float GHOST_MOVEMENT_SPEED = 2.0f;
 
+	public enum State {
+		MOVE, 
+		ATTACK, 
+		HIT_REACT, 
+		DEAD, 
+		FROZEN
+	}
+	
 	private State mState;
 	private float mTimer;
 	private float mTimer2;
@@ -94,10 +99,12 @@ public class PlayerComponent extends GameComponent {
 				pos.x += d.x;
 				
 				pool.release(d);
+				
+				parentObject.setCurrentAction(ActionType.MOVE);
+			} else {
+				parentObject.setCurrentAction(ActionType.IDLE);
 			}
-
 		}
-
 	}
 
 	public void update(float timeDelta, BaseObject parent) {
@@ -141,6 +148,9 @@ public class PlayerComponent extends GameComponent {
 		case FROZEN:
 			stateFrozen(gameTime, timeDelta, parentObject);
 			break;
+		case ATTACK:
+			stateAttack(gameTime, timeDelta, parentObject);
+			break;
 		default:
 			break;
 		}
@@ -149,8 +159,18 @@ public class PlayerComponent extends GameComponent {
 
 	}
 
-	protected void gotoMove(GameObject parentObject) {
+	protected void goToAttack(GameObject parentObject) {
 		parentObject.setCurrentAction(GameObject.ActionType.MOVE);
+		mState = State.ATTACK;
+	}
+	
+	private void stateAttack(float gameTime, float timeDelta,
+			GameObject parentObject) {
+		parentObject.setCurrentAction(GameObject.ActionType.ATTACK);
+		
+	}
+
+	protected void gotoMove(GameObject parentObject) {
 		mState = State.MOVE;
 	}
 
@@ -162,6 +182,11 @@ public class PlayerComponent extends GameComponent {
 		final InputGameInterface input = sSystemRegistry.inputGameInterface;
 
 		// check input buttons here
+		
+		if (input.getButtonPressed()) {
+			goToAttack(parentObject);
+		}
+		
 
 	}
 

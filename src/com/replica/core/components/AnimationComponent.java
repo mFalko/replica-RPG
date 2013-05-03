@@ -49,7 +49,7 @@ public class AnimationComponent extends GameComponent {
 
 	private SpriteComponent mSprite;
 	PlayerAnimations idleAnimation_ ;
-
+	PlayerAnimations attackAnimation_ ;
 
 	public AnimationComponent() {
 		super();
@@ -102,7 +102,7 @@ public class AnimationComponent extends GameComponent {
 				
 			} else if (currentAction == ActionType.MOVE) {
 				InputGameInterface input = sSystemRegistry.inputGameInterface;
-				
+				//TODO: use facing direction from gameObject
 				InputDPad dpad = input.getDpad();
 				if (dpad.pressed()) {
 					if (dpad.upPressed()) {
@@ -122,6 +122,21 @@ public class AnimationComponent extends GameComponent {
 
 			} else if (currentAction == ActionType.ATTACK) {
 
+				switch (parentObject.currentAttack) {
+				case SPELL:
+					break;
+					
+				case SWORD:
+					break;
+					
+				case POLE:
+					break;
+					
+				case ARROW:
+					break;
+				}
+				
+				
 			} else if (currentAction == ActionType.HIT_REACT) {
 
 			} else if (currentAction == ActionType.DEATH) {

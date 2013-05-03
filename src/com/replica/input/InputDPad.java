@@ -48,7 +48,7 @@ public class InputDPad extends BaseObject {
 	}
 
 	public boolean pressed() {
-		return dpadXY_.getPressed();
+		return upPressed() || downPressed() || leftPressed() || rightPressed();
 	}
 
 	public boolean upPressed() {

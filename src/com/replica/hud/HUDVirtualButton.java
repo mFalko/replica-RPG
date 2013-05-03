@@ -42,31 +42,38 @@ public class HUDVirtualButton extends BaseObject {
 		InputGameInterface input = sSystemRegistry.inputGameInterface;
 		
 		
+		if (input.getButtonPressed()) {
+			buttonGraphic_.setOpacity(0.85f);
+		} else {
+			buttonGraphic_.setOpacity(0.5f);
+		}
+		
 		render.scheduleForDraw(buttonGraphic_, position_,
 				SortConstants.HUD, false);
 		
-		render.scheduleForDraw(buttonGloss_, position_,
-				SortConstants.HUD+1, false);
+//		render.scheduleForDraw(buttonGloss_, position_,
+//				SortConstants.HUD+1, false);
 		
 	}
 	
 	void init() {
-		{
-		// first time init
-		buttonGloss_.setTexture(sSystemRegistry.shortTermTextureLibrary
-				.getTextureByResource(R.drawable.buttongloss));
-		Texture tex = buttonGloss_.getTexture();
-		buttonGloss_.resize(tex.width, tex.height);
-		buttonGloss_.setWidth((int) width_);
-		buttonGloss_.setHeight((int) height_);
-		}
+//		{
+//		// first time init
+//		buttonGloss_.setTexture(sSystemRegistry.shortTermTextureLibrary
+//				.getTextureByResource(R.drawable.buttongloss));
+//		Texture tex = buttonGloss_.getTexture();
+//		buttonGloss_.resize(tex.width, tex.height);
+//		buttonGloss_.setWidth((int) width_);
+//		buttonGloss_.setHeight((int) height_);
+//		}
 		{
 		buttonGraphic_.setTexture(sSystemRegistry.shortTermTextureLibrary
-				.getTextureByResource(R.drawable.buttonbackground));
-		Texture tex = buttonGloss_.getTexture();
+				.getTextureByResource(R.drawable.sq_butotn));
+		Texture tex = buttonGraphic_.getTexture();
 		buttonGraphic_.resize(tex.width, tex.height);
 		buttonGraphic_.setWidth((int) width_);
 		buttonGraphic_.setHeight((int) height_);
+		buttonGraphic_.setOpacity(0.5f);
 		}
 	}
 	

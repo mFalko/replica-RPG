@@ -29,6 +29,7 @@ import com.replica.core.components.BackgroundCollisionComponent;
 import com.replica.core.components.GameComponent;
 import com.replica.core.components.GameComponentPool;
 import com.replica.core.components.MotionBlurComponent;
+import com.replica.core.components.PlayerComponent;
 import com.replica.core.components.RenderComponent;
 import com.replica.core.components.SpriteComponent;
 import com.replica.core.graphics.AnimationFrame;
@@ -252,11 +253,15 @@ public class GameObjectFactory extends BaseObject {
 		object.activationRadius = mAlwaysActive;
 		object.width = 50;
 		object.height = 50;
-
+		
+		//GhostMovementGameComponent gm = new GhostMovementGameComponent();
+		
+		PlayerComponent playerComponent = new PlayerComponent();
+		
 		AnimationComponent objectAnimationComponent = new AnimationComponent();
 		SpriteComponent objectSpriteComponent = new SpriteComponent();
 		RenderComponent objectRenCom = new RenderComponent();
-		GhostMovementGameComponent gm = new GhostMovementGameComponent();
+		
 		BackgroundCollisionComponent backgroundCollisionComponent = new BackgroundCollisionComponent(10, 10, 20, 0);
 
 		SpriteAnimation moveNorth = loadAnimation(
@@ -307,7 +312,11 @@ public class GameObjectFactory extends BaseObject {
 		
 		object.add(objectAnimationComponent);
 		object.add(objectSpriteComponent);
-		object.add(gm);
+		
+		object.add(playerComponent);
+		
+//		object.add(gm);
+		
 		object.add(objectRenCom);
 		object.add(backgroundCollisionComponent);
 		

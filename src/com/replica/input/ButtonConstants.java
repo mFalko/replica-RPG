@@ -16,11 +16,21 @@
 
 package com.replica.input;
 
+import com.replica.core.BaseObject;
+
 public final class ButtonConstants {
     
     public static final int D_PAD_REGION_X = 10;
     public static final int D_PAD_REGION_Y = 10;
-    public static final int D_PAD_REGION_WIDTH = 100;
-    public static final int D_PAD_REGION_HEIGHT = 100;
+    public static final int D_PAD_REGION_WIDTH = 130;
+    public static final int D_PAD_REGION_HEIGHT = 130;
+    
+    public static final int BUTTON_PADDING = 10;
+    public static final int buttonWidth = 50;
+    public static final int buttonHeight = 50;
+    public static final int buttonStartX = BaseObject.sSystemRegistry.contextParameters.gameWidth - buttonWidth - 10;
+    public static final int buttonStartY = 10;
+	
+	
     
 }

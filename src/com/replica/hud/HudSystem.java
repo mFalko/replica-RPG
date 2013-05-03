@@ -62,9 +62,11 @@ public class HudSystem extends BaseObject {
 		if (useTouchInterface_) {
 
 			dpad.update(timeDelta, this);
-			for (int i = 0; i < attackButtons_.length; ++i) {
-				attackButtons_[i].update(timeDelta, this);
-			}
+//			for (int i = 0; i < attackButtons_.length; ++i) {
+				attackButtons_[0].update(timeDelta, this);
+//			}
+			
+			
 		}
 
 	}

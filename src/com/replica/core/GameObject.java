@@ -39,6 +39,7 @@ public class GameObject extends PhasedObjectManager {
 
   
     public boolean positionLocked;
+    public boolean touchingWall;
     
     public float activationRadius;
     public boolean destroyOnDeactivation;
@@ -65,6 +66,15 @@ public class GameObject extends PhasedObjectManager {
     }
     
     private ActionType mCurrentAction;
+    
+    public enum AttackType {
+    	SPELL,
+    	SWORD,
+    	POLE,
+    	ARROW
+    }
+    
+    public AttackType currentAttack;
     
     public enum Team {
         NONE,
@@ -171,8 +181,6 @@ public class GameObject extends PhasedObjectManager {
     public final void setBackgroundCollisionNormal(Vector2 normal) {
         mBackgroundCollisionNormal.set(normal);
     }
-
-
     
     public final ActionType getCurrentAction() {
         return mCurrentAction;
