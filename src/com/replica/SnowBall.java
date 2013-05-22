@@ -37,7 +37,7 @@ import com.replica.utility.EventReporter;
  */
 public class SnowBall extends Activity {
 
-	public static final int VERSION = 14;
+	public static final int VERSION = 1;
 	private Game game_;
 	GLSurfaceView GLView_;
 	private long mLastTouchTime = 0L;
@@ -59,8 +59,12 @@ public class SnowBall extends Activity {
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-		int defaultWidth = 480;
-		int defaultHeight = 320;
+//		int defaultWidth = 480;
+//		int defaultHeight = 320;
+		
+		int defaultWidth = 600;
+		int defaultHeight = 400;
+		
 		if (dm.widthPixels != defaultWidth) {
 			float ratio = ((float) dm.widthPixels) / dm.heightPixels;
 			defaultWidth = (int) (defaultHeight * ratio);
@@ -101,7 +105,7 @@ public class SnowBall extends Activity {
 
 		game_.onPause();
 		GLView_.onPause();
-//		game_.getRenderer().onPause(); // hack!
+		game_.getRenderer().onPause(); // hack!
 
 //		if (mMethodTracing) {
 //			Debug.stopMethodTracing();

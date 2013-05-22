@@ -58,9 +58,6 @@ public class GenericAnimationComponent extends GameComponent {
                 case DEATH:
                     mSprite.playAnimation(Animation.DEATH);
                     break;
-                case HIDE:
-                    mSprite.playAnimation(Animation.HIDE);
-                    break;
                 case FROZEN:
                     mSprite.playAnimation(Animation.FROZEN);
                     break;

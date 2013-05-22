@@ -16,8 +16,6 @@
 
 package com.replica.core.components;
 
-import android.util.Log;
-
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.PhasedObjectManager;
@@ -45,11 +43,11 @@ public class SpriteComponent extends GameComponent {
 	private boolean mVisible;
 	private SpriteAnimation mCurrentAnimation;
 	private boolean mAnimationsDirty;
+	boolean mActive;
 
 	public SpriteComponent(int width, int height) {
 		super();
 		mAnimations = new PhasedObjectManager();
-
 		reset();
 		mWidth = width;
 		mHeight = height;
@@ -59,9 +57,7 @@ public class SpriteComponent extends GameComponent {
 	public SpriteComponent() {
 		super();
 		mAnimations = new PhasedObjectManager();
-
 		reset();
-
 		setPhase(ComponentPhases.PRE_DRAW.ordinal());
 	}
 
@@ -79,10 +75,16 @@ public class SpriteComponent extends GameComponent {
 		mCurrentAnimation = null;
 		mOpacity = 1.0f;
 		mAnimationsDirty = false;
+		mActive = true;
 	}
 
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
+		
+		if (!mActive) {
+			return;
+		}
+		
 		mAnimationTime += timeDelta;
 		final PhasedObjectManager animations = mAnimations;
 		final int currentAnimIndex = mCurrentAnimationIndex;
@@ -108,7 +110,7 @@ public class SpriteComponent extends GameComponent {
 					mCurrentAnimation = currentAnimation;
 				}
 			}
-
+			
 			GameObject parentObject = (GameObject) parent;
 			AnimationFrame currentFrame = currentAnimation
 					.getFrame(mAnimationTime);
@@ -116,6 +118,7 @@ public class SpriteComponent extends GameComponent {
 				validFrameAvailable = true;
 				final RenderComponent render = mRenderComponent;
 				if (render != null) {
+					
 					final DrawableFactory factory = sSystemRegistry.drawableFactory;
 					if (mVisible && currentFrame.texture != null
 							&& factory != null) {
@@ -239,5 +242,17 @@ public class SpriteComponent extends GameComponent {
 
 	public final int getAnimationCount() {
 		return mAnimations.getConcreteCount();
+	}
+	
+	public final void setActive(boolean active) {
+		mActive = active;
+		if (!active) {
+			if (mRenderComponent != null) {
+				mRenderComponent.setDrawable(null);
+			}
+			if (mCollisionComponent != null) {
+				mCollisionComponent.setCollisionVolumes(null, null);
+			}
+		}
 	}
 }

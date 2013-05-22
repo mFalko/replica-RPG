@@ -16,6 +16,8 @@
 
 package com.replica.core;
 
+import com.replica.core.game.AttackConstants;
+import com.replica.core.game.AttackConstants.AttackType;
 import com.replica.utility.TimeSystem;
 import com.replica.utility.Utils;
 import com.replica.utility.Vector2;
@@ -27,8 +29,9 @@ import com.replica.utility.Vector2;
  * components can use to share state (direct component-to-component communication is discouraged).
  */
 public class GameObject extends PhasedObjectManager {
-    private final static float COLLISION_SURFACE_DECAY_TIME = 0.3f;
+	
     // These fields are managed by components.
+	// define as constants and use a alloc free map to access?
     private Vector2 mPosition;
     private Vector2 mVelocity;
     private Vector2 mTargetVelocity;
@@ -44,7 +47,17 @@ public class GameObject extends PhasedObjectManager {
     public float activationRadius;
     public boolean destroyOnDeactivation;
     
+    private int maxLife;
+    private int maxMana;
+    
     public int life;
+    public int mana;
+    
+    //TODO: make private and use enum to access via one method
+    public int strength;
+    public int agility;
+    public int intellect;
+    public int spirit;
     
     public int lastReceivedHitType;
     
@@ -61,20 +74,12 @@ public class GameObject extends PhasedObjectManager {
         ATTACK,
         HIT_REACT,
         DEATH,
-        HIDE,
         FROZEN
     }
     
     private ActionType mCurrentAction;
+    public AttackConstants currentAttack = AttackConstants.FIREBALL_1;
     
-    public enum AttackType {
-    	SPELL,
-    	SWORD,
-    	POLE,
-    	ARROW
-    }
-    
-    public AttackType currentAttack;
     
     public enum Team {
         NONE,
@@ -83,6 +88,8 @@ public class GameObject extends PhasedObjectManager {
     }
     
     public Team team;
+    
+    
     
     public GameObject() {
         super();

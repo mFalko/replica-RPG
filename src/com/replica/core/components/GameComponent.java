@@ -27,6 +27,7 @@ import com.replica.core.PhasedObject;
 public abstract class GameComponent extends PhasedObject {
     // Defines high-level buckets within which components may choose to run.
     public enum ComponentPhases {
+    	INPUT,
         THINK,                  // decisions are made
         PHYSICS,                // impulse velocities are summed
         POST_PHYSICS,           // inertia, friction, and bounce

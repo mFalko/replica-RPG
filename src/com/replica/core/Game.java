@@ -74,6 +74,11 @@ public class Game extends AllocationGuard {
 	private boolean mGLDataLoaded;
 	private ContextParameters mContextParameters;
 	private TouchFilter mTouchFilter;
+	
+	public enum GameState {
+		INGAME,
+		MENU
+	}
 
 	public Game() {
 		super();
@@ -98,9 +103,6 @@ public class Game extends AllocationGuard {
 			mRenderer = new GameRenderer(context, this, gameWidth, gameHeight);
 			// Create core systems
 			BaseObject.sSystemRegistry.openGLSystem = new OpenGLSystem(null);
-
-			// BaseObject.sSystemRegistry.customToastSystem = new
-			// CustomToastSystem(context);
 
 			ContextParameters params = mContextParameters;
 			params.viewWidth = viewWidth;
@@ -148,10 +150,7 @@ public class Game extends AllocationGuard {
 			// windowMgr.getDefaultDisplay().getOrientation();
 			// input.setScreenRotation(rotationIndex);
 
-			InputGameInterface inputInterface = new InputGameInterface();
 			
-			gameRoot.add(inputInterface);
-			BaseObject.sSystemRegistry.inputGameInterface = inputInterface;
 
 			// LevelSystem level = new LevelSystem();
 			// BaseObject.sSystemRegistry.levelSystem = level;
@@ -165,6 +164,7 @@ public class Game extends AllocationGuard {
 			BaseObject.sSystemRegistry.gameObjectManager = gameManager;
 
 			GameObjectFactory objectFactory = new GameObjectFactory();
+			objectFactory.preloadEffects();
 			BaseObject.sSystemRegistry.gameObjectFactory = objectFactory;
 
 			// BaseObject.sSystemRegistry.hotSpotSystem = new HotSpotSystem();
@@ -198,40 +198,27 @@ public class Game extends AllocationGuard {
 			 BaseObject.sSystemRegistry.vectorPool = new VectorPool();
 			BaseObject.sSystemRegistry.drawableFactory = new DrawableFactory();
 
-			// hud system
+			
+
+			 
+			InputGameInterface inputInterface = new InputGameInterface();
+			gameRoot.add(inputInterface);
+			BaseObject.sSystemRegistry.inputGameInterface = inputInterface;
+			
+			 // hud system
 			//TODO: Refactor HUD code
-			 HudSystem hud = new HudSystem();
-			hud.setTouchDPadBounds(ButtonConstants.D_PAD_REGION_X,
-					ButtonConstants.D_PAD_REGION_Y,
-					ButtonConstants.D_PAD_REGION_WIDTH,
-					ButtonConstants.D_PAD_REGION_HEIGHT);
-			 
-			 int buttonWidth = ButtonConstants.buttonWidth;
-			 int buttonHeight = ButtonConstants.buttonHeight;
-			 int buttonStartX = ButtonConstants.buttonStartX;
-			 int buttonStartY = ButtonConstants.buttonStartY;
-			 
-			 hud.setAttackButtonBounds(0, buttonStartX, buttonStartY, buttonWidth, buttonHeight);
-			 
-			 BaseObject.sSystemRegistry.shortTermTextureLibrary
+			HudSystem hud = new HudSystem();
+
+			BaseObject.sSystemRegistry.shortTermTextureLibrary
 				.allocateTexture(R.drawable.sq_butotn);
 
 			BaseObject.sSystemRegistry.shortTermTextureLibrary
 					.allocateTexture(R.drawable.dpad);
 			
+			hud.registerTouchInput(inputInterface, gameWidth, gameHeight);
+			
 			 BaseObject.sSystemRegistry.hudSystem = hud;
 			 gameRoot.add(hud);
-
-			 
-			 
-			 
-			inputInterface.setDpadLocation(ButtonConstants.D_PAD_REGION_X,
-					ButtonConstants.D_PAD_REGION_Y,
-					ButtonConstants.D_PAD_REGION_WIDTH,
-					ButtonConstants.D_PAD_REGION_HEIGHT);
-
-			inputInterface.setButtonLocation(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
-			 
 			 
 			 
 			 
@@ -498,14 +485,9 @@ public class Game extends AllocationGuard {
 	public void onSurfaceReady() {
 		DebugLog.d("AndouKun", "Surface Ready");
 
-		// if (mPendingLevel != null && mPendingLevel != mCurrentLevel) {
-		// if (mRunning) {
-		// stopLevel();
-		// }
-		// goToLevel(mPendingLevel);
-		// } else if (mGameThread.getPaused() && mRunning) {
-		// mGameThread.resumeGame();
-		// }
+	if (mGameThread.getPaused() && mRunning) {
+			mGameThread.resumeGame();
+		}
 	}
 
 	public void setSurfaceView(GLSurfaceView view) {
@@ -529,24 +511,17 @@ public class Game extends AllocationGuard {
 		// here.
 		// GL should just be passed to this function and then set up directly.
 
-		// if (!mGLDataLoaded && mGameThread.getPaused() && mRunning &&
-		// mPendingLevel == null) {
-		//
-		// mSurfaceView.loadTextures(BaseObject.sSystemRegistry.longTermTextureLibrary);
-		// mSurfaceView.loadTextures(BaseObject.sSystemRegistry.shortTermTextureLibrary);
-		// mSurfaceView.loadBuffers(BaseObject.sSystemRegistry.bufferLibrary);
-		// mGLDataLoaded = true;
-		// }
+		if (!mGLDataLoaded) {// && mGameThread.getPaused() && mRunning) {
+			BaseObject.sSystemRegistry.shortTermTextureLibrary.invalidateAll();
+			BaseObject.sSystemRegistry.shortTermTextureLibrary.loadAll(context, gl);
+			BaseObject.sSystemRegistry.longTermTextureLibrary.invalidateAll();
+			BaseObject.sSystemRegistry.longTermTextureLibrary.loadAll(context, gl);
+			mGLDataLoaded = true;
+		}
 
-		BaseObject.sSystemRegistry.shortTermTextureLibrary.invalidateAll();
-		BaseObject.sSystemRegistry.shortTermTextureLibrary.loadAll(context, gl);
-		BaseObject.sSystemRegistry.longTermTextureLibrary.invalidateAll();
-		BaseObject.sSystemRegistry.longTermTextureLibrary.loadAll(context, gl);
+		
+		
 	}
-
-	// public void setPendingLevel(LevelTree.Level level) {
-	// // mPendingLevel = level;
-	// }
 
 	public void setSoundEnabled(boolean soundEnabled) {
 		BaseObject.sSystemRegistry.soundSystem.setSoundEnabled(soundEnabled);
@@ -584,15 +559,4 @@ public class Game extends AllocationGuard {
 		return (mRunning && mGameThread != null && mGameThread.getPaused());
 	}
 
-	public int getRobotsDestroyed() {
-		return BaseObject.sSystemRegistry.eventRecorder.getRobotsDestroyed();
-	}
-
-	public int getPearlsCollected() {
-		return BaseObject.sSystemRegistry.eventRecorder.getPearlsCollected();
-	}
-
-	public int getPearlsTotal() {
-		return BaseObject.sSystemRegistry.eventRecorder.getPearlsTotal();
-	}
 }

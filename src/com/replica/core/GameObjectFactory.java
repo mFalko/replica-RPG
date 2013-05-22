@@ -20,17 +20,21 @@ import java.util.Comparator;
 
 import android.util.Log;
 
-import com.replica.GhostMovementGameComponent;
 import com.replica.R;
 import com.replica.core.GameObject.ActionType;
-import com.replica.core.components.AnimationComponent;
-import com.replica.core.components.AnimationComponent.PlayerAnimations;
 import com.replica.core.components.BackgroundCollisionComponent;
 import com.replica.core.components.GameComponent;
 import com.replica.core.components.GameComponentPool;
-import com.replica.core.components.MotionBlurComponent;
+import com.replica.core.components.HumanoidAnimationComponent;
+import com.replica.core.components.HumanoidAnimationComponent.HumanoidAnimations;
+import com.replica.core.components.HumanoidAnimationComponent.SimpleSpriteUpdater;
+import com.replica.core.components.LifetimeComponent;
+import com.replica.core.components.MovementComponent;
 import com.replica.core.components.PlayerComponent;
 import com.replica.core.components.RenderComponent;
+import com.replica.core.components.SimpleAnimationComponent;
+import com.replica.core.components.SimpleAnimationComponent.SimpleAnimations;
+import com.replica.core.components.SimpleCollisionComponent;
 import com.replica.core.components.SpriteComponent;
 import com.replica.core.graphics.AnimationFrame;
 import com.replica.core.graphics.SpriteAnimation;
@@ -66,9 +70,9 @@ public class GameObjectFactory extends BaseObject {
 	// order for the
 	// level content to make sense.
 	public enum GameObjectType {
-		INVALID(-1),
+		INVALID,
 
-		PLAYER(0),
+		PLAYER,
 
 		// Collectables
 
@@ -87,34 +91,38 @@ public class GameObjectFactory extends BaseObject {
 		// Special Objects -- Not spawnable normally
 
 		// End
-		OBJECT_COUNT(-1);
+		OBJECT_COUNT;
 
-		private final int mIndex;
-
-		GameObjectType(int index) {
-			this.mIndex = index;
-		}
-
-		public int index() {
-			return mIndex;
-		}
-
-		// TODO: Is there any better way to do this?
-		public static GameObjectType indexToType(int index) {
-			final GameObjectType[] valuesArray = values();
-			GameObjectType foundType = INVALID;
-			for (int x = 0; x < valuesArray.length; x++) {
-				GameObjectType type = valuesArray[x];
-				if (type.mIndex == index) {
-					foundType = type;
-					break;
-				}
-			}
-			return foundType;
-		}
+//		private final int mIndex;
+//
+//		GameObjectType(int index) {
+//			this.mIndex = index;
+//		}
+//
+//		public int index() {
+//			return mIndex;
+//		}
+		
+		
+//
+//		// TODO: Is there any better way to do this?
+//		public static GameObjectType indexToType(int index) {
+//			final GameObjectType[] valuesArray = values();
+//			GameObjectType foundType = INVALID;
+//			for (int x = 0; x < valuesArray.length; x++) {
+//				GameObjectType type = valuesArray[x];
+//				if (type.mIndex == index) {
+//					foundType = type;
+//					break;
+//				}
+//			}
+//			return foundType;
+//		}
 
 	}
 
+	
+	
 	public GameObjectFactory() {
 		super();
 
@@ -174,7 +182,6 @@ public class GameObjectFactory extends BaseObject {
 
 	@Override
 	public void reset() {
-
 	}
 
 	protected GameComponentPool getComponentPool(Class<?> componentType) {
@@ -221,20 +228,39 @@ public class GameObjectFactory extends BaseObject {
 		// These textures appear in every level, so they are long-term.
 		TextureLibrary textureLibrary = sSystemRegistry.longTermTextureLibrary;
 
+		//skeleton humanoid
+		textureLibrary.allocateTexture(R.drawable.body_skeleton_walkcycle_north);
+		textureLibrary.allocateTexture(R.drawable.body_skeleton_walkcycle_south);
+		textureLibrary.allocateTexture(R.drawable.body_skeleton_walkcycle_west);
+		textureLibrary.allocateTexture(R.drawable.body_skeleton_walkcycle_east);
+		textureLibrary.allocateTexture(R.drawable.body_skeleton_spellcast_north);
+		textureLibrary.allocateTexture(R.drawable.body_skeleton_spellcast_south);
+		textureLibrary.allocateTexture(R.drawable.body_skeleton_spellcast_west);
+		textureLibrary.allocateTexture(R.drawable.body_skeleton_spellcast_east);
+		
+		//spell fireball
+		textureLibrary.allocateTexture(R.drawable.attack_spell_fireball_north);
+		textureLibrary.allocateTexture(R.drawable.attack_spell_fireball_south);
+		textureLibrary.allocateTexture(R.drawable.attack_spell_fireball_west);
+		textureLibrary.allocateTexture(R.drawable.attack_spell_fireball_east);
+		
 	}
 
 	public void destroy(GameObject object) {
-		object.commitUpdates();
-		final int componentCount = object.getCount();
-		for (int x = 0; x < componentCount; x++) {
-			GameComponent component = (GameComponent) object.get(x);
-			if (!component.shared) {
-				releaseComponent(component);
-			}
-		}
-		object.removeAll();
-		object.commitUpdates();
-		mGameObjectPool.release(object);
+		
+		Log.v("FIRE", "DESTROY");
+		
+//		object.commitUpdates();
+//		final int componentCount = object.getCount();
+//		for (int x = 0; x < componentCount; x++) {
+//			GameComponent component = (GameComponent) object.get(x);
+//			if (!component.shared) {
+//				releaseComponent(component);
+//			}
+//		}
+//		object.removeAll();
+//		object.commitUpdates();
+//		mGameObjectPool.release(object);
 	}
 
 	public GameObject spawn(GameObjectType type, float x, float y,
@@ -254,11 +280,10 @@ public class GameObjectFactory extends BaseObject {
 		object.width = 50;
 		object.height = 50;
 		
-		//GhostMovementGameComponent gm = new GhostMovementGameComponent();
 		
 		PlayerComponent playerComponent = new PlayerComponent();
 		
-		AnimationComponent objectAnimationComponent = new AnimationComponent();
+		HumanoidAnimationComponent objectAnimationComponent = new HumanoidAnimationComponent();
 		SpriteComponent objectSpriteComponent = new SpriteComponent();
 		RenderComponent objectRenCom = new RenderComponent();
 		
@@ -266,29 +291,42 @@ public class GameObjectFactory extends BaseObject {
 
 		SpriteAnimation moveNorth = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_north,
-				PlayerAnimations.MOVE_NORTH.ordinal(), 8, 64, 64, 64, true);
+				HumanoidAnimations.MOVE_NORTH.ordinal(), 8, 64, 64, 64, true);
 		SpriteAnimation moveSouth = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_south,
-				PlayerAnimations.MOVE_SOUTH.ordinal(), 8, 64, 64, 64, true);
+				HumanoidAnimations.MOVE_SOUTH.ordinal(), 8, 64, 64, 64, true);
 		SpriteAnimation moveWest = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_west,
-				PlayerAnimations.MOVE_WEST.ordinal(), 8, 64, 64, 64, true);
+				HumanoidAnimations.MOVE_WEST.ordinal(), 8, 64, 64, 64, true);
 		SpriteAnimation moveEast = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_east,
-				PlayerAnimations.MOVE_EAST.ordinal(), 8, 64, 64, 64, true);
+				HumanoidAnimations.MOVE_EAST.ordinal(), 8, 64, 64, 64, true);
 		
 		SpriteAnimation idleNorth = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_north,
-				PlayerAnimations.IDLE_NORTH.ordinal(), 1, 0, 64, 64, true);
+				HumanoidAnimations.IDLE_NORTH.ordinal(), 1, 0, 64, 64, true);
 		SpriteAnimation idleSouth = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_south,
-				PlayerAnimations.IDLE_SOUTH.ordinal(), 1, 0, 64, 64, true);
+				HumanoidAnimations.IDLE_SOUTH.ordinal(), 1, 0, 64, 64, true);
 		SpriteAnimation idleWest = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_west,
-				PlayerAnimations.IDLE_WEST.ordinal(), 1, 0, 64, 64, true);
+				HumanoidAnimations.IDLE_WEST.ordinal(), 1, 0, 64, 64, true);
 		SpriteAnimation idleEast = loadAnimation(
 				R.drawable.body_skeleton_walkcycle_east,
-				PlayerAnimations.IDLE_EAST.ordinal(), 1, 0, 64, 64, true);
+				HumanoidAnimations.IDLE_EAST.ordinal(), 1, 0, 64, 64, true);
+		
+		SpriteAnimation spellcastNorth = loadAnimation(
+				R.drawable.body_skeleton_spellcast_north,
+				HumanoidAnimations.ATTACK_SPELL_NORTH.ordinal(), 7, 0, 64, 64, true);	
+		SpriteAnimation spellcastSouth = loadAnimation(
+				R.drawable.body_skeleton_spellcast_south,
+				HumanoidAnimations.ATTACK_SPELL_SOUTH.ordinal(), 7, 0, 64, 64, true);
+		SpriteAnimation spellcastWest = loadAnimation(
+				R.drawable.body_skeleton_spellcast_west,
+				HumanoidAnimations.ATTACK_SPELL_WEST.ordinal(), 7, 0, 64, 64, true);
+		SpriteAnimation spellcastEast = loadAnimation(
+				R.drawable.body_skeleton_spellcast_east,
+				HumanoidAnimations.ATTACK_SPELL_EAST.ordinal(), 7, 0, 64, 64, true);
 		
 
 		objectSpriteComponent.addAnimation(moveNorth);
@@ -299,12 +337,19 @@ public class GameObjectFactory extends BaseObject {
 		objectSpriteComponent.addAnimation(idleSouth);
 		objectSpriteComponent.addAnimation(idleWest);
 		objectSpriteComponent.addAnimation(idleEast);
-		
+		objectSpriteComponent.addAnimation(spellcastNorth);
+		objectSpriteComponent.addAnimation(spellcastSouth);
+		objectSpriteComponent.addAnimation(spellcastWest);
+		objectSpriteComponent.addAnimation(spellcastEast);
+																			
 
 		objectSpriteComponent.setSize((int) object.width, (int) object.height);
 		objectSpriteComponent.setRenderComponent(objectRenCom);
+		
+		SimpleSpriteUpdater spriteUpdater = new SimpleSpriteUpdater();
+		spriteUpdater.setSprite(objectSpriteComponent);
 
-		objectAnimationComponent.setSprite(objectSpriteComponent);
+		objectAnimationComponent.setSpriteUpdater(spriteUpdater);
 
 		objectRenCom.setPriority(3);
 		
@@ -312,11 +357,7 @@ public class GameObjectFactory extends BaseObject {
 		
 		object.add(objectAnimationComponent);
 		object.add(objectSpriteComponent);
-		
 		object.add(playerComponent);
-		
-//		object.add(gm);
-		
 		object.add(objectRenCom);
 		object.add(backgroundCollisionComponent);
 		
@@ -325,6 +366,65 @@ public class GameObjectFactory extends BaseObject {
 		return object;
 
 	}
+	
+	public GameObject spawnFireball(float positionX, float positionY) {
+				
+		GameObject object = new GameObject();
+		object.getPosition().set(positionX, positionY);
+		object.activationRadius = mTightActivationRadius;
+		object.width = 50;
+		object.height = 50;
+		object.life = 1;
+		
+		SpriteComponent objectSpriteComponent = new SpriteComponent();
+		RenderComponent objectRenCom = new RenderComponent();
+		SimpleAnimationComponent animationCom = new SimpleAnimationComponent();
+		
+		SpriteAnimation moveNorth = loadAnimation(
+				R.drawable.attack_spell_fireball_north,
+				SimpleAnimations.NORTH.ordinal(), 7, 0, 64, 64, true);
+		
+		SpriteAnimation moveSouth = loadAnimation(
+				R.drawable.attack_spell_fireball_south,
+				SimpleAnimations.SOUTH.ordinal(), 8, 0, 64, 64, true);
+		
+		SpriteAnimation moveWest = loadAnimation(
+				R.drawable.attack_spell_fireball_west,
+				SimpleAnimations.WEST.ordinal(), 8, 0, 64, 64, true);
+		
+		SpriteAnimation moveEast = loadAnimation(
+				R.drawable.attack_spell_fireball_east,
+				SimpleAnimations.EAST.ordinal(), 8, 0, 64, 64, true);
+		
+		
+		objectSpriteComponent.addAnimation(moveNorth);
+		objectSpriteComponent.addAnimation(moveSouth);
+		objectSpriteComponent.addAnimation(moveWest);
+		objectSpriteComponent.addAnimation(moveEast);
+		
+		objectSpriteComponent.setSize((int) object.width, (int) object.height);
+		objectSpriteComponent.setRenderComponent(objectRenCom);
+		animationCom.setSpriteComponent(objectSpriteComponent);
+		objectRenCom.setPriority(1000);
+		
+		LifetimeComponent lifetimeCom = new LifetimeComponent();
+		lifetimeCom.setDieOnHitBackground(true);
+		lifetimeCom.setDieWhenInvisible(true);
+		
+		MovementComponent movementCom = new MovementComponent();	
+		SimpleCollisionComponent collisionCom = new SimpleCollisionComponent();
+		
+		object.add(objectSpriteComponent);
+		object.add(objectRenCom);
+		object.add(animationCom);
+		
+		object.add(lifetimeCom);
+		object.add(movementCom);
+		object.add(collisionCom);
+				
+		object.setCurrentAction(ActionType.MOVE);
+		return object;
+	}
 
 	private SpriteAnimation loadAnimation(int rID, int animationID,
 			int frames, int offset, int frameHeight, int frameWidth,
@@ -332,10 +432,8 @@ public class GameObjectFactory extends BaseObject {
 
 		SpriteAnimation animation = new SpriteAnimation(animationID, frames);
 
-		Texture tex = BaseObject.sSystemRegistry.shortTermTextureLibrary
+		Texture tex = BaseObject.sSystemRegistry.longTermTextureLibrary
 				.allocateTexture(rID);
-
-		Log.v("SnowBAll", "RID " + tex.resource);
 
 		for (int i = 0; i < frames; ++i) {
 
@@ -345,11 +443,11 @@ public class GameObjectFactory extends BaseObject {
 			crop[2] = frameWidth;
 			crop[3] = frameHeight;
 
-			AnimationFrame frame = new AnimationFrame(tex, 0.1f);
+			AnimationFrame frame = new AnimationFrame(tex, .1f);
 			frame.mCrop = crop;
 			animation.addFrame(frame);
 		}
-		animation.setLoop(true);
+		animation.setLoop(loop);
 		return animation;
 	}
 

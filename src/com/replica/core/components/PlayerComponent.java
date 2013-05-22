@@ -18,6 +18,8 @@ package com.replica.core.components;
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.GameObject.ActionType;
+import com.replica.core.GameObjectFactory;
+import com.replica.core.GameObjectManager;
 import com.replica.core.collision.CollisionParameters;
 import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.input.InputDPad;
@@ -30,7 +32,7 @@ public class PlayerComponent extends GameComponent {
 
 
 	private static final float HIT_REACT_TIME = 0;
-	private final float GHOST_MOVEMENT_SPEED = 2.0f;
+	private final float PLAYER_MOVEMENT_SPEED = 2.0f;
 
 	public enum State {
 		MOVE, 
@@ -42,12 +44,11 @@ public class PlayerComponent extends GameComponent {
 	
 	private State mState;
 	private float mTimer;
-	private float mTimer2;
 
 	private InventoryComponent mInventory;
 	private Vector2 mHotSpotTestPoint;
 	private HitReactionComponent mHitReaction;
-	
+	private LaunchProjectileComponent mlauncher;
 
 	public PlayerComponent() {
 		super();
@@ -60,7 +61,6 @@ public class PlayerComponent extends GameComponent {
 	public void reset() {
 		mState = State.MOVE;
 		mTimer = 0.0f;
-		mTimer2 = 0.0f;
 		mInventory = null;
 		mHotSpotTestPoint.zero();
 		mHitReaction = null;
@@ -72,41 +72,48 @@ public class PlayerComponent extends GameComponent {
 
 		if (pool != null && input != null) {
 			
-			Vector2 pos = ((GameObject) parentObject).getPosition();
-
-			float deltaX = 0;
-			float deltaY = 0;
-
+			Vector2 pos = parentObject.getPosition();
+			
 			InputDPad dpad = input.getDpad();
 			if (dpad.pressed()) {
+				
+				Vector2 facingDir = parentObject.facingDirection;
+				facingDir.zero();
+				float deltaX = 0;
+				float deltaY = 0;
+				
 				if (dpad.upPressed()) {
-					deltaY += GHOST_MOVEMENT_SPEED;
+					deltaY += 1;
+					facingDir.y = 1;
 				} else if (dpad.downPressed()) {
-					deltaY += -GHOST_MOVEMENT_SPEED;
-				}
-				if (dpad.leftPressed()) {
-					deltaX += -GHOST_MOVEMENT_SPEED;
+					deltaY += -1;
+					facingDir.y = -1;
+				} else if (dpad.leftPressed()) {
+					deltaX += -1;
+					facingDir.x = -1;
 				} else if (dpad.rightPressed()) {
-					deltaX += GHOST_MOVEMENT_SPEED;
+					deltaX += 1;
+					facingDir.x = 1;
 				}
 
-				Vector2 d = pool.allocate();
-				d.set(deltaX, deltaY);
-				d.normalize();
-				d.multiply(GHOST_MOVEMENT_SPEED);
+				Vector2 directionDelta = pool.allocate();
+				directionDelta.set(deltaX, deltaY);
+				directionDelta.normalize();
+				directionDelta.multiply(PLAYER_MOVEMENT_SPEED);
 
-				pos.y += d.y;
-				pos.x += d.x;
+				pos.y += directionDelta.y;
+				pos.x += directionDelta.x;
 				
-				pool.release(d);
-				
+				pool.release(directionDelta);
+
 				parentObject.setCurrentAction(ActionType.MOVE);
 			} else {
 				parentObject.setCurrentAction(ActionType.IDLE);
 			}
 		}
 	}
-
+	
+	@Override
 	public void update(float timeDelta, BaseObject parent) {
 
 		TimeSystem time = sSystemRegistry.timeSystem;
@@ -122,17 +129,11 @@ public class PlayerComponent extends GameComponent {
 		if (mState != State.DEAD) {
 			if (parentObject.life <= 0) {
 				gotoDead(gameTime);
-			} else if (parentObject.getPosition().y < -parentObject.height) {
-				// we fell off the bottom of the screen, die.
-				parentObject.life = 0;
-				gotoDead(gameTime);
 			} else if (mState != State.HIT_REACT
 					&& parentObject.lastReceivedHitType != HitType.INVALID
 					&& parentObject.getCurrentAction() == ActionType.HIT_REACT) {
 				gotoHitReact(parentObject, gameTime);
-			} else {
-
-			}
+			} 
 		}
 
 		switch (mState) {
@@ -154,27 +155,59 @@ public class PlayerComponent extends GameComponent {
 		default:
 			break;
 		}
-
-		// update hud relevent items
-
 	}
 
 	protected void goToAttack(GameObject parentObject) {
-		parentObject.setCurrentAction(GameObject.ActionType.MOVE);
+		
+//		if (parentObject.currentAttack == null) {
+//			gotoMove(parentObject);
+//			return;
+//		}
+		
+		parentObject.setCurrentAction(GameObject.ActionType.ATTACK);
 		mState = State.ATTACK;
+		mTimer = -1.0f;	
 	}
 	
 	private void stateAttack(float gameTime, float timeDelta,
 			GameObject parentObject) {
-		parentObject.setCurrentAction(GameObject.ActionType.ATTACK);
 		
+		if (mTimer < 0.0f) {
+            mTimer = gameTime;
+        } 
+//		parentObject.currentAttack.castTime
+		if (gameTime - mTimer >= 0.5f) {
+			GameObjectFactory factory = sSystemRegistry.gameObjectFactory;
+            GameObjectManager manager = sSystemRegistry.gameObjectManager;
+            VectorPool pool = sSystemRegistry.vectorPool;
+            
+            
+            
+            GameObject object = factory.spawnFireball(
+            		parentObject.getPosition().x, parentObject.getPosition().y);
+            
+            Vector2 vel = pool.allocate();
+            vel.set(parentObject.facingDirection);
+            vel.multiply(300);
+            
+            object.setVelocity(vel);
+            object.facingDirection.set(parentObject.facingDirection);
+            pool.release(vel);
+            
+            manager.add(object);
+            
+			gotoMove(parentObject);
+		}
+		
+		
+		//TODO: attack stuff
 	}
 
-	protected void gotoMove(GameObject parentObject) {
+	private void gotoMove(GameObject parentObject) {
 		mState = State.MOVE;
 	}
 
-	protected void stateMove(float time, float timeDelta,
+	private void stateMove(float time, float timeDelta,
 			GameObject parentObject) {
 
 		move(time, timeDelta, parentObject);
@@ -183,14 +216,14 @@ public class PlayerComponent extends GameComponent {
 
 		// check input buttons here
 		
-		if (input.getButtonPressed()) {
+		if (input.getButtonPressed(0)) {
 			goToAttack(parentObject);
 		}
 		
 
 	}
-
-	protected void gotoHitReact(GameObject parentObject, float time) {
+	
+	private void gotoHitReact(GameObject parentObject, float time) {
 		if (parentObject.lastReceivedHitType == CollisionParameters.HitType.LAUNCH) {
 			if (mState != State.FROZEN) {
 				gotoFrozen(parentObject);
@@ -202,7 +235,7 @@ public class PlayerComponent extends GameComponent {
 		}
 	}
 
-	protected void stateHitReact(float time, float timeDelta,
+	private void stateHitReact(float time, float timeDelta,
 			GameObject parentObject) {
 		// This state just waits until the timer is expired.
 		if (time - mTimer > HIT_REACT_TIME) {
@@ -210,29 +243,29 @@ public class PlayerComponent extends GameComponent {
 		}
 	}
 
-	protected void gotoDead(float time) {
+	private void gotoDead(float time) {
 		mState = State.DEAD;
 		mTimer = time;
 	}
 
-	protected void stateDead(float time, float timeDelta,
+	private void stateDead(float time, float timeDelta,
 			GameObject parentObject) {
 
 		// TODO:what happens on death?
 	}
 
-	protected void gotoFrozen(GameObject parentObject) {
+	private void gotoFrozen(GameObject parentObject) {
 		mState = State.FROZEN;
 		parentObject.setCurrentAction(ActionType.FROZEN);
 	}
 
-	protected void stateFrozen(float time, float timeDelta,
+	private void stateFrozen(float time, float timeDelta,
 			GameObject parentObject) {
 		if (parentObject.getCurrentAction() == ActionType.MOVE) {
 			gotoMove(parentObject);
 		}
 	}
-
+	
 	public final void setInventory(InventoryComponent inventory) {
 		mInventory = inventory;
 	}

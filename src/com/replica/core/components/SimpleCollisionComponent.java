@@ -19,7 +19,7 @@ package com.replica.core.components;
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.systems.CollisionSystem;
-import com.replica.utility.TimeSystem;
+import com.replica.utility.RectF;
 import com.replica.utility.Utils;
 import com.replica.utility.Vector2;
 
@@ -30,6 +30,7 @@ public class SimpleCollisionComponent extends GameComponent {
 	private Vector2 mMovementDirection;
 	private Vector2 mHitPoint;
 	private Vector2 mHitNormal;
+	private RectF   mbounds;
 	
 	public SimpleCollisionComponent() {
 		super();
@@ -39,6 +40,7 @@ public class SimpleCollisionComponent extends GameComponent {
 		mMovementDirection = new Vector2();
 		mHitPoint = new Vector2();
 		mHitNormal = new Vector2();
+		mbounds = new RectF();
 	}
 	
 	@Override
@@ -61,9 +63,15 @@ public class SimpleCollisionComponent extends GameComponent {
         	if (mMovementDirection.length2() > 0.0f) {
         		final CollisionSystem collision = sSystemRegistry.collisionSystem;
         		if (collision != null) {
-        			//FIXME: fix this
-        			final boolean hit = false;//= collision.castRay(mPreviousPosition, mCurrentPosition, 
-//        					mMovementDirection, mHitPoint, mHitNormal, parentObject);
+        			
+        			final float x = parentObject.getPosition().x;
+        			final float y = parentObject.getPosition().y;
+        			final float width = parentObject.width;
+        			final float height = parentObject.height;
+        			mbounds.set(x, y, width, height);
+        			
+        			final boolean hit = CollisionSystem.testBoxAgainstList(
+        					collision.query(mbounds), x, x+width, y+height, y, parentObject, null, null);
         			
         			if (hit) {
         				// snap
@@ -77,8 +85,8 @@ public class SimpleCollisionComponent extends GameComponent {
         					parentObject.getPosition().y = mHitPoint.y - halfHeight;
         				}
         				
-        				
-    	                    
+        				//FIXME: implement background collision normals
+        				mHitNormal.set(1, 1);
     	                parentObject.setBackgroundCollisionNormal(mHitNormal);
     	                    
         			}

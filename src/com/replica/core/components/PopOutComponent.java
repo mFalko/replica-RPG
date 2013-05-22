@@ -78,13 +78,7 @@ public class PopOutComponent extends GameComponent {
                 final float currentTime = time.getGameTime();
                 
                 switch(mState) {
-                    case STATE_HIDDEN:
-                        parentObject.setCurrentAction(GameObject.ActionType.HIDE);
-                        if (mDistance.length2() < (mAppearDistance * mAppearDistance)) {
-                            mState = STATE_VISIBLE;
-                            mLastAttackCompletedTime = currentTime;
-                        }
-                        break;
+        
                     case STATE_VISIBLE:
                         parentObject.setCurrentAction(GameObject.ActionType.IDLE);
                         if (mDistance.length2() > (mHideDistance * mHideDistance)) {

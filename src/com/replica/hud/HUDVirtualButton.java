@@ -5,7 +5,9 @@ import com.replica.core.BaseObject;
 import com.replica.core.graphics.DrawableBitmap;
 import com.replica.core.graphics.Texture;
 import com.replica.core.systems.RenderSystem;
+import com.replica.input.ButtonConstants;
 import com.replica.input.InputGameInterface;
+import com.replica.utility.DebugLog;
 import com.replica.utility.SortConstants;
 import com.replica.utility.Vector2;
 
@@ -42,7 +44,7 @@ public class HUDVirtualButton extends BaseObject {
 		InputGameInterface input = sSystemRegistry.inputGameInterface;
 		
 		
-		if (input.getButtonPressed()) {
+		if (input.getButtonPressed(index_)) {
 			buttonGraphic_.setOpacity(0.85f);
 		} else {
 			buttonGraphic_.setOpacity(0.5f);
@@ -56,7 +58,7 @@ public class HUDVirtualButton extends BaseObject {
 		
 	}
 	
-	void init() {
+	protected void init() {
 //		{
 //		// first time init
 //		buttonGloss_.setTexture(sSystemRegistry.shortTermTextureLibrary
@@ -77,6 +79,14 @@ public class HUDVirtualButton extends BaseObject {
 		}
 	}
 	
+	public void setIndex(int index) {
+		if (index < 0 || index >= ButtonConstants.GAME_BUTTON_COUNT) {
+			DebugLog.v("Input Interface", "Invalid Button Index");
+			return;
+		}
+		index_ = index;
+	}
+	
 	public enum ButtonShape {
 		RECTANGLE,
 		CIRCLE
@@ -89,5 +99,6 @@ public class HUDVirtualButton extends BaseObject {
 	private Vector2 position_ = new Vector2();
 	private float width_;
 	private float height_;
+	private int index_ = -1;
 	
 }

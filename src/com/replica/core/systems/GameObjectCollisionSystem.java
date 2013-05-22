@@ -27,6 +27,7 @@ import com.replica.core.collision.CollisionVolume;
 import com.replica.core.components.HitReactionComponent;
 import com.replica.utility.DebugSystem;
 import com.replica.utility.FixedSizeArray;
+import com.replica.utility.ShellSorter;
 import com.replica.utility.TObjectPool;
 import com.replica.utility.Vector2;
 
@@ -59,7 +60,7 @@ public class GameObjectCollisionSystem extends BaseObject {
         super();
         mObjects = new FixedSizeArray<CollisionVolumeRecord>(MAX_COLLIDING_OBJECTS);
         mObjects.setComparator(sCollisionVolumeComparator);
-        //mObjects.setSorter(new ShellSorter<CollisionVolumeRecord>());
+        mObjects.setSorter(new ShellSorter<CollisionVolumeRecord>());
         mRecordPool = new CollisionVolumeRecordPool(COLLISION_RECORD_POOL_SIZE);
     }
     

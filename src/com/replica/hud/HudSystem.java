@@ -18,6 +18,8 @@ package com.replica.hud;
 
 import com.replica.core.BaseObject;
 import com.replica.core.GameObjectManager;
+import com.replica.input.ButtonConstants;
+import com.replica.input.InputGameInterface;
 
 /**
  * A very simple manager for orthographic in-game UI elements. TODO: This should
@@ -40,8 +42,11 @@ public class HudSystem extends BaseObject {
 
 	@Override
 	public void reset() {
-
-		dpad.reset();
+		for (int i = 0; i < attackButtons_.length; ++i) {
+			attackButtons_[i].reset();
+		}
+		menuButton_.reset();
+		dpad_.reset();
 
 	}
 
@@ -61,10 +66,11 @@ public class HudSystem extends BaseObject {
 
 		if (useTouchInterface_) {
 
-			dpad.update(timeDelta, this);
-//			for (int i = 0; i < attackButtons_.length; ++i) {
-				attackButtons_[0].update(timeDelta, this);
-//			}
+			dpad_.update(timeDelta, this);
+			menuButton_.update(timeDelta, this);
+			for (int i = 0; i < attackButtons_.length; ++i) {
+				attackButtons_[i].update(timeDelta, this);
+			}
 			
 			
 		}
@@ -72,27 +78,68 @@ public class HudSystem extends BaseObject {
 	}
 
 	private void init() {
-		dpad.init();
+		dpad_.init();
+		menuButton_.init();
 		for (int i = 0; i < attackButtons_.length; ++i) {
 			attackButtons_[i].init();
 		}
 	}
 	
-	public void setTouchDPadBounds(float x, float y, float width, float height) {
-		dpad.setBounds(x, y, width, height);
+	
+
+	public void registerTouchInput(InputGameInterface inputInterface, int viewWidth, int viewHeight) {
+		
+		dpad_.setBounds(ButtonConstants.D_PAD_REGION_X,
+						ButtonConstants.D_PAD_REGION_Y,
+						ButtonConstants.D_PAD_REGION_WIDTH,
+						ButtonConstants.D_PAD_REGION_HEIGHT);
+		inputInterface.setDpadLocation(ButtonConstants.D_PAD_REGION_X,
+										ButtonConstants.D_PAD_REGION_Y,
+										ButtonConstants.D_PAD_REGION_WIDTH,
+										ButtonConstants.D_PAD_REGION_HEIGHT);
+		
+		int padding = ButtonConstants.BUTTON_PADDING;
+		int buttonWidth = ButtonConstants.GAME_BUTTON_WIDTH;
+		int buttonHeight = ButtonConstants.GAME_BUTTON_HEIGHT;
+		
+		int startX = viewWidth - buttonWidth - padding;
+		int startY = padding;
+		
+		int height = 0;
+		for (int i = 0; i < attackButtons_.length; ++i) {
+			if (height >= ButtonConstants.BUTTON_COLUMN_HEIGHT) {
+				startX -= buttonWidth + padding;
+				startY = padding;
+				height = 0;
+			}
+			
+			attackButtons_[i].setBounds(startX, startY, buttonWidth, buttonHeight);
+			attackButtons_[i].setIndex(i);
+			
+			inputInterface.setGameButtonLocation(i, startX, startY, buttonWidth, buttonHeight);
+			
+			startY += buttonHeight + padding;
+			++height;
+		}
+		
+		menuButton_.setBounds(viewWidth - ButtonConstants.MENU_BUTTON_WIDTH - padding,
+				viewHeight - ButtonConstants.MENU_BUTTON_HEIGHT - padding,
+				ButtonConstants.MENU_BUTTON_WIDTH,
+				ButtonConstants.MENU_BUTTON_HEIGHT);
+		
+		inputInterface.setMenuButtonLocation(viewWidth - ButtonConstants.MENU_BUTTON_WIDTH - padding,
+				viewHeight - ButtonConstants.MENU_BUTTON_HEIGHT - padding,
+				ButtonConstants.MENU_BUTTON_WIDTH,
+				ButtonConstants.MENU_BUTTON_HEIGHT);
 	}
 	
-	public void setAttackButtonBounds(int button, float x, float y, float width, float height) {
-		attackButtons_[button].setBounds(x, y, width, height);
-	}
 
-	// Begin private members
 	private boolean useTouchInterface_ = true;
 	private boolean firstRun_ = true;
-	private HUDVirtualDPad dpad = new HUDVirtualDPad();
+	private HUDVirtualDPad dpad_ = new HUDVirtualDPad();
+	private HUDVirtualButton menuButton_ = new HUDVirtualButton();
+	private HUDVirtualButton[] attackButtons_ = new HUDVirtualButton[ButtonConstants.GAME_BUTTON_COUNT];
+
 	
-	private HUDVirtualButton[] attackButtons_ = new HUDVirtualButton[4];
-	
-	// End private members
 
 }

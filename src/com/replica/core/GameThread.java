@@ -18,6 +18,7 @@ package com.replica.core;
 
 import android.os.SystemClock;
 
+import com.replica.core.Game.GameState;
 import com.replica.core.graphics.GameRenderer;
 import com.replica.core.systems.CameraSystem;
 import com.replica.core.systems.SoundSystem;
@@ -33,12 +34,15 @@ public class GameThread implements Runnable {
     private long mLastTime;
     
     private ObjectManager mGameRoot;
+    private ObjectManager mMenuRoot;
     private GameRenderer mRenderer;
     private Object mPauseLock;
     private boolean mFinished;
     private boolean mPaused = false;
     private int mProfileFrames;
     private long mProfileTime;
+    
+    private GameState mGameState = GameState.INGAME;
     
     private static final float PROFILE_REPORT_DELAY = 3.0f;
     
@@ -66,16 +70,26 @@ public class GameThread implements Runnable {
                         secondsDelta = 0.1f;
                     }
                     mLastTime = time;
-    
-                    mGameRoot.update(secondsDelta, null);
-    
-                    CameraSystem camera = BaseObject.sSystemRegistry.cameraSystem;
+                    
                     float x = 0.0f;
                     float y = 0.0f;
-                    if (camera != null) {
-                    	x = camera.getFocusPositionX();
-                    	y = camera.getFocusPositionY();
+                    
+                    switch (mGameState) {
+                    case INGAME:
+                    	mGameRoot.update(secondsDelta, null);
+    
+	                    CameraSystem camera = BaseObject.sSystemRegistry.cameraSystem;
+	                    if (camera != null) {
+	                    	x = camera.getFocusPositionX();
+	                    	y = camera.getFocusPositionY();
+	                    }
+                    	break;
+                    	
+                    case MENU:
+                    	
+                    	break;
                     }
+                    
                     BaseObject.sSystemRegistry.renderSystem.swap(mRenderer, x, y);
                     
                     final long endTime = SystemClock.uptimeMillis();
@@ -153,6 +167,10 @@ public class GameThread implements Runnable {
 
     public void setGameRoot(ObjectManager gameRoot) {
         mGameRoot = gameRoot;
+    }
+    
+    public void setMenuRoot(ObjectManager menuRoot) {
+        mMenuRoot = menuRoot;
     }
     
 }

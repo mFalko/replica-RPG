@@ -51,9 +51,9 @@ public class HitReactionComponent extends GameComponent {
     private boolean mInvincible;
     private boolean mDieOnCollect;
     private boolean mDieOnAttack;
-//    private ChangeComponentsComponent mPossessionComponent;
+    private ChangeComponentsComponent mPossessionComponent;
 //    private InventoryComponent.UpdateRecord mInventoryUpdate;
-//    private LauncherComponent mLauncherComponent;
+    private LauncherComponent mLauncherComponent;
 //    private int mLauncherHitType;
     private float mInvincibleTime;
     private int mGameEventHitType;
@@ -182,7 +182,9 @@ public class HitReactionComponent extends GameComponent {
                 // don't hit our friends, if we have friends.
                 final boolean sameTeam = (parent.team == attacker.team && parent.team != Team.NONE);
                 if (!mForceInvincibility && !mInvincible && parent.life > 0 && !sameTeam) {
-                    parent.life -= 1;
+                	
+//                	attacker.currentAttack.attack_.attack(parent);
+
 
                     if (mBounceOnHit && parent.life > 0) {
                         VectorPool pool = sSystemRegistry.vectorPool;

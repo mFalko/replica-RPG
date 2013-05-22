@@ -23,7 +23,7 @@ public class InputTouchButton extends BaseObject {
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-		
+		button_.reset();
 	}
 	
 	@Override
@@ -44,8 +44,28 @@ public class InputTouchButton extends BaseObject {
 		return button_.getPressed();
 	}
 	
+	public final float getPressedDuration(float currentTime) {
+		return button_.getPressedDuration(currentTime);
+	}
+	
+	public final float getMagnitude() {
+		return button_.getMagnitude();
+	}
+	
+	public void release() {
+		button_.release();
+	}
+	
+	public boolean containsPoint(float x, float y){
+		return x >= position_.x 
+				&& x <= position_.x + width_ 
+				&& y >= position_.y
+				&& y <= position_.y + height_;
+	}
+	
 	private InputButton button_ = new InputButton();
 	private Vector2 position_ = new Vector2();
 	private float width_;
 	private float height_;
+	
 }

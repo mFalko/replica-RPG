@@ -166,17 +166,17 @@ public class TileSet extends BaseObject{
 	private int tileWidth_;
 	private int tileHeight_;
 	
-	private static long FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
-	private static long FLIPPED_VERTICALLY_FLAG = 0x40000000;
-	private static long FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+	private static final long FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+	private static final long FLIPPED_VERTICALLY_FLAG = 0x40000000;
+	private static final long FLIPPED_DIAGONALLY_FLAG = 0x20000000;
 
 	protected class Sheet {
 		public Sheet(int firstGID, Texture texture) {
 			firstGID_ = firstGID;
 			texture_ = texture;
 		}
-		public int firstGID_;
-		public Texture texture_;
+		public final int firstGID_;
+		public final Texture texture_;
 	}
 
 	

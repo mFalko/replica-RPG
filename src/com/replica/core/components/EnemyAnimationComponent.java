@@ -80,8 +80,7 @@ public class EnemyAnimationComponent extends GameComponent {
                     
                     if (currentAction == GameObject.ActionType.ATTACK) {
                         mState = AnimationState.ATTACKING;
-                    } else if (currentAction == GameObject.ActionType.HIDE) {
-                        mState = AnimationState.HIDING;
+                    
                     } else if (Math.abs(velocityX) > 0.0f) {
                         mState = AnimationState.MOVING;
                     } 
@@ -101,8 +100,7 @@ public class EnemyAnimationComponent extends GameComponent {
                     }
                     if (currentAction == GameObject.ActionType.ATTACK) {
                         mState = AnimationState.ATTACKING;
-                    } else if (currentAction == GameObject.ActionType.HIDE) {
-                        mState = AnimationState.HIDING;
+                   
                     } else if (Math.abs(velocityX) == 0.0f) {
                         mState = AnimationState.IDLING;
                     }
@@ -114,12 +112,7 @@ public class EnemyAnimationComponent extends GameComponent {
                         mState = AnimationState.IDLING;
                     }
                     break;
-                case HIDING:
-                    mSprite.playAnimation(EnemyAnimations.HIDDEN.ordinal());
-                    if (currentAction != GameObject.ActionType.HIDE) {
-                        mState = AnimationState.APPEARING;
-                    }
-                    break;
+        
                 case APPEARING:
                     if (mFacePlayer) {
                         facePlayer(parentObject);
