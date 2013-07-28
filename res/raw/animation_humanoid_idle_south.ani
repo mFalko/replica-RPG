@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<animation frameHeight="64" frameWidth="64" frames="1" offset="0" loop="true">
+    <attackVolumes>
+        <volumeGroup count="1" frame="0">
+            <aabb height="5" hitType="64" width="25" x="20" y="2"/>
+        </volumeGroup>
+    </attackVolumes>
+    <vulnerabilityVolumes>
+        <volumeGroup count="4" frame="0">
+            <aabb height="13" hitType="111" width="26" x="18" y="15"/>
+            <aabb height="11" hitType="47" width="6" x="36" y="2"/>
+            <aabb height="18" hitType="111" width="17" x="23" y="30"/>
+            <aabb height="11" hitType="47" width="7" x="22" y="2"/>
+        </volumeGroup>
+    </vulnerabilityVolumes>
+</animation>

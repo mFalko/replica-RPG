@@ -18,6 +18,8 @@ package com.replica.core.systems;
 
 import java.util.Comparator;
 
+import android.util.Log;
+
 import com.replica.core.AllocationGuard;
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
@@ -89,13 +91,14 @@ public class GameObjectCollisionSystem extends BaseObject {
      * @param attackVolumes  A list of volumes that can hit other game objects.  May be null.
      * @param vulnerabilityVolumes  A list of volumes that can receive hits from other game objects.
      * May be null.
+     * @param doFlip 
      */
     public void registerForCollisions(GameObject object, 
             HitReactionComponent reactionComponent,
             CollisionVolume boundingVolume,
             FixedSizeArray<CollisionVolume> attackVolumes,
-            FixedSizeArray<CollisionVolume> vulnerabilityVolumes) {
-        CollisionVolumeRecord record = mRecordPool.allocate();
+            FixedSizeArray<CollisionVolume> vulnerabilityVolumes, boolean doFlip) {
+    	CollisionVolumeRecord record = mRecordPool.allocate();
         if (record != null && object != null && boundingVolume != null 
                 && (attackVolumes != null || vulnerabilityVolumes != null)) {
             record.object = object;
@@ -103,6 +106,7 @@ public class GameObjectCollisionSystem extends BaseObject {
             record.attackVolumes = attackVolumes;
             record.vulnerabilityVolumes = vulnerabilityVolumes;
             record.reactionComponent = reactionComponent;
+            record.doFlip = doFlip;
             mObjects.add(record);
         }
     }
@@ -116,8 +120,8 @@ public class GameObjectCollisionSystem extends BaseObject {
         for (int x = 0; x < count; x++) {
             final CollisionVolumeRecord record = mObjects.get(x);
             final Vector2 position = record.object.getPosition();
-            sFlip.flipX = (record.object.facingDirection.x < 0.0f);
-            sFlip.flipY = (record.object.facingDirection.y < 0.0f);
+            sFlip.flipX = record.doFlip && (record.object.facingDirection.x < 0.0f);
+            sFlip.flipY = record.doFlip && (record.object.facingDirection.y < 0.0f);
             sFlip.parentWidth = record.object.width;
             sFlip.parentHeight = record.object.height;
             
@@ -129,8 +133,8 @@ public class GameObjectCollisionSystem extends BaseObject {
             for (int y = x + 1; y < count; y++) {
                 final CollisionVolumeRecord other = mObjects.get(y);
                 final Vector2 otherPosition = other.object.getPosition();
-                sOtherFlip.flipX = (other.object.facingDirection.x < 0.0f);
-                sOtherFlip.flipY = (other.object.facingDirection.y < 0.0f);
+                sOtherFlip.flipX = other.doFlip && (other.object.facingDirection.x < 0.0f);
+                sOtherFlip.flipY = other.doFlip && (other.object.facingDirection.y < 0.0f);
                 sOtherFlip.parentWidth = other.object.width;
                 sOtherFlip.parentHeight = other.object.height;
                 
@@ -163,7 +167,7 @@ public class GameObjectCollisionSystem extends BaseObject {
                                 record.reactionComponent.hitVictim(
                                         record.object, other.object, hit, hitAccepted);
                             }
-                            
+                           
                         }
                         
                         final int hit2 = testAttackAgainstVulnerability(
@@ -176,6 +180,8 @@ public class GameObjectCollisionSystem extends BaseObject {
                         if (hit2 != HitType.INVALID) {
                             boolean hitAccepted = false;
                             if (record.reactionComponent != null) {
+                            	//TODO: Im hitting twice....figure this out!!
+                            	//FIXME: Im hitting twice....figure this out!!
                                 hitAccepted = record.reactionComponent.receivedHit(
                                         record.object, other.object, hit2);
                             }
@@ -213,22 +219,31 @@ public class GameObjectCollisionSystem extends BaseObject {
             Vector2 vulnerabilityPosition,
             CollisionVolume.FlipInfo attackFlip,
             CollisionVolume.FlipInfo vulnerabilityFlip) {
+    	
+    	
         int intersectionType = HitType.INVALID;
+        
         if (attackVolumes != null && vulnerabilityVolumes != null) {
             final int attackCount = attackVolumes.getCount();
+            
             for (int x = 0; x < attackCount && intersectionType == HitType.INVALID; x++) {
                 final CollisionVolume attackVolume = attackVolumes.get(x);
                 final int hitType = attackVolume.getHitType();
+                
                 if (hitType != HitType.INVALID) {
+                	
                     final int vulnerabilityCount = vulnerabilityVolumes.getCount();
                     for (int y = 0; y < vulnerabilityCount; y++) {
+                    	
                         final CollisionVolume vulnerabilityVolume = vulnerabilityVolumes.get(y);
                         final int vulnerableType = vulnerabilityVolume.getHitType();
-                        if (vulnerableType == HitType.INVALID || vulnerableType == hitType) {
+                        if (vulnerableType == HitType.INVALID || (vulnerableType & hitType) > 0) {
+                        	
                             if (attackVolume.intersects(attackPosition, attackFlip,
                                     vulnerabilityVolume, vulnerabilityPosition, 
                                     vulnerabilityFlip)) {
-                                intersectionType = hitType;
+                            	
+                                intersectionType = (vulnerableType & hitType);
                                 break;
                             }
                         }
@@ -252,18 +267,6 @@ public class GameObjectCollisionSystem extends BaseObject {
 	    			DebugSystem.COLOR_OUTLINE);
     	}
     	if (mDrawDebugCollisionVolumes) {
-	    	if (record.attackVolumes != null) {
-	    		final int attackVolumeCount = record.attackVolumes.getCount();
-	    		for (int y = 0; y < attackVolumeCount; y++) {
-	    			CollisionVolume volume = record.attackVolumes.get(y);
-	    			sSystemRegistry.debugSystem.drawShape(
-	    					position.x + volume.getMinXPosition(sFlip), position.y + volume.getMinYPosition(sFlip), 
-	    					volume.getMaxX() - volume.getMinX(), 
-	    					volume.getMaxY() - volume.getMinY(), 
-	    	    			volume.getClass() == AABoxCollisionVolume.class ? DebugSystem.SHAPE_BOX : DebugSystem.SHAPE_CIRCLE,
-	    	    			DebugSystem.COLOR_RED);
-	    		}
-	    	}
 	    	
 	    	if (record.vulnerabilityVolumes != null) {
 	    		final int vulnVolumeCount = record.vulnerabilityVolumes.getCount();
@@ -277,6 +280,22 @@ public class GameObjectCollisionSystem extends BaseObject {
 	    	    			DebugSystem.COLOR_BLUE);
 	    		}
 	    	}
+	    	
+			if (record.attackVolumes != null) {
+				final int attackVolumeCount = record.attackVolumes.getCount();
+				for (int y = 0; y < attackVolumeCount; y++) {
+					CollisionVolume volume = record.attackVolumes.get(y);
+					sSystemRegistry.debugSystem
+							.drawShape(
+									position.x + volume.getMinXPosition(sFlip),
+									position.y + volume.getMinYPosition(sFlip),
+									volume.getMaxX() - volume.getMinX(),
+									volume.getMaxY() - volume.getMinY(),
+									volume.getClass() == AABoxCollisionVolume.class ? DebugSystem.SHAPE_BOX : DebugSystem.SHAPE_CIRCLE,
+									DebugSystem.COLOR_RED);
+				}
+			}
+
     	}
     }
     
@@ -292,6 +311,7 @@ public class GameObjectCollisionSystem extends BaseObject {
         public CollisionVolume boundingVolume;
         public FixedSizeArray<CollisionVolume> attackVolumes;
         public FixedSizeArray<CollisionVolume> vulnerabilityVolumes;
+        public boolean doFlip;
         
         public void reset() {
             object = null;
@@ -299,6 +319,7 @@ public class GameObjectCollisionSystem extends BaseObject {
             vulnerabilityVolumes = null;
             boundingVolume = null;
             reactionComponent = null;
+            doFlip = false;
         }
     }
     

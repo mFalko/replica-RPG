@@ -24,13 +24,14 @@ public final class CollisionParameters {
     // react differently to the intersection depending on the hit type.
 	// TODO: Make this a bit field so that objects can support multiple hit types.
     public final class HitType {
-        public final static int INVALID = 0;    // No type.
-        public final static int HIT = 1;        // Standard hit type.  Life is reduced by 1.
-        public final static int DEATH = 2;      // Causes instant death.
-        public final static int COLLECT = 3;    // Causes collectable objects to be collected by the attacker.
-        public final static int POSSESS = 4;    // Causes possessable objects to become possessed.
-        public final static int DEPRESS = 5;    // A hit indicating that the attacker is pressing into the victim.
-        public final static int LAUNCH = 6;     // A hit indicating that the attacker will launch the victim.
+    	public static final int INVALID = 0;			// No type.
+    	public static final int ATTACK  = 1 << 0;		// Attack runs code from attack class to calculate damage
+    	public static final int DEATH   = 1 << 1;		// Causes instant death.
+    	public static final int LAUNCH  = 1 << 2;		// A hit indicating that the attacker will launch the victim.
+    	public static final int COLLECT = 1 << 3;		// Causes collectable objects to be collected by the attacker.
+    	public static final int PRESS   = 1 << 4;		// A hit indicating that the attacker is pressing into the victim.
+    	public static final int POSSESS = 1 << 5;		// Causes possessable objects to become possessed.
+    	public static final int FLIP    = 1 << 6;		// Used to calulate draw order
     }
     
    

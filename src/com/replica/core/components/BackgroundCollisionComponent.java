@@ -23,6 +23,7 @@ import com.replica.core.GameObject;
 import com.replica.core.collision.HitPoint;
 import com.replica.core.collision.LineSegment;
 import com.replica.core.systems.CollisionSystem;
+import com.replica.utility.DebugSystem;
 import com.replica.utility.FixedSizeArray;
 import com.replica.utility.RectF;
 import com.replica.utility.Vector2;
@@ -91,8 +92,8 @@ public class BackgroundCollisionComponent extends GameComponent {
 	public void setSize(int width, int height) {
 		mWidth = width;
 		mHeight = height;
+		queryRect.set(0, 0, mWidth, mHeight);
 		// TODO: Resize might cause new collisions.
-
 	}
 
 	public void setOffset(int horzOffset, int vertOffset) {
@@ -128,7 +129,7 @@ public class BackgroundCollisionComponent extends GameComponent {
 		}
 		
 		
-		//draw debug boxes
+//		draw debug boxes
 //		FixedSizeArray<LineSegment> segments = sSystemRegistry.zone
 //				.getCollisionLines();
 //		DebugSystem dsys = sSystemRegistry.debugSystem;
@@ -136,12 +137,12 @@ public class BackgroundCollisionComponent extends GameComponent {
 //			RectF segBound = segments.get(i).getBounds();
 //			dsys.drawShape(segBound.left_, segBound.bottom_, segBound.width(),
 //					segBound.height(), DebugSystem.SHAPE_BOX,
-//					DebugSystem.COLOR_OUTLINE);
+//					DebugSystem.COLOR_BLUE);
 //		}
 //		
 //		dsys.drawShape(queryRect.left_, queryRect.bottom_, queryRect.width(),
 //				queryRect.height(), DebugSystem.SHAPE_BOX,
-//				DebugSystem.COLOR_OUTLINE);
+//				DebugSystem.COLOR_BLUE);
 	}
 
 	/** Comparator for hit points. */

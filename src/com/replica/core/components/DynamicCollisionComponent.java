@@ -37,6 +37,7 @@ public class DynamicCollisionComponent extends GameComponent {
     private FixedSizeArray<CollisionVolume> mAttackVolumes;
     private FixedSizeArray<CollisionVolume> mVulnerabilityVolumes;
     private SphereCollisionVolume mBoundingVolume;
+    private boolean doFlip;
     private HitReactionComponent mHitReactionComponent;
     
     public DynamicCollisionComponent() {
@@ -60,7 +61,7 @@ public class DynamicCollisionComponent extends GameComponent {
         GameObjectCollisionSystem collision = sSystemRegistry.gameObjectCollisionSystem;
         if (collision != null && mBoundingVolume.getRadius() > 0.0f) {
             collision.registerForCollisions((GameObject)parent, mHitReactionComponent, mBoundingVolume, 
-                    mAttackVolumes, mVulnerabilityVolumes);
+                    mAttackVolumes, mVulnerabilityVolumes, doFlip);
         }
     }
     
@@ -69,10 +70,11 @@ public class DynamicCollisionComponent extends GameComponent {
     }
     
     public void setCollisionVolumes(FixedSizeArray<CollisionVolume> attackVolumes, 
-            FixedSizeArray<CollisionVolume> vulnerableVolumes) {
+            FixedSizeArray<CollisionVolume> vulnerableVolumes, boolean doFlip) {
         if (mVulnerabilityVolumes != vulnerableVolumes || mAttackVolumes != attackVolumes) {
             mAttackVolumes = attackVolumes;
             mVulnerabilityVolumes = vulnerableVolumes;
+            this.doFlip = doFlip;
             mBoundingVolume.reset();
             if (mAttackVolumes != null) {
                final int count = mAttackVolumes.getCount();
@@ -89,4 +91,5 @@ public class DynamicCollisionComponent extends GameComponent {
              }
         }
     }
+
 }

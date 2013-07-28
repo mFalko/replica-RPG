@@ -19,6 +19,7 @@ package com.replica.core;
 import java.util.ArrayList;
 
 import com.replica.core.collision.HitPointPool;
+import com.replica.core.factory.GameObjectFactory;
 import com.replica.core.graphics.BufferLibrary;
 import com.replica.core.graphics.DrawableFactory;
 import com.replica.core.graphics.TextureLibrary;

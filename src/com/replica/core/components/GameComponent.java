@@ -41,7 +41,7 @@ public abstract class GameComponent extends PhasedObject {
         FRAME_END,              // final cleanup before the next update
     }
     
-    public boolean shared;
+    public boolean shared = false;
     
     public GameComponent() {
         super();

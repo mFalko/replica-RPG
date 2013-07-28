@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<animation frameHeight="64" frameWidth="64" frames="6" offset="0">
+    <attackVolumes>
+        <volumeGroup count="1" frame="0">
+            <aabb height="6" hitType="64" width="51" x="7" y="4"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="1">
+            <aabb height="6" hitType="64" width="51" x="5" y="6"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="2">
+            <aabb height="6" hitType="64" width="51" x="7" y="5"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="3">
+            <aabb height="6" hitType="64" width="51" x="7" y="5"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="4">
+            <aabb height="6" hitType="64" width="51" x="7" y="5"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="5">
+            <aabb height="6" hitType="64" width="51" x="8" y="2"/>
+        </volumeGroup>
+    </attackVolumes>
+    <vulnerabilityVolumes>
+        <volumeGroup count="1" frame="0">
+            <aabb height="42" hitType="64" width="51" x="7" y="15"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="1">
+            <aabb height="43" hitType="64" width="51" x="5" y="16"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="2">
+            <aabb height="38" hitType="64" width="51" x="7" y="14"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="3">
+            <aabb height="31" hitType="64" width="51" x="6" y="15"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="4">
+            <aabb height="18" hitType="64" width="50" x="8" y="15"/>
+        </volumeGroup>
+        <volumeGroup count="1" frame="5">
+            <aabb height="16" hitType="64" width="51" x="7" y="13"/>
+        </volumeGroup>
+    </vulnerabilityVolumes>
+</animation>

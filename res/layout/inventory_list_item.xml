@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+    
+    <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@drawable/text_area_rect_small" />
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="left"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_top_left" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="left"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_horizontal"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_vertical" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_bottom_left" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_horizontal"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_horizontal_medium" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_horizontal"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_horizontal_medium" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_top_right" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_horizontal"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_vertical" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/space"
+                android:gravity="center_vertical"
+                android:scaleType="fitXY"
+                android:src="@drawable/border_bottom_right" />
+        </LinearLayout>
+    </LinearLayout>
+    
+   
+
+</FrameLayout>

@@ -18,7 +18,7 @@ package com.replica.core.components;
 
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
-import com.replica.core.GameObjectFactory;
+import com.replica.core.factory.GameObjectFactory;
 import com.replica.utility.FixedSizeArray;
 
 /** 

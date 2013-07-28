@@ -19,8 +19,9 @@ package com.replica.core.components;
 import com.replica.core.BaseObject;
 import com.replica.core.ContextParameters;
 import com.replica.core.GameObject;
-import com.replica.core.GameObjectFactory;
 import com.replica.core.GameObjectManager;
+import com.replica.core.collision.CollisionParameters.HitType;
+import com.replica.core.factory.GameObjectFactory;
 import com.replica.core.systems.CameraSystem;
 import com.replica.core.systems.SoundSystem;
 import com.replica.core.systems.SoundSystem.Sound;
@@ -163,6 +164,7 @@ public class LifetimeComponent extends GameComponent {
     public final void setDieOnHitBackground(boolean die) {
     	mDieOnHitBackground = die;
     }
+
     
     public final void setDeathSound(Sound deathSound) {
     	mDeathSound = deathSound;

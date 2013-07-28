@@ -2,24 +2,56 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.replica"
     android:versionCode="1"
-    android:versionName="1.0">
+    android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:name="android.permission.INTERNET" />
 
-   <application android:label="@string/code_name"
-        android:icon="@drawable/ic_launcher"
-        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
-        
-     <activity android:name=".SnowBall" android:label="@string/code_name" 
-   				  android:screenOrientation="landscape" 
-     			  android:configChanges="keyboardHidden|orientation" 
-     			  android:launchMode="singleTask">
-     		<intent-filter>
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="16" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/game_icon"
+        android:label="@string/code_name"
+        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+
+        <!-- Main Menu -->
+        <activity
+            android:name="com.replica.menu.MainMenuActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/code_name"
+            android:screenOrientation="landscape" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>	  
-      </activity>  
+            </intent-filter>
+        </activity>
+
+        <!-- Game -->
+        <activity
+            android:name="com.replica.SnowBall"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/code_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name="com.replica.menu.MainGameMenuActivity"
+            android:label="@string/title_activity_main_game_menu" 
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity
+            android:name="com.replica.menu.InventoryActivity"
+            android:label="@string/title_activity_invintory" 
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="landscape">
+        </activity>
     </application>
 
 </manifest>

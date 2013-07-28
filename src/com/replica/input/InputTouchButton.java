@@ -32,12 +32,17 @@ public class InputTouchButton extends BaseObject {
 		final InputTouchScreen touch = input.getTouchScreen();
 		final InputXY buttonTouch = touch.findPointerInRegion(position_.x,
 				position_.y, width_, height_);
+		
 		if (buttonTouch != null) {
 			button_.press(currentTime, 1.0f);
 		} else {
 			button_.release();
 		}
 		
+	}
+	
+	public float getLastPressedTime() {
+		return button_.getLastPressedTime();
 	}
 	
 	public boolean pressed() {

@@ -16,6 +16,7 @@
 
 package com.replica.core.components;
 
+
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.PhasedObjectManager;
@@ -85,6 +86,7 @@ public class SpriteComponent extends GameComponent {
 			return;
 		}
 		
+		
 		mAnimationTime += timeDelta;
 		final PhasedObjectManager animations = mAnimations;
 		final int currentAnimIndex = mCurrentAnimationIndex;
@@ -148,18 +150,22 @@ public class SpriteComponent extends GameComponent {
 				if (mCollisionComponent != null) {
 					mCollisionComponent.setCollisionVolumes(
 							currentFrame.attackVolumes,
-							currentFrame.vulnerabilityVolumes);
+							currentFrame.vulnerabilityVolumes,
+							null == currentFrame.mCrop);
 				}
 			}
 		}
 
 		if (!validFrameAvailable) {
+			
+			
+			
 			// No current frame = draw nothing!
 			if (mRenderComponent != null) {
 				mRenderComponent.setDrawable(null);
 			}
 			if (mCollisionComponent != null) {
-				mCollisionComponent.setCollisionVolumes(null, null);
+				mCollisionComponent.setCollisionVolumes(null, null, false);
 			}
 		}
 	}
@@ -251,7 +257,7 @@ public class SpriteComponent extends GameComponent {
 				mRenderComponent.setDrawable(null);
 			}
 			if (mCollisionComponent != null) {
-				mCollisionComponent.setCollisionVolumes(null, null);
+				mCollisionComponent.setCollisionVolumes(null, null, false);
 			}
 		}
 	}

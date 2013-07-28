@@ -16,6 +16,8 @@
 
 package com.replica.core.systems;
 
+import android.util.Log;
+
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.collision.HitPoint;
@@ -46,6 +48,8 @@ public class CollisionSystem extends BaseObject {
     
     public CollisionSystem() {
         super();
+        
+        //TODO: move static segment quadtree into zone and pass the whole tree to this system
         lineSegmentQuadtree_ = new QuadTree<LineSegment>(MAX_LINE_SEGMENTS);
         temporaryLineSegmentQuadtree_ = new QuadTree<LineSegment>(MAX_TEMPORARY_LINE_SEGMENTS); 
         lineSegmentPool_ = new LineSegmentPool(MAX_TEMPORARY_LINE_SEGMENTS * 2);
@@ -100,6 +104,7 @@ public class CollisionSystem extends BaseObject {
     	lineSegmentsQuery_.clear();
     	lineSegmentQuadtree_.Query(queryRect, lineSegmentsQuery_);
     	temporaryLineSegmentQuadtree_.Query(queryRect, lineSegmentsQuery_);
+
     	return lineSegmentsQuery_;
     }
     
@@ -127,7 +132,6 @@ public class CollisionSystem extends BaseObject {
         }
         pendingTemporaryLineSegments_.clear();
         
-//        lineSegmentQuadtree_.debugDraw();
     }
 
     /* 
@@ -158,7 +162,7 @@ public class CollisionSystem extends BaseObject {
                     foundHit = true;
 //                    normalX = segment.mNormal.x;
 //                    normalY = segment.mNormal.y;
-                    // Store the components on their own so we don't have to allocate a vector
+                    // TODO: Store the components on their own so we don't have to allocate a vector
                     // in this loop.
                     hitX = hitPoint.x;
                     hitY = hitPoint.y;

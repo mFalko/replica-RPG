@@ -276,4 +276,46 @@ public class FixedSizeArray<T> extends AllocationGuard {
     public void setSorter(Sorter<T> sorter) {
         mSorter = sorter;
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(mContents);
+		result = prime * result + mCount;
+		result = prime * result + (mSorted ? 1231 : 1237);
+		result = prime * result + ((mSorter == null) ? 0 : mSorter.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		FixedSizeArray<?> other = (FixedSizeArray<?>) obj;
+		if (!Arrays.equals(mContents, other.mContents)) {
+			return false;
+		}
+		if (mCount != other.mCount) {
+			return false;
+		}
+		if (mSorted != other.mSorted) {
+			return false;
+		}
+		
+		return true;
+	}
 }

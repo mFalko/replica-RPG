@@ -16,19 +16,26 @@
 
 package com.replica.input;
 
+import java.lang.reflect.InvocationTargetException;
+
+import android.content.Context;
+import android.content.Intent;
+
+import com.replica.R;
 import com.replica.core.BaseObject;
+import com.replica.hud.UIConstants;
+import com.replica.menu.MainGameMenuActivity;
 import com.replica.utility.DebugLog;
 
 public class InputGameInterface extends BaseObject {
-	
-	
-	private int pressedButtonIndex_;
 
-	//TODO: add in hard controls, currently only supports touch
-	
-	//touch controls
+	// TODO: add in hard controls, currently only supports touch
+
+	// touch controls
 	private InputDPad dpad_ = new InputDPad();
 	private InputTouchButton[] touchButtons_ = new InputTouchButton[ButtonConstants.TOTAL_BUTTON_COUNT];
+
+	private static final float MENU_BUTTON_TOUCH_DELAY = 0.5f;
 
 	public InputGameInterface() {
 		super();
@@ -50,38 +57,61 @@ public class InputGameInterface extends BaseObject {
 	public void update(float timeDelta, BaseObject parent) {
 
 		final float gameTime = sSystemRegistry.timeSystem.getGameTime();
+		final float lastMenuPress = touchButtons_[ButtonConstants.MENU_BUTTON_INDEX]
+				.getLastPressedTime();
 
 		dpad_.update(gameTime, this);
 		boolean buttonPressed = false;
 		for (int i = 0; i < ButtonConstants.TOTAL_BUTTON_COUNT; ++i) {
 			if (!buttonPressed) {
+				touchButtons_[i].release();
 				touchButtons_[i].update(gameTime, parent);
 				buttonPressed = touchButtons_[i].pressed();
-				pressedButtonIndex_ = buttonPressed? i : -1;
 			} else {
 				touchButtons_[i].release();
-			}	
+			}
 		}
-		
-		if (pressedButtonIndex_ == ButtonConstants.MENU_BUTTON_INDEX) {
-			//TODO: switch game state to menu
+
+		boolean gotoMenu = touchButtons_[ButtonConstants.MENU_BUTTON_INDEX]
+				.pressed();
+		if (gotoMenu && gameTime - lastMenuPress > MENU_BUTTON_TOUCH_DELAY) {
+
+			Context context = BaseObject.sSystemRegistry.contextParameters.context;
+			Intent i = new Intent(context, MainGameMenuActivity.class);
+			context.startActivity(i);
+
+			if (UIConstants.mOverridePendingTransition != null) {
+				try {
+					UIConstants.mOverridePendingTransition.invoke(context,
+							R.anim.activity_fade_in, R.anim.activity_fade_out);
+				} catch (InvocationTargetException ite) {
+					DebugLog.d("Activity Transition",
+							"Invocation Target Exception");
+				} catch (IllegalAccessException ie) {
+					DebugLog.d("Activity Transition",
+							"Illegal Access Exception");
+				}
+			}
 		}
 	}
-	
+
 	public void setDpadLocation(float x, float y, float width, float height) {
 		dpad_.setBounds(x, y, height, width);
 	}
-	
-	public void setGameButtonLocation(int button, float x, float y, float width, float height) {
+
+	public void setGameButtonLocation(int button, float x, float y,
+			float width, float height) {
 		if (button < 0 || button >= ButtonConstants.GAME_BUTTON_COUNT) {
-			DebugLog.v("Input Interface", "Invalid Button Index");
+			// DebugLog.v("Input Interface", "Invalid Button Index");
 			return;
 		}
 		touchButtons_[button].setBounds(x, y, width, height);
 	}
-	
-	public void setMenuButtonLocation(float x, float y, float width, float height) {
-		touchButtons_[ButtonConstants.MENU_BUTTON_INDEX].setBounds(x, y, width, height);
+
+	public void setMenuButtonLocation(float x, float y, float width,
+			float height) {
+		touchButtons_[ButtonConstants.MENU_BUTTON_INDEX].setBounds(x, y, width,
+				height);
 	}
 
 	public InputDPad getDpad() {
@@ -96,22 +126,14 @@ public class InputGameInterface extends BaseObject {
 		// mUseOnScreenControls = onscreen;
 	}
 
-	public boolean getMenuButtonPressed() {
-		return touchButtons_[ButtonConstants.MENU_BUTTON_INDEX].pressed();
-	}
-	
-	public int getGameButtonPressed() {
-		return pressedButtonIndex_;
-	}
-	
 	public boolean getButtonPressed(int index) {
 		if (index < 0 || index >= ButtonConstants.TOTAL_BUTTON_COUNT) {
-			DebugLog.v("Input Interface", "Invalid Button Index");
+			// DebugLog.v("Input Interface", "Invalid Button Index");
 			return false;
 		}
 		return touchButtons_[index].pressed();
 	}
-	
+
 	public int getGameButtonIndex(float x, float y) {
 		int index = -1;
 		for (int i = 0; i < ButtonConstants.GAME_BUTTON_COUNT; ++i) {
@@ -122,7 +144,5 @@ public class InputGameInterface extends BaseObject {
 		}
 		return index;
 	}
-	
-	
 
 }

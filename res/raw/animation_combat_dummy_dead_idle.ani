@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<animation frameHeight="64" frameWidth="64" frames="1" offset="5">
+    <attackVolumes>
+        <volumeGroup count="1" frame="0">
+            <aabb height="6" hitType="64" width="51" x="9" y="3"/>
+        </volumeGroup>
+    </attackVolumes>
+    <vulnerabilityVolumes>
+        <volumeGroup count="1" frame="0">
+            <aabb height="16" hitType="64" width="51" x="8" y="14"/>
+        </volumeGroup>
+    </vulnerabilityVolumes>
+</animation>

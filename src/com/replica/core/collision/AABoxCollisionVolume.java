@@ -63,6 +63,12 @@ public class AABoxCollisionVolume extends CollisionVolume {
         return mBottomLeft.y;
     }
     
+    @Override
+    public String toString() {
+    	
+    	return "X = " + mBottomLeft.x + " : Y = " + mBottomLeft.y + " : Width = " + mWidthHeight.x + " : Height = " + mWidthHeight.y + " : HitType = " + getHitType();
+    }
+    
     /**
      * Calculates the intersection of this volume and another, and returns true if the
      * volumes intersect.  This test treats the other volume as an AABox.

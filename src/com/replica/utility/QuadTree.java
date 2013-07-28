@@ -72,9 +72,14 @@ public class QuadTree<T extends HasBounds> extends AllocationGuard {
 			float right = node.getBounds().right_;
 			float bottom = node.getBounds().bottom_;
 			float halfWidth = (right - left) / 2.0f;
-			float halfHeight = (top - bottom) / 2.0f;
-
-			
+			float halfHeight = (top - bottom) / 2.0f;	
+//			_____________
+//			|  2  |  1  |
+//			|     |     |
+//			-------------
+//			|  3  |  4  |
+//			|     |     |
+//			-------------
 			//public void set(float x, float y, float width, float height)
 			//1
 			node.nodes_.get(0).bounds_.set(left + halfWidth, bottom + halfHeight, halfWidth, halfHeight );
@@ -85,7 +90,6 @@ public class QuadTree<T extends HasBounds> extends AllocationGuard {
 			//4
 			node.nodes_.get(3).bounds_.set(left + halfWidth, bottom             , halfWidth, halfHeight);
 
-			
 			node.partitioned_ = true;
 
 			Iterator<T> iter = node.data_.iterator();

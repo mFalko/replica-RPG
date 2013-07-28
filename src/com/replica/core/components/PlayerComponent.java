@@ -15,13 +15,15 @@
  */
 
 package com.replica.core.components;
+import android.util.Log;
+
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.GameObject.ActionType;
-import com.replica.core.GameObjectFactory;
 import com.replica.core.GameObjectManager;
 import com.replica.core.collision.CollisionParameters;
 import com.replica.core.collision.CollisionParameters.HitType;
+import com.replica.core.factory.GameObjectFactory;
 import com.replica.input.InputDPad;
 import com.replica.input.InputGameInterface;
 import com.replica.utility.TimeSystem;
@@ -107,6 +109,8 @@ public class PlayerComponent extends GameComponent {
 				pool.release(directionDelta);
 
 				parentObject.setCurrentAction(ActionType.MOVE);
+				
+//				Log.v("SnowBall", "Position: X = " + pos.x + " : Y = " + pos.y);
 			} else {
 				parentObject.setCurrentAction(ActionType.IDLE);
 			}
@@ -184,7 +188,7 @@ public class PlayerComponent extends GameComponent {
             
             
             GameObject object = factory.spawnFireball(
-            		parentObject.getPosition().x, parentObject.getPosition().y);
+            		parentObject.getPosition().x + (20*parentObject.facingDirection.x)+10, parentObject.getPosition().y + (10*parentObject.facingDirection.y)+10);
             
             Vector2 vel = pool.allocate();
             vel.set(parentObject.facingDirection);
@@ -224,23 +228,22 @@ public class PlayerComponent extends GameComponent {
 	}
 	
 	private void gotoHitReact(GameObject parentObject, float time) {
-		if (parentObject.lastReceivedHitType == CollisionParameters.HitType.LAUNCH) {
-			if (mState != State.FROZEN) {
-				gotoFrozen(parentObject);
-			}
-		} else {
-			mState = State.HIT_REACT;
-			mTimer = time;
-
-		}
+//		if (parentObject.lastReceivedHitType == CollisionParameters.HitType.LAUNCH) {
+//			if (mState != State.FROZEN) {
+//				gotoFrozen(parentObject);
+//			}
+//		} else {
+//			mState = State.HIT_REACT;
+//			mTimer = time;
+//
+//		}
 	}
 
 	private void stateHitReact(float time, float timeDelta,
 			GameObject parentObject) {
-		// This state just waits until the timer is expired.
-		if (time - mTimer > HIT_REACT_TIME) {
-			gotoMove(parentObject);
-		}
+		
+		//TODO: do different stuff based on the last hit
+		gotoMove(parentObject);
 	}
 
 	private void gotoDead(float time) {

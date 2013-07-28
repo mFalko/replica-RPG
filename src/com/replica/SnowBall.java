@@ -21,13 +21,20 @@ package com.replica;
 
 
 
+import java.lang.reflect.InvocationTargetException;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.replica.core.Game;
 import com.replica.core.graphics.GLSurfaceView;
+import com.replica.hud.UIConstants;
 import com.replica.utility.DebugLog;
 import com.replica.utility.EventReporter;
 
@@ -37,6 +44,12 @@ import com.replica.utility.EventReporter;
  */
 public class SnowBall extends Activity {
 
+	
+	private static final int ROLL_TO_FACE_BUTTON_DELAY = 100;
+    
+    public static final int QUIT_GAME_DIALOG = 0;
+	
+	
 	public static final int VERSION = 1;
 	private Game game_;
 	GLSurfaceView GLView_;
@@ -144,4 +157,91 @@ public class SnowBall extends Activity {
         return true;
 	}
 
+	
+	 @Override
+	    public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    	boolean result = true;
+	    	if (keyCode == KeyEvent.KEYCODE_BACK) {
+				final long time = System.currentTimeMillis();
+	    		if (time - mLastTouchTime > ROLL_TO_FACE_BUTTON_DELAY) {
+	    			showDialog(QUIT_GAME_DIALOG);
+	    			result = true;
+	    		}
+	    	} else if (keyCode == KeyEvent.KEYCODE_MENU) {
+	    		result = true;
+	    		//TODO: implement pause overlay
+	    		if (game_.isPaused()) {
+//	    			hidePauseMessage();
+//	    			game_.onResume(this, true);
+	    		} else {
+	    			final long time = System.currentTimeMillis();
+	    	        if (time - mLastTouchTime > ROLL_TO_FACE_BUTTON_DELAY) {
+//	    	        	showPauseMessage();
+//	    	        	game_.onPause();
+	    	        }
+	    		}
+	    	} else {
+			    result = game_.onKeyDownEvent(keyCode);
+			    // Sleep so that the main thread doesn't get flooded with UI events.
+			    try {
+			        Thread.sleep(4);
+			    } catch (InterruptedException e) {
+			        // No big deal if this sleep is interrupted.
+			    }
+	    	}
+	        return result;
+	    }
+	     
+	    @Override
+	    public boolean onKeyUp(int keyCode, KeyEvent event) {
+	    	boolean result = false;
+	    	if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    		result = true;
+	    	} else if (keyCode == KeyEvent.KEYCODE_MENU){ 
+
+	    	} else {
+	    		result = game_.onKeyUpEvent(keyCode);
+		        // Sleep so that the main thread doesn't get flooded with UI events.
+		        try {
+		            Thread.sleep(4);
+		        } catch (InterruptedException e) {
+		            // No big deal if this sleep is interrupted.
+		        }
+	    	}
+	        return result;
+	    }
+	    
+	    
+	    
+	    
+	    @Override
+	    protected Dialog onCreateDialog(int id) {
+	        Dialog dialog = null;
+	        if (id == QUIT_GAME_DIALOG) {
+	        	//TODO: move strings to strings.xml
+	        	
+	            dialog = new AlertDialog.Builder(this)
+	                .setTitle("Quit")
+	                .setPositiveButton("Quit Game", new DialogInterface.OnClickListener() {
+	                    public void onClick(DialogInterface dialog, int whichButton) {
+	                    	finish();
+	                    	if (UIConstants.mOverridePendingTransition != null) {
+	         	 		       try {
+	         	 		    	  UIConstants.mOverridePendingTransition.invoke(SnowBall.this, R.anim.activity_fade_in, R.anim.activity_fade_out);
+	         	 		       } catch (InvocationTargetException ite) {
+	         	 		           DebugLog.d("Activity Transition", "Invocation Target Exception");
+	         	 		       } catch (IllegalAccessException ie) {
+	         	 		    	   DebugLog.d("Activity Transition", "Illegal Access Exception");
+	         	 		       }
+	         	            }
+	                    }
+	                })
+	                .setNegativeButton("Cancel", null)
+	                .setMessage("Do you want to quit the game?")
+	                .create();
+	        }
+	        return dialog;
+	    }
+	
+	
 }

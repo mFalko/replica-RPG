@@ -18,7 +18,6 @@ package com.replica.core;
 
 import android.os.SystemClock;
 
-import com.replica.core.Game.GameState;
 import com.replica.core.graphics.GameRenderer;
 import com.replica.core.systems.CameraSystem;
 import com.replica.core.systems.SoundSystem;
@@ -34,7 +33,6 @@ public class GameThread implements Runnable {
     private long mLastTime;
     
     private ObjectManager mGameRoot;
-    private ObjectManager mMenuRoot;
     private GameRenderer mRenderer;
     private Object mPauseLock;
     private boolean mFinished;
@@ -42,7 +40,6 @@ public class GameThread implements Runnable {
     private int mProfileFrames;
     private long mProfileTime;
     
-    private GameState mGameState = GameState.INGAME;
     
     private static final float PROFILE_REPORT_DELAY = 3.0f;
     
@@ -71,24 +68,15 @@ public class GameThread implements Runnable {
                     }
                     mLastTime = time;
                     
-                    float x = 0.0f;
-                    float y = 0.0f;
-                    
-                    switch (mGameState) {
-                    case INGAME:
-                    	mGameRoot.update(secondsDelta, null);
-    
-	                    CameraSystem camera = BaseObject.sSystemRegistry.cameraSystem;
-	                    if (camera != null) {
-	                    	x = camera.getFocusPositionX();
-	                    	y = camera.getFocusPositionY();
-	                    }
-                    	break;
-                    	
-                    case MENU:
-                    	
-                    	break;
-                    }
+					mGameRoot.update(secondsDelta, null);
+					float x = 0.0f;
+					float y = 0.0f;
+					CameraSystem camera = BaseObject.sSystemRegistry.cameraSystem;
+					if (camera != null) {
+						x = camera.getFocusPositionX();
+						y = camera.getFocusPositionY();
+					}
+
                     
                     BaseObject.sSystemRegistry.renderSystem.swap(mRenderer, x, y);
                     
@@ -168,9 +156,6 @@ public class GameThread implements Runnable {
     public void setGameRoot(ObjectManager gameRoot) {
         mGameRoot = gameRoot;
     }
-    
-    public void setMenuRoot(ObjectManager menuRoot) {
-        mMenuRoot = menuRoot;
-    }
+
     
 }

@@ -18,6 +18,7 @@ package com.replica.core;
 
 import java.util.Comparator;
 
+import com.replica.core.factory.GameObjectFactory;
 import com.replica.core.systems.CameraSystem;
 import com.replica.utility.FixedSizeArray;
 import com.replica.utility.Vector2;

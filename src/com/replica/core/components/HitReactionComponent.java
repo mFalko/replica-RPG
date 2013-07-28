@@ -16,20 +16,19 @@
 
 package com.replica.core.components;
 
+import android.util.Log;
+
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.GameObject.ActionType;
 import com.replica.core.GameObject.Team;
-import com.replica.core.GameObjectFactory;
-import com.replica.core.GameObjectFactory.GameObjectType;
 import com.replica.core.GameObjectManager;
 import com.replica.core.collision.CollisionParameters;
 import com.replica.core.collision.CollisionParameters.HitType;
+import com.replica.core.factory.GameObjectFactory;
+import com.replica.core.factory.GameObjectFactory.GameObjectType;
 import com.replica.core.systems.SoundSystem;
 import com.replica.utility.TimeSystem;
-import com.replica.utility.Utils;
-import com.replica.utility.Vector2;
-import com.replica.utility.VectorPool;
 
 /** 
  * A general-purpose component that responds to dynamic collision notifications.  This component
@@ -38,27 +37,16 @@ import com.replica.utility.VectorPool;
  * that object to respond to dynamic collisions.
  */
 public class HitReactionComponent extends GameComponent {
-    private static final float ATTACK_PAUSE_DELAY = (1.0f / 60) * 4;
-    private final static float DEFAULT_BOUNCE_MAGNITUDE = 200.0f;
     private final static float EVENT_SEND_DELAY = 5.0f;
-    
-    private boolean mPauseOnAttack;
-    private float mPauseOnAttackTime;
-    private boolean mBounceOnHit;
-    private float mBounceMagnitude;
-    private float mInvincibleAfterHitTime;
+ 
     private float mLastHitTime;
     private boolean mInvincible;
     private boolean mDieOnCollect;
     private boolean mDieOnAttack;
     private ChangeComponentsComponent mPossessionComponent;
-//    private InventoryComponent.UpdateRecord mInventoryUpdate;
     private LauncherComponent mLauncherComponent;
-//    private int mLauncherHitType;
     private float mInvincibleTime;
     private int mGameEventHitType;
-//    private int mGameEventOnHit;
-//    private int mGameEventIndexData;
     private float mLastGameEventTime;
     private boolean mForceInvincibility;
     private SoundSystem.Sound mTakeHitSound;
@@ -80,21 +68,12 @@ public class HitReactionComponent extends GameComponent {
     
     @Override
     public void reset() {
-        mPauseOnAttack = false;
-        mPauseOnAttackTime = ATTACK_PAUSE_DELAY;
-        mBounceOnHit = false;
-        mBounceMagnitude = DEFAULT_BOUNCE_MAGNITUDE;
-        mInvincibleAfterHitTime = 0.0f;
         mInvincible = false;
         mDieOnCollect = false;
         mDieOnAttack = false;
-//        mPossessionComponent = null;
-//        mInventoryUpdate = null;
-//        mLauncherComponent = null;
-//        mLauncherHitType = HitType.LAUNCH;
+        mPossessionComponent = null;
+        mLauncherComponent = null;
         mInvincibleTime = 0.0f;
-//        mGameEventOnHit = -1;
-//        mGameEventIndexData = 0;
         mLastGameEventTime = -1.0f;
         mGameEventHitType = CollisionParameters.HitType.INVALID;
         mForceInvincibility = false;
@@ -110,31 +89,34 @@ public class HitReactionComponent extends GameComponent {
     /** Called when this object attacks another object. */
     public void hitVictim(GameObject parent, GameObject victim, int hitType, 
             boolean hitAccepted) {
+    	
         if (hitAccepted) {
-            if (mPauseOnAttack && hitType == CollisionParameters.HitType.HIT) {
-                TimeSystem time = sSystemRegistry.timeSystem;
-                time.freeze(mPauseOnAttackTime);
-            }
-            
-            if (mDieOnAttack) {
-                parent.life = 0;
-            }
-            
-//            if (hitType == mLauncherHitType && mLauncherComponent != null) {
-//                mLauncherComponent.prepareToLaunch(victim, parent);
-//            }
-            
-            if (mDealHitSound != null && 
-            		(hitType == mDealHitSoundHitType || 
-            				mDealHitSoundHitType == CollisionParameters.HitType.INVALID)) {
-                SoundSystem sound = sSystemRegistry.soundSystem;
-                if (sound != null) {
-                    sound.play(mDealHitSound, false, SoundSystem.PRIORITY_NORMAL);
-                }
-            }
-            
+        	
+        	//attacked the other GO
+        	if (0 != (hitType & HitType.ATTACK)) {
+				if (mDieOnAttack) {
+					parent.life = 0;
+				}
+//				parent.currentAttack.attack_.onAttack(); 
+				//TODO: have an attack callback? If one is needed put it here
+        	}
+        	
+        	//Launch the other object
+			if (0 != (hitType & HitType.LAUNCH) && mLauncherComponent != null) {
+				mLauncherComponent.prepareToLaunch(victim, parent);
+			}
+        	
+			if (mDealHitSound != null
+					&& (0 !=(hitType &  mDealHitSoundHitType) || mDealHitSoundHitType == CollisionParameters.HitType.INVALID)) {
+				SoundSystem sound = sSystemRegistry.soundSystem;
+				if (sound != null) {
+					sound.play(mDealHitSound, false,
+							SoundSystem.PRIORITY_NORMAL);
+				}
+			}
+
             if (mSpawnOnDealHitObjectType != GameObjectType.INVALID && 
-                    hitType == mSpawnOnDealHitHitType) {
+                    0 != (hitType & mSpawnOnDealHitHitType)) {
                 final float x = mAlignDealHitObjectToVictimX ? 
                         victim.getPosition().x : parent.getPosition().x;
                 final float y = mAlignDealHitObjectToVictimY ? 
@@ -152,6 +134,7 @@ public class HitReactionComponent extends GameComponent {
                     }
                 }
             }
+  
         }
     }
     
@@ -159,12 +142,11 @@ public class HitReactionComponent extends GameComponent {
     public boolean receivedHit(GameObject parent, GameObject attacker, int hitType) {
         final TimeSystem time = sSystemRegistry.timeSystem;
         final float gameTime = time.getGameTime();
-         
-        if (mGameEventHitType == hitType && 
+ 
+        if (0 != (mGameEventHitType & hitType) && 
                 mGameEventHitType != CollisionParameters.HitType.INVALID ) {
         	if (mLastGameEventTime < 0.0f || gameTime > mLastGameEventTime + EVENT_SEND_DELAY) {
-//	            LevelSystem level = sSystemRegistry.levelSystem;
-//	            level.sendGameEvent(mGameEventOnHit, mGameEventIndexData, true);
+				//TODO: wth do I do w/ game events
 	        } else {
 	        	// special case.  If we're waiting for a hit type to spawn an event and
 	        	// another event has just happened, eat this hit so we don't miss
@@ -174,72 +156,76 @@ public class HitReactionComponent extends GameComponent {
         	mLastGameEventTime = gameTime;
         }
         
-        switch(hitType) {
-            case CollisionParameters.HitType.INVALID:
-                break;
-            
-            case CollisionParameters.HitType.HIT:
-                // don't hit our friends, if we have friends.
-                final boolean sameTeam = (parent.team == attacker.team && parent.team != Team.NONE);
-                if (!mForceInvincibility && !mInvincible && parent.life > 0 && !sameTeam) {
-                	
-//                	attacker.currentAttack.attack_.attack(parent);
-
-
-                    if (mBounceOnHit && parent.life > 0) {
-                        VectorPool pool = sSystemRegistry.vectorPool;
-                        Vector2 newVelocity = pool.allocate(parent.getPosition());
-                        newVelocity.subtract(attacker.getPosition());
-                        newVelocity.set(0.5f * Utils.sign(newVelocity.x), 
-                                0.5f * Utils.sign(newVelocity.y));
-                        newVelocity.multiply(mBounceMagnitude);
-                        parent.setVelocity(newVelocity);
-                        parent.getTargetVelocity().zero();
-                        pool.release(newVelocity);
-                    }
-
-                    if (mInvincibleAfterHitTime > 0.0f) {
-                        mInvincible = true;
-                        mInvincibleTime = mInvincibleAfterHitTime;
-                    }
-                    
-                } else {
-                    // Ignore this hit.
-                    hitType = CollisionParameters.HitType.INVALID;
-                }
-                break;
-            case CollisionParameters.HitType.DEATH:
-                // respect teams?
-                parent.life = 0;
-                break;
-            case CollisionParameters.HitType.COLLECT:
-//                if (mInventoryUpdate != null && parent.life > 0) {
-//                    InventoryComponent attackerInventory = attacker.findByClass(InventoryComponent.class);
-//                    if (attackerInventory != null) {
-//                        attackerInventory.applyUpdate(mInventoryUpdate);
-//                    }
-//                }
-                if (mDieOnCollect && parent.life > 0) {
-                    parent.life = 0;
-                } 
-                break;
-            case CollisionParameters.HitType.POSSESS:
-//                if (mPossessionComponent != null && parent.life > 0 && attacker.life > 0) {
-//                    mPossessionComponent.activate(parent);
-//                } else {
-//                    hitType = CollisionParameters.HitType.INVALID;
-//                }
-                break;
-            case CollisionParameters.HitType.LAUNCH:   
-                break;
-                
-            default:
-                break;
+        // don't hit our friends, if we have friends.
+        final boolean sameTeam = (parent.team == attacker.team && parent.team != Team.NONE);
+        if (0 != (hitType & HitType.ATTACK)) {
+			if (!mForceInvincibility && !mInvincible && parent.life > 0 && !sameTeam) {
+				//TODO: attack logic goes here
+				parent.life -=20; 
+				Log.v("SnowBall", "Life = " + parent.life);
+			} else {
+				// Ignore this hit.
+				hitType = CollisionParameters.HitType.INVALID;
+			}
         }
         
+        if (0 != (hitType & HitType.DEATH)) {
+        	if (!sameTeam) {
+        		parent.life = 0;
+        	}
+        }
+        
+        if (0 != (hitType & HitType.LAUNCH)) {
+        	
+        }
+
+		if (0 != (hitType & HitType.COLLECT)) {
+			if (parent.life > 0) {
+				InventoryComponent attackerInventory = attacker
+						.findByClass(InventoryComponent.class);
+				if (attackerInventory != null) {
+					//TODO: add item into attacker inventory 
+				}
+
+				if (mDieOnCollect) {
+					parent.life = 0;
+				}
+			}
+        }
+        
+        if (0 != (hitType & HitType.PRESS)) {
+        	
+        }
+        
+        if (0 != (hitType & HitType.POSSESS)) {
+			if (mPossessionComponent != null && parent.life > 0
+					&& attacker.life > 0) {
+				mPossessionComponent.activate(parent);
+			} else {
+				hitType = CollisionParameters.HitType.INVALID;
+			}
+		}
+        
+        if (0 != (hitType & HitType.FLIP)) {
+        	
+//        	Log.v("SnowBall", "HERE");
+        	//this is going to happen A LOT, need to find a better way, possibly a dedicated component
+        	final RenderComponent parentRenderComponent = (RenderComponent)parent.findByClass(RenderComponent.class);
+        	final RenderComponent attackerRenderComponent = (RenderComponent)attacker.findByClass(RenderComponent.class);
+        	
+        	//attacker is behind parent if this is called
+        	//ensure that draw order is correct
+        	if (parentRenderComponent.getPriority() <= attackerRenderComponent.getPriority()) {
+        		 attackerRenderComponent.setPriority(parentRenderComponent.getPriority() -1);
+        	}
+        	
+        	
+        	
+        	//TODO: add check to make sure we don't flip under the background or into the effect layer
+        }
         
         if (hitType != CollisionParameters.HitType.INVALID) {
-            if (mTakeHitSound != null && hitType == mTakeHitSoundHitType) {
+            if (mTakeHitSound != null && 0 != (hitType & mTakeHitSoundHitType)) {
                 SoundSystem sound = sSystemRegistry.soundSystem;
                 if (sound != null) {
                     sound.play(mTakeHitSound, false, SoundSystem.PRIORITY_NORMAL);
@@ -247,8 +233,7 @@ public class HitReactionComponent extends GameComponent {
             }
             mLastHitTime = gameTime;
             parent.setCurrentAction(ActionType.HIT_REACT);
-            parent.lastReceivedHitType = hitType;
-            
+            parent.lastReceivedHitType = hitType; 
         }
         
         return hitType != CollisionParameters.HitType.INVALID;
@@ -274,25 +259,6 @@ public class HitReactionComponent extends GameComponent {
         }
     }
     
-    public void setPauseOnAttack(boolean pause) {
-        mPauseOnAttack = pause;
-    }
-    
-    public void setPauseOnAttackTime(float seconds) {
-        mPauseOnAttackTime = seconds;
-    }
-    
-    public void setBounceOnHit(boolean bounce) {
-        mBounceOnHit = bounce;
-    }
-    
-    public void setBounceMagnitude(float magnitude) {
-        mBounceMagnitude = magnitude;
-    }
-    
-    public void setInvincibleTime(float time) {
-        mInvincibleAfterHitTime = time;
-    }
     
     public void setDieWhenCollected(boolean die) {
         mDieOnCollect = true;
@@ -306,19 +272,15 @@ public class HitReactionComponent extends GameComponent {
         mInvincible = invincible;
     }
     
-//    public void setPossessionComponent(ChangeComponentsComponent component) {
-//        mPossessionComponent = component;
-//    }
-//    
-//    public void setInventoryUpdate(InventoryComponent.UpdateRecord update) {
-//        mInventoryUpdate = update;
-//    }
-//    
-//    public void setLauncherComponent(LauncherComponent component, int launchHitType) {
-//        mLauncherComponent = component;
-//        mLauncherHitType = launchHitType;
-//    }
+    public void setPossessionComponent(ChangeComponentsComponent component) {
+        mPossessionComponent = component;
+    }
     
+    public void setLauncherComponent(LauncherComponent component) {
+        mLauncherComponent = component;
+    }
+    
+    //TODO: how to handle events, that is the question...
     public void setSpawnGameEventOnHit(int hitType, int gameFlowEventType, int indexData) {
         mGameEventHitType = hitType;
 //        mGameEventOnHit = gameFlowEventType;

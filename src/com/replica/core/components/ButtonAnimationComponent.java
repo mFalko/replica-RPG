@@ -56,7 +56,7 @@ public class ButtonAnimationComponent extends GameComponent {
             GameObject parentObject = (GameObject)parent;
             
             if (parentObject.getCurrentAction() == GameObject.ActionType.HIT_REACT &&
-                    parentObject.lastReceivedHitType == CollisionParameters.HitType.DEPRESS) {
+                    parentObject.lastReceivedHitType == CollisionParameters.HitType.PRESS) {
             	if (mSprite.getCurrentAnimation() == Animation.UP) {
             		SoundSystem sound = sSystemRegistry.soundSystem;
             		if (sound != null) {

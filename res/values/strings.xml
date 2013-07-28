@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="code_name">PinHead</string>
+
+    <string name="code_name">SnowBall</string>
     <string name="app_name">Undecided</string>
+    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="menu_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="new_game">New Game</string>
+    <string name="load_game">Load Game</string>
+    <string name="options">Options</string>
+    <string name="exit_game">Exit Game</string>
+    <string name="space">" "</string>
+    <string name="whats_new_ticker">This is the development version of a new action RPG for Android. It is still rough and will most likely crash. YMMV. If you have any ideas, comments, bug reports, etc please email them to matt.falkoski@gmail.com. Thank you for testing this app.</string>
+    <string name="title_activity_main_game_menu">MainGameMenuActivity</string>
+    <string name="inventory">Inventory</string>
+    <string name="continue_game">Continue</string>
+    <string name="title_activity_invintory">Invintory</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="back">Back</string>
+    <string name="character">Character</string>
+    <string name="skills">Skills</string>
+    <string name="load">Load</string>
+    <string name="items">Items</string>
+    <string name="quest_log">Quest Log</string>
+    <string name="save">Save</string>
+    <string name="exit">Exit</string>
+    <string name="store">Store</string>
+
 </resources>

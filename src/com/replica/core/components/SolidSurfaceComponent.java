@@ -16,6 +16,8 @@
 
 package com.replica.core.components;
 
+import android.util.Log;
+
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.systems.CollisionSystem;
@@ -33,6 +35,7 @@ public class SolidSurfaceComponent extends GameComponent {
     private Vector2 mStart;
     private Vector2 mEnd;
     private Vector2 mNormal;
+    private boolean doFlip;
     
     public SolidSurfaceComponent(int maxSurfaceCount) {
         super();
@@ -52,6 +55,7 @@ public class SolidSurfaceComponent extends GameComponent {
         mStartPoints.clear();
         mEndPoints.clear();
         mNormals.clear();
+        doFlip = false;
     }
     
     public SolidSurfaceComponent() {
@@ -72,9 +76,7 @@ public class SolidSurfaceComponent extends GameComponent {
             mNormals = new FixedSizeArray<Vector2>(maxSurfaceCount);
         }
         
-        mStartPoints.clear();
-        mEndPoints.clear();
-        mNormals.clear();
+        reset();
     }
     
     // Note that this function keeps direct references to the arguments it is passed.
@@ -82,6 +84,10 @@ public class SolidSurfaceComponent extends GameComponent {
         mStartPoints.add(startPoint);
         mEndPoints.add(endPoint);
         mNormals.add(normal);
+    }
+  
+    public void setDoFlip(boolean doFlip) {
+    	this.doFlip = doFlip;
     }
 
     @Override
@@ -102,34 +108,35 @@ public class SolidSurfaceComponent extends GameComponent {
             
             for (int x = 0; x < surfaceCount; x++) {
                start.set(startPoints.get(x));
-               if (parentObject.facingDirection.x < 0.0f) {
+               if (doFlip && parentObject.facingDirection.x < 0.0f) {
                    start.flipHorizontal(parentObject.width); 
                }
                
-               if (parentObject.facingDirection.y < 0.0f) {
+               if (doFlip && parentObject.facingDirection.y < 0.0f) {
                    start.flipVertical(parentObject.height); 
                }
                start.add(position);
                
                end.set(endPoints.get(x));
-               if (parentObject.facingDirection.x < 0.0f) {
+               if (doFlip && parentObject.facingDirection.x < 0.0f) {
                    end.flipHorizontal(parentObject.width); 
                }
                
-               if (parentObject.facingDirection.y < 0.0f) {
+               if (doFlip && parentObject.facingDirection.y < 0.0f) {
                    end.flipVertical(parentObject.height); 
                }
                end.add(position);
                 
                normal.set(normals.get(x));
-               if (parentObject.facingDirection.x < 0.0f) {
+               if (doFlip && parentObject.facingDirection.x < 0.0f) {
                    normal.flipHorizontal(0); 
                }
                
-               if (parentObject.facingDirection.y < 0.0f) {
+               if (doFlip && parentObject.facingDirection.y < 0.0f) {
                    normal.flipVertical(0); 
                }
                
+//               Log.v("SnowBall", "segmants add");
                collision.addTemporarySurface(start, end, normal, parentObject);
             }
             

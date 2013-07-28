@@ -74,6 +74,7 @@ public class GameObject extends PhasedObjectManager {
         ATTACK,
         HIT_REACT,
         DEATH,
+        DEAD,
         FROZEN
     }
     

@@ -19,6 +19,8 @@ package com.replica.core.components;
 
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
+import com.replica.core.collision.CollisionParameters.HitType;
+import com.replica.core.game.AnimationType;
 import com.replica.utility.FixedSizeArray;
 
 /**
@@ -33,73 +35,31 @@ import com.replica.utility.FixedSizeArray;
  */
 public class HumanoidAnimationComponent extends GameComponent {
 	
-	
-	public enum HumanoidAnimations {
-		IDLE,
-		IDLE_NORTH,
-		IDLE_SOUTH,
-		IDLE_WEST,
-		IDLE_EAST, 
-		
-		MOVE,
-		MOVE_NORTH,
-		MOVE_SOUTH,
-		MOVE_WEST,
-		MOVE_EAST,
-		
-		DEATH,
-		DEATH_NORTH,
-		DEATH_SOUTH,
-		DEATH_WEST,
-		DEATH_EAST,
 
-		SPELL,
-		ATTACK_SPELL_NORTH,
-		ATTACK_SPELL_SOUTH,
-		ATTACK_SPELL_WEST,
-		ATTACK_SPELL_EAST,
-		
-		SWORD,
-		ATTACK_SWORD_NORTH,
-		ATTACK_SWORD_SOUTH,
-		ATTACK_SWORD_WEST,
-		ATTACK_SWORD_EAST,
-		
-		POLE,
-		ATTACK_POLE_NORTH,
-		ATTACK_POLE_SOUTH,
-		ATTACK_POLE_WEST,
-		ATTACK_POLE_EAST,
-		
-		ARROW,
-		ATTACK_ARROW_NORTH,
-		ATTACK_ARROW_SOUTH,
-		ATTACK_ARROW_WEST,
-		ATTACK_ARROW_EAST,
-	}
-	
 	private static final int NORTH = 1; 
 	private static final int SOUTH = 2; 
 	private static final int WEST = 3; 
 	private static final int EAST = 4; 
 	
-	private static final int IDLE = HumanoidAnimations.IDLE.ordinal();
-	private static final int MOVE = HumanoidAnimations.MOVE.ordinal();
-	private static final int DEATH = HumanoidAnimations.DEATH.ordinal();
-	private static final int SPELL = HumanoidAnimations.SPELL.ordinal();
-	private static final int SWORD = HumanoidAnimations.SWORD.ordinal();
-	private static final int POLE = HumanoidAnimations.POLE.ordinal();
-	private static final int ARROW = HumanoidAnimations.ARROW.ordinal();
+	private static final int IDLE = AnimationType.HUMANOID_IDLE.ordinal();
+	private static final int MOVE = AnimationType.HUMANOID_MOVE.ordinal();
+	private static final int DEATH = AnimationType.HUMANOID_DEATH.ordinal();
+	private static final int DEAD = AnimationType.HUMANOID_DEAD.ordinal();
+	private static final int HIT_REACT = AnimationType.HUMANOID_HIT_REACT.ordinal();
+	private static final int SPELL = AnimationType.HUMANOID_ATTACK_SPELL.ordinal();
+	private static final int SWORD = AnimationType.HUMANOID_ATTACK_SWORD.ordinal();
+	private static final int POLE = AnimationType.HUMANOID_ATTACK_POLE.ordinal();
+	private static final int ARROW = AnimationType.HUMANOID_ATTACK_ARROW.ordinal();
 	
-	private static final HumanoidAnimations[] HumanoidAnimationValues = HumanoidAnimations.values();
+	private static final AnimationType[] HumanoidAnimationValues = AnimationType.values();
 
 	private SpriteUpdater spriteUpdater_;
-	private HumanoidAnimations currentAnimation_;
+	private AnimationType currentAnimation_;
 
 	public HumanoidAnimationComponent() {
 		super();
 		reset();
-		currentAnimation_ = HumanoidAnimations.IDLE;
+		currentAnimation_ = AnimationType.HUMANOID_IDLE;
 		setPhase(ComponentPhases.ANIMATION.ordinal());
 	}
 
@@ -117,7 +77,7 @@ public class HumanoidAnimationComponent extends GameComponent {
 			GameObject parentObject = (GameObject) parent;
 			GameObject.ActionType currentAction = parentObject.getCurrentAction();
 			
-			final HumanoidAnimations oldAnimation = currentAnimation_;
+			final AnimationType oldAnimation = currentAnimation_;
 
 			boolean visible = true;
 			float opacity = 1.0f;
@@ -130,9 +90,17 @@ public class HumanoidAnimationComponent extends GameComponent {
 						 
 			switch (currentAction) {
 			case IDLE:
-			case HIT_REACT:
 			case FROZEN:
 				currentAnimation_ = HumanoidAnimationValues[IDLE + facing];
+				break;
+				
+			case HIT_REACT:
+				// FIXME: there is a bug here..I know it, most GOs do not have
+				// hit react and will not draw in this state...
+				// I'll fix it later
+				if ((parentObject.lastReceivedHitType & HitType.ATTACK) != 0) {
+					currentAnimation_ = HumanoidAnimationValues[HIT_REACT + facing];
+				}
 				break;
 
 			case MOVE:
@@ -145,6 +113,10 @@ public class HumanoidAnimationComponent extends GameComponent {
 
 			case DEATH:
 				currentAnimation_ = HumanoidAnimationValues[DEATH + facing];
+				break;
+				
+			case DEAD:
+				currentAnimation_ = HumanoidAnimationValues[DEAD + facing];
 				break;
 	
 			} 
@@ -189,7 +161,7 @@ public class HumanoidAnimationComponent extends GameComponent {
 	
 	private static interface SpriteUpdater {
 		
-		public void playAnimation(HumanoidAnimations animation);
+		public void playAnimation(AnimationType animation);
 
 		public void setOpacity(float opacity);
 
@@ -201,7 +173,7 @@ public class HumanoidAnimationComponent extends GameComponent {
 		private FixedSizeArray<SpriteComponent> sprites_ = new FixedSizeArray<SpriteComponent>(10);
 		
 		@Override
-		public void playAnimation(HumanoidAnimations animation) {
+		public void playAnimation(AnimationType animation) {
 			
 			final int count = sprites_.getCount();
 			for (int i = 0; i < count; i++) {
@@ -243,7 +215,7 @@ public class HumanoidAnimationComponent extends GameComponent {
 		private SpriteComponent sprite_;
 
 		@Override
-		public void playAnimation(HumanoidAnimations animation) {
+		public void playAnimation(AnimationType animation) {
 			
 			if (sprite_ != null) {
 				sprite_.playAnimation(animation.ordinal());

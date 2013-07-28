@@ -29,6 +29,7 @@ import android.view.MotionEvent;
 
 import com.replica.R;
 import com.replica.core.collision.HitPointPool;
+import com.replica.core.factory.GameObjectFactory;
 import com.replica.core.graphics.BufferLibrary;
 import com.replica.core.graphics.DrawableFactory;
 import com.replica.core.graphics.GLSurfaceView;
@@ -36,13 +37,13 @@ import com.replica.core.graphics.GameRenderer;
 import com.replica.core.graphics.TextureLibrary;
 import com.replica.core.systems.CameraSystem;
 import com.replica.core.systems.CollisionSystem;
+import com.replica.core.systems.GameObjectCollisionSystem;
 import com.replica.core.systems.OpenGLSystem;
 import com.replica.core.systems.RenderSystem;
 import com.replica.core.zoneloder.XMLZoneLoader;
 import com.replica.core.zoneloder.Zone;
 import com.replica.core.zoneloder.ZoneLoader;
 import com.replica.hud.HudSystem;
-import com.replica.input.ButtonConstants;
 import com.replica.input.InputGameInterface;
 import com.replica.input.InputSystem;
 import com.replica.input.MultiTouchFilter;
@@ -75,10 +76,7 @@ public class Game extends AllocationGuard {
 	private ContextParameters mContextParameters;
 	private TouchFilter mTouchFilter;
 	
-	public enum GameState {
-		INGAME,
-		MENU
-	}
+
 
 	public Game() {
 		super();
@@ -152,12 +150,10 @@ public class Game extends AllocationGuard {
 
 			
 
-			// LevelSystem level = new LevelSystem();
-			// BaseObject.sSystemRegistry.levelSystem = level;
 
-			// CollisionSystem collision = new CollisionSystem();
-			// BaseObject.sSystemRegistry.collisionSystem = collision;
-			 BaseObject.sSystemRegistry.hitPointPool = new HitPointPool();
+
+
+			BaseObject.sSystemRegistry.hitPointPool = new HitPointPool();
 
 			GameObjectManager gameManager = new GameObjectManager(
 					params.viewWidth * 2);
@@ -169,8 +165,7 @@ public class Game extends AllocationGuard {
 
 			// BaseObject.sSystemRegistry.hotSpotSystem = new HotSpotSystem();
 			//
-			// BaseObject.sSystemRegistry.levelBuilder = new LevelBuilder();
-			//
+
 			// BaseObject.sSystemRegistry.channelSystem = new ChannelSystem();
 			// BaseObject.sSystemRegistry.registerForReset(BaseObject.sSystemRegistry.channelSystem);
 
@@ -187,20 +182,19 @@ public class Game extends AllocationGuard {
 
 			// More basic systems.
 
-			// GameObjectCollisionSystem dynamicCollision = new
-			// GameObjectCollisionSystem();
-			// gameRoot.add(dynamicCollision);
-			// BaseObject.sSystemRegistry.gameObjectCollisionSystem =
-			// dynamicCollision;
+			GameObjectCollisionSystem dynamicCollision = new GameObjectCollisionSystem();
+			gameRoot.add(dynamicCollision);
+			BaseObject.sSystemRegistry.gameObjectCollisionSystem = dynamicCollision;
+			
+			CollisionSystem collision = new CollisionSystem();
+			BaseObject.sSystemRegistry.collisionSystem = collision;
+			gameRoot.add(collision);
 
 			RenderSystem renderer = new RenderSystem();
 			BaseObject.sSystemRegistry.renderSystem = renderer;
-			 BaseObject.sSystemRegistry.vectorPool = new VectorPool();
+			BaseObject.sSystemRegistry.vectorPool = new VectorPool();
 			BaseObject.sSystemRegistry.drawableFactory = new DrawableFactory();
 
-			
-
-			 
 			InputGameInterface inputInterface = new InputGameInterface();
 			gameRoot.add(inputInterface);
 			BaseObject.sSystemRegistry.inputGameInterface = inputInterface;
@@ -229,14 +223,17 @@ public class Game extends AllocationGuard {
 			// BaseObject.sSystemRegistry.eventRecorder = eventRecorder;
 			// BaseObject.sSystemRegistry.registerForReset(eventRecorder);
 
-			// gameRoot.add(collision);
 
 			// debug systems
 			 BaseObject.sSystemRegistry.debugSystem = new DebugSystem(longTermTextureLibrary);
-			// dynamicCollision.setDebugPrefs(false, true);
+//			 dynamicCollision.setDebugPrefs(false, true);
 
 			// objectFactory.preloadEffects();
-
+			 
+			mBootstrapComplete = true;
+			
+			
+			 //TODO: Everything below this point needs to GTFO of bootstrap
 
 			 GameObject ghost = objectFactory.spawnPlayer(100, 100);
 			 gameManager.add(ghost);
@@ -247,24 +244,47 @@ public class Game extends AllocationGuard {
 				InputStream in = context.getAssets().open("town.xml");
 				ZoneLoader loader = new XMLZoneLoader(params.viewWidth, params.viewHeight);
 				zone_ = loader.loadZone(in, context);
+				in.close();
 			} catch (IOException e) {
 
 			}
 			gameRoot.add(zone_);
 			BaseObject.sSystemRegistry.zone = zone_;
-
-			CollisionSystem collision = new CollisionSystem();
 			collision.initialize(zone_.getCollisionLines(), zone_.getWorldWidth(), zone_.getWorldHeight());
-			BaseObject.sSystemRegistry.collisionSystem = collision;
-			gameRoot.add(collision);
+			
+			
+			GameObject combatDummy = objectFactory.spawnCombatDummy(200, 200);
+			gameManager.add(combatDummy);
+			
+			
+			GameObject combatDummy2 = objectFactory.spawnCombatDummy(300, 350);
+			gameManager.add(combatDummy2);
+			
+			
+			GameObject combatDummy3 = objectFactory.spawnCombatDummy(2275, 1500);
+			gameManager.add(combatDummy3);
+			
+			
+			GameObject combatDummy4 = objectFactory.spawnCombatDummy(456, 850);
+			gameManager.add(combatDummy4);
+			
+			
+			GameObject combatDummy5 = objectFactory.spawnCombatDummy(954, 1254);
+			gameManager.add(combatDummy5);
+			
+			
+			GameObject combatDummy6 = objectFactory.spawnCombatDummy(1630, 278);
+			gameManager.add(combatDummy6);
+			
+			
+			
 			mGameRoot = gameRoot;
 
 			mGameThread = new GameThread(mRenderer);
 			mGameThread.setGameRoot(mGameRoot);
 
-			// mCurrentLevel = null;
 
-			mBootstrapComplete = true;
+			
 		}
 	}
 
@@ -485,7 +505,7 @@ public class Game extends AllocationGuard {
 	public void onSurfaceReady() {
 		DebugLog.d("AndouKun", "Surface Ready");
 
-	if (mGameThread.getPaused() && mRunning) {
+		if (mGameThread.getPaused() && mRunning) {
 			mGameThread.resumeGame();
 		}
 	}

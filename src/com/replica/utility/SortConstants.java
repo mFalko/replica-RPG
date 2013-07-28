@@ -18,9 +18,11 @@ package com.replica.utility;
 
 public class SortConstants {
 	public static final int BACKGROUND_START = -100;
-
-
 	public static final int HIGHGROUND_START = 400;
+	
+	public static final int GAMEOBJECT_BASE_FLIP = 100;
+	
+	
 	public static final int HUD = 499;
 	public static final int FADE = 500;
 }

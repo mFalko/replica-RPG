@@ -2,7 +2,7 @@ package com.replica.core.game;
 
 
 import com.replica.core.GameObject;
-import com.replica.core.GameObjectFactory.GameObjectType;
+import com.replica.core.factory.GameObjectFactory.GameObjectType;
 
 public class AttackConstants {
 	

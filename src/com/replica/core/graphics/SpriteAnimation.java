@@ -32,6 +32,10 @@ public class SpriteAnimation extends PhasedObject {
     private boolean mLoop;
     private float mLength;
     
+    public SpriteAnimation(int frameCount) {
+    	this(0, frameCount);
+    }
+    
     public SpriteAnimation(int animationId, int frameCount) {
         super();
         mFrames = new FixedSizeArray<AnimationFrame>(frameCount);

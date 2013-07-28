@@ -69,7 +69,7 @@ public class InputButton {
 	public final void reset() {
 		mDown = false;
 		mMagnitude = 0.0f;
-		mLastPressedTime = 0.0f;
+		mLastPressedTime = -1.0f;
 		mDownTime = 0.0f;
 	}
 }
