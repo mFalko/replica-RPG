@@ -40,7 +40,7 @@ public class TileSet extends BaseObject{
 
 		Sheet tileSheet = null;
 		long id = GID &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
-		int sheetIndex = getSheetIndex(GID, sheets);
+		int sheetIndex = getSheetIndex(id, sheets);
 		tileSheet = sheets[sheetIndex];
 		
 		assert tileSheet != null;
@@ -49,6 +49,7 @@ public class TileSet extends BaseObject{
 		final int pixelHeight = tileSheet.texture_.height;
 		final int width = pixelWidth / tileWidth_;
 
+		//FIXME: allow tile rotations!!! This is important
 //		final boolean flippedHorizontally = (GID & FLIPPED_HORIZONTALLY_FLAG) > 1;
 //		final boolean flippedVertically = (GID & FLIPPED_VERTICALLY_FLAG) > 1;
 //		final boolean flippedDiagonally = (GID & FLIPPED_DIAGONALLY_FLAG) > 1;

@@ -22,7 +22,6 @@ public class InputTouchButton extends BaseObject {
 	
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
 		button_.reset();
 	}
 	

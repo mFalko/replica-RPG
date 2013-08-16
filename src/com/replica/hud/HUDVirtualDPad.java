@@ -32,7 +32,6 @@ public class HUDVirtualDPad extends BaseObject {
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
 		circleInnerLocation_.set(position_.x, position_.y);
 		circleLocation_.set(position_.x, position_.y);
 	}

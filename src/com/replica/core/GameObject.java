@@ -16,6 +16,7 @@
 
 package com.replica.core;
 
+import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.core.game.AttackConstants;
 import com.replica.core.game.AttackConstants.AttackType;
 import com.replica.utility.TimeSystem;
@@ -37,7 +38,6 @@ public class GameObject extends PhasedObjectManager {
     private Vector2 mTargetVelocity;
     private Vector2 mAcceleration;
     private Vector2 mImpulse;
-
     private Vector2 mBackgroundCollisionNormal;
 
   
@@ -80,7 +80,6 @@ public class GameObject extends PhasedObjectManager {
     
     private ActionType mCurrentAction;
     public AttackConstants currentAttack = AttackConstants.FIREBALL_1;
-    
     
     public enum Team {
         NONE,
@@ -128,8 +127,7 @@ public class GameObject extends PhasedObjectManager {
         team = Team.NONE;
         width = 0.0f;
         height = 0.0f;
-        
-//        lastReceivedHitType = HitType.INVALID;
+        lastReceivedHitType = HitType.INVALID;
     }
     
 

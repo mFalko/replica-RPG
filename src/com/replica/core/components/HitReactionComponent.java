@@ -16,8 +16,6 @@
 
 package com.replica.core.components;
 
-import android.util.Log;
-
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.GameObject.ActionType;
@@ -28,6 +26,7 @@ import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.core.factory.GameObjectFactory;
 import com.replica.core.factory.GameObjectFactory.GameObjectType;
 import com.replica.core.systems.SoundSystem;
+import com.replica.utility.DebugLog;
 import com.replica.utility.TimeSystem;
 
 /** 
@@ -38,6 +37,7 @@ import com.replica.utility.TimeSystem;
  */
 public class HitReactionComponent extends GameComponent {
     private final static float EVENT_SEND_DELAY = 5.0f;
+    private final static float INVINCIBLE_AFTER_HIT_TIME = 0.05f;
  
     private float mLastHitTime;
     private boolean mInvincible;
@@ -64,6 +64,7 @@ public class HitReactionComponent extends GameComponent {
         super();
         reset();
         setPhase(ComponentPhases.PRE_DRAW.ordinal());
+//        setPhase(ComponentPhases.COLLISION_DETECTION.ordinal());
     }
     
     @Override
@@ -137,7 +138,7 @@ public class HitReactionComponent extends GameComponent {
   
         }
     }
-    
+    //TODO: check caller to ensure return value is used properly
     /** Called when this object is hit by another object. */
     public boolean receivedHit(GameObject parent, GameObject attacker, int hitType) {
         final TimeSystem time = sSystemRegistry.timeSystem;
@@ -147,6 +148,7 @@ public class HitReactionComponent extends GameComponent {
                 mGameEventHitType != CollisionParameters.HitType.INVALID ) {
         	if (mLastGameEventTime < 0.0f || gameTime > mLastGameEventTime + EVENT_SEND_DELAY) {
 				//TODO: wth do I do w/ game events
+        		//maybe deal w/ hot spots here..
 	        } else {
 	        	// special case.  If we're waiting for a hit type to spawn an event and
 	        	// another event has just happened, eat this hit so we don't miss
@@ -162,7 +164,11 @@ public class HitReactionComponent extends GameComponent {
 			if (!mForceInvincibility && !mInvincible && parent.life > 0 && !sameTeam) {
 				//TODO: attack logic goes here
 				parent.life -=20; 
-				Log.v("SnowBall", "Life = " + parent.life);
+				DebugLog.d("SnowBall", "Life = " + parent.life);
+				
+				//I dont like this, but there needs to be a hit delay, find a better way
+				mInvincible = true;
+                mInvincibleTime = INVINCIBLE_AFTER_HIT_TIME;
 			} else {
 				// Ignore this hit.
 				hitType = CollisionParameters.HitType.INVALID;
@@ -207,8 +213,9 @@ public class HitReactionComponent extends GameComponent {
 		}
         
         if (0 != (hitType & HitType.FLIP)) {
+        	//fully handled here
+        	hitType &= ~(HitType.FLIP);
         	
-//        	Log.v("SnowBall", "HERE");
         	//this is going to happen A LOT, need to find a better way, possibly a dedicated component
         	final RenderComponent parentRenderComponent = (RenderComponent)parent.findByClass(RenderComponent.class);
         	final RenderComponent attackerRenderComponent = (RenderComponent)attacker.findByClass(RenderComponent.class);

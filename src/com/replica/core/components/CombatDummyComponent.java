@@ -8,8 +8,8 @@ import com.replica.utility.TimeSystem;
 
 public class CombatDummyComponent extends GameComponent {
 
-	private static final float HIT_REACT_TIME = 2;
-	private static final float DEAD_TIME = 120;
+	private static final float HIT_REACT_TIME = 0.8f;
+	private static final float DEAD_TIME = 30;
 	
 	public enum State {
 		IDLE,  
@@ -94,6 +94,7 @@ public class CombatDummyComponent extends GameComponent {
 	
 	private void gotoDead(float gameTime, GameObject parentObject) {
 		parentObject.setCurrentAction(ActionType.DEATH);
+		mState = State.DEAD;
 		mTimer = -1.0f;	
 	}
 	

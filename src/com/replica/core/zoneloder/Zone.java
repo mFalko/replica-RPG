@@ -19,36 +19,20 @@
 
 package com.replica.core.zoneloder;
 
-import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
-import com.replica.core.PhasedObjectManager;
 import com.replica.core.collision.LineSegment;
-import com.replica.core.graphics.Layer;
 import com.replica.utility.FixedSizeArray;
 
 /**
  * @author matt
  * 
  */
-public class Zone extends PhasedObjectManager{
+public class Zone extends GameObject{
 
 	public Zone() {
+		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.falko.android.pinhead.BaseObject#update(float,
-	 * com.falko.android.pinhead.BaseObject)
-	 */
-	@Override
-	public void update(float timeDelta, BaseObject parent) {
-		
-		
-		background.update(timeDelta, parent);
-		
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -56,7 +40,9 @@ public class Zone extends PhasedObjectManager{
 	 */
 	@Override
 	public void reset() {
-
+		worldWidth_ = -1;
+		worldHeight_ = -1;
+//		backgroundCollisionLines_.clear();
 	}
 
 	public int getWorldHeight() {
@@ -83,9 +69,8 @@ public class Zone extends PhasedObjectManager{
 		return backgroundCollisionLines_;
 	}
 	
+	//TODO: make this a quadtree and pass the tree to the background collision system
 	private FixedSizeArray<LineSegment> backgroundCollisionLines_;
 	private int worldWidth_;
 	private int worldHeight_;
-	
-	GameObject background;
 }

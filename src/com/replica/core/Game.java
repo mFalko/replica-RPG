@@ -70,13 +70,9 @@ public class Game extends AllocationGuard {
 	private boolean mRunning;
 	private boolean mBootstrapComplete;
 
-	private Zone zone_;
-
 	private boolean mGLDataLoaded;
 	private ContextParameters mContextParameters;
 	private TouchFilter mTouchFilter;
-	
-
 
 	public Game() {
 		super();
@@ -119,8 +115,6 @@ public class Game extends AllocationGuard {
 				mTouchFilter = new MultiTouchFilter();
 				Log.v("SNowBAll", "Multitouch");
 			}
-			
-			
 
 			// Short-term textures are cleared between levels.
 			TextureLibrary shortTermTextureLibrary = new TextureLibrary();
@@ -142,16 +136,10 @@ public class Game extends AllocationGuard {
 			BaseObject.sSystemRegistry.inputSystem = input;
 			BaseObject.sSystemRegistry.registerForReset(input);
 
-			// WindowManager windowMgr = (WindowManager) context
-			// .getSystemService(Context.WINDOW_SERVICE);
-			// int rotationIndex =
-			// windowMgr.getDefaultDisplay().getOrientation();
-			// input.setScreenRotation(rotationIndex);
-
-			
-
-
-
+//			WindowManager windowMgr = (WindowManager) context
+//					.getSystemService(Context.WINDOW_SERVICE);
+//			int rotationIndex = windowMgr.getDefaultDisplay().getOrientation();
+//			input.setScreenRotation(rotationIndex);
 
 			BaseObject.sSystemRegistry.hitPointPool = new HitPointPool();
 
@@ -170,22 +158,13 @@ public class Game extends AllocationGuard {
 			// BaseObject.sSystemRegistry.registerForReset(BaseObject.sSystemRegistry.channelSystem);
 
 			CameraSystem camera = new CameraSystem();
-
 			BaseObject.sSystemRegistry.cameraSystem = camera;
 			BaseObject.sSystemRegistry.registerForReset(camera);
-
-			gameRoot.add(gameManager);
-
-			// Camera must come after the game manager so that the camera target
-			// moves before the cameracenters.
-			gameRoot.add(camera);
-
-			// More basic systems.
 
 			GameObjectCollisionSystem dynamicCollision = new GameObjectCollisionSystem();
 			gameRoot.add(dynamicCollision);
 			BaseObject.sSystemRegistry.gameObjectCollisionSystem = dynamicCollision;
-			
+
 			CollisionSystem collision = new CollisionSystem();
 			BaseObject.sSystemRegistry.collisionSystem = collision;
 			gameRoot.add(collision);
@@ -198,24 +177,28 @@ public class Game extends AllocationGuard {
 			InputGameInterface inputInterface = new InputGameInterface();
 			gameRoot.add(inputInterface);
 			BaseObject.sSystemRegistry.inputGameInterface = inputInterface;
-			
-			 // hud system
-			//TODO: Refactor HUD code
+
+			// hud system
+			// TODO: Refactor HUD code
 			HudSystem hud = new HudSystem();
 
 			BaseObject.sSystemRegistry.shortTermTextureLibrary
-				.allocateTexture(R.drawable.sq_butotn);
+					.allocateTexture(R.drawable.sq_butotn);
 
 			BaseObject.sSystemRegistry.shortTermTextureLibrary
 					.allocateTexture(R.drawable.dpad);
-			
+
 			hud.registerTouchInput(inputInterface, gameWidth, gameHeight);
+
+			BaseObject.sSystemRegistry.hudSystem = hud;
+			gameRoot.add(hud);
 			
-			 BaseObject.sSystemRegistry.hudSystem = hud;
-			 gameRoot.add(hud);
-			 
-			 
-			 
+			
+			
+			
+			
+			
+
 			// BaseObject.sSystemRegistry.vibrationSystem = new
 			// VibrationSystem();
 
@@ -223,26 +206,32 @@ public class Game extends AllocationGuard {
 			// BaseObject.sSystemRegistry.eventRecorder = eventRecorder;
 			// BaseObject.sSystemRegistry.registerForReset(eventRecorder);
 
-
 			// debug systems
-			 BaseObject.sSystemRegistry.debugSystem = new DebugSystem(longTermTextureLibrary);
-//			 dynamicCollision.setDebugPrefs(false, true);
+			BaseObject.sSystemRegistry.debugSystem = new DebugSystem(
+					longTermTextureLibrary);
+			// dynamicCollision.setDebugPrefs(false, true);
 
 			// objectFactory.preloadEffects();
-			 
+
+			gameRoot.add(gameManager);
+			// Camera must come after the game manager so that the camera target
+			// moves before the cameracenters.
+			gameRoot.add(camera);
+
 			mBootstrapComplete = true;
-			
-			
-			 //TODO: Everything below this point needs to GTFO of bootstrap
 
-			 GameObject ghost = objectFactory.spawnPlayer(100, 100);
-			 gameManager.add(ghost);
-			 gameManager.setPlayer(ghost);
-			 camera.setTarget(ghost);
+			// TODO: Everything below this point needs to GTFO of bootstrap
 
+			GameObject ghost = objectFactory.spawnPlayer(100, 100);
+			gameManager.add(ghost);
+			gameManager.setPlayer(ghost);
+			camera.setTarget(ghost);
+
+			Zone zone_ = null;
 			try {
 				InputStream in = context.getAssets().open("town.xml");
-				ZoneLoader loader = new XMLZoneLoader(params.viewWidth, params.viewHeight);
+				ZoneLoader loader = new XMLZoneLoader(params.viewWidth,
+						params.viewHeight);
 				zone_ = loader.loadZone(in, context);
 				in.close();
 			} catch (IOException e) {
@@ -250,41 +239,34 @@ public class Game extends AllocationGuard {
 			}
 			gameRoot.add(zone_);
 			BaseObject.sSystemRegistry.zone = zone_;
-			collision.initialize(zone_.getCollisionLines(), zone_.getWorldWidth(), zone_.getWorldHeight());
 			
-			
+			collision.initialize(zone_.getCollisionLines(),
+					zone_.getWorldWidth(), zone_.getWorldHeight());
+
 			GameObject combatDummy = objectFactory.spawnCombatDummy(200, 200);
 			gameManager.add(combatDummy);
-			
-			
+
 			GameObject combatDummy2 = objectFactory.spawnCombatDummy(300, 350);
 			gameManager.add(combatDummy2);
-			
-			
-			GameObject combatDummy3 = objectFactory.spawnCombatDummy(2275, 1500);
+
+			GameObject combatDummy3 = objectFactory
+					.spawnCombatDummy(2275, 1500);
 			gameManager.add(combatDummy3);
-			
-			
+
 			GameObject combatDummy4 = objectFactory.spawnCombatDummy(456, 850);
 			gameManager.add(combatDummy4);
-			
-			
+
 			GameObject combatDummy5 = objectFactory.spawnCombatDummy(954, 1254);
 			gameManager.add(combatDummy5);
-			
-			
+
 			GameObject combatDummy6 = objectFactory.spawnCombatDummy(1630, 278);
 			gameManager.add(combatDummy6);
-			
-			
-			
+
 			mGameRoot = gameRoot;
 
 			mGameThread = new GameThread(mRenderer);
 			mGameThread.setGameRoot(mGameRoot);
 
-
-			
 		}
 	}
 
@@ -533,14 +515,14 @@ public class Game extends AllocationGuard {
 
 		if (!mGLDataLoaded) {// && mGameThread.getPaused() && mRunning) {
 			BaseObject.sSystemRegistry.shortTermTextureLibrary.invalidateAll();
-			BaseObject.sSystemRegistry.shortTermTextureLibrary.loadAll(context, gl);
+			BaseObject.sSystemRegistry.shortTermTextureLibrary.loadAll(context,
+					gl);
 			BaseObject.sSystemRegistry.longTermTextureLibrary.invalidateAll();
-			BaseObject.sSystemRegistry.longTermTextureLibrary.loadAll(context, gl);
+			BaseObject.sSystemRegistry.longTermTextureLibrary.loadAll(context,
+					gl);
 			mGLDataLoaded = true;
 		}
 
-		
-		
 	}
 
 	public void setSoundEnabled(boolean soundEnabled) {

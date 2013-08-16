@@ -20,7 +20,6 @@ import com.replica.core.BaseObject;
 import com.replica.core.ContextParameters;
 import com.replica.core.GameObject;
 import com.replica.core.GameObjectManager;
-import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.core.factory.GameObjectFactory;
 import com.replica.core.systems.CameraSystem;
 import com.replica.core.systems.SoundSystem;

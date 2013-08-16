@@ -26,23 +26,20 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.Xml;
 
 import com.replica.R;
-import com.replica.core.GameObject;
 import com.replica.core.collision.LineSegment;
 import com.replica.core.components.RenderComponent;
 import com.replica.core.components.ScrollerComponent;
-import com.replica.core.graphics.Layer;
 import com.replica.core.graphics.Texture;
 import com.replica.core.graphics.TiledVertexGrid;
 import com.replica.core.graphics.VertexGrid;
 import com.replica.core.zoneloder.TileSet.Sheet;
+import com.replica.utility.DebugLog;
 import com.replica.utility.FixedSizeArray;
 import com.replica.utility.SortConstants;
 import com.replica.utility.Utils;
-import com.replica.utility.Vector2;
 
 /**
  * @author matt
@@ -72,9 +69,9 @@ public class XMLZoneLoader implements ZoneLoader {
 			parser.setInput(in, null);
 			parseXML(parser);
 		} catch (XmlPullParserException e) {
-			Log.v("pinhead", e.getMessage());
+			DebugLog.v("SnowBall", e.getMessage());
 		} catch (IOException e) {
-			Log.v("pinhead", e.getMessage());
+			DebugLog.v("SnowBall", e.getMessage());
 		} finally {
 			try {
 				in.close();
@@ -91,7 +88,7 @@ public class XMLZoneLoader implements ZoneLoader {
 	private Zone buildMap() {
 		float[][] uvWorkspace = new float[4][2];
 		
-		GameObject background = new GameObject();
+		Zone map = new Zone();
 		
 		for (int i = 0; i < layerCount_; ++i) {
 			Sheet[] sheets = tileSet_.getSheets(mapData_[i]);
@@ -158,20 +155,17 @@ public class XMLZoneLoader implements ZoneLoader {
 	        													layer);
 	        scroller.setRenderComponent(backgroundRender);
 
-	        background.add(scroller);
-	        background.add(backgroundRender);
+	        map.add(scroller);
+	        map.add(backgroundRender);
 	        backgroundRender.setCameraRelative(false);
 			
 		}
 
-		Zone map = new Zone();
 
 		map.setWorldHeight(worldHeight_ * tileSet_.getTileHeight());
 		map.setWorldWidth(worldWidth_ * tileSet_.getTileWidth());
 		
 		map.setcollisionLines(backgroundCollisionLines_);
-
-		map.background = background;
 
 		return map;
 	}
@@ -292,7 +286,7 @@ public class XMLZoneLoader implements ZoneLoader {
 		
 		String lineCountAttrName = parser.getAttributeName(0);
 		if (!lineCountAttrName.equals("lineCount")) {
-			Log.e("Replica", "Collision");
+			DebugLog.e("SnowBall", "Collision");
 			return;
 		}
 		

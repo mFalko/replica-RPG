@@ -14,19 +14,17 @@ public class AttackConstants {
 	}
 	
 	private AttackConstants(GameObjectType attackObject, 
-			float time, boolean waitForCast, AttackType attackType, int textureID) {
+			float time, boolean waitForCast, AttackType attackType) {
 		attackObject_ = attackObject;
 		castTime_ = time;
 		waitForCastTime_ = waitForCast;
 		attackType_ = attackType;
-		textureID_ = textureID;
 	}
 	
 	public final GameObjectType attackObject_;
 	public final float castTime_;
 	public final boolean waitForCastTime_;  //true - launch GO after cast time : false - launch as many as possible during cast time
 	public final AttackType attackType_;
-	public final int textureID_;
 	public final Attack attack_ = new Attack();
 	
 	//based off of
@@ -55,7 +53,7 @@ public class AttackConstants {
 	
 	//Spell Attacks
 	public static final AttackConstants FIREBALL_1 =
-			new AttackConstants(null, 1.0f, true, AttackType.SPELL, -1);
+			new AttackConstants(GameObjectType.FIREBALL_SMALL, 1.0f, true, AttackType.SPELL);
 	
 	
 

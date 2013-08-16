@@ -464,62 +464,62 @@ public class GameObjectFactory extends BaseObject {
 
 			SpriteAnimation moveNorth = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_move_north,
-					R.drawable.body_skeleton_walkcycle_north, width, height);	
+					R.drawable.body_male_walkcycle_north, width, height);	
 			moveNorth.setPhase(AnimationType.HUMANOID_MOVE_NORTH.ordinal());
 			
 			SpriteAnimation moveSouth = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_move_south,
-					R.drawable.body_skeleton_walkcycle_south, width, height);
+					R.drawable.body_male_walkcycle_south, width, height);
 			moveSouth.setPhase(AnimationType.HUMANOID_MOVE_SOUTH.ordinal());
 			
 			SpriteAnimation moveWest = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_move_west,
-					R.drawable.body_skeleton_walkcycle_west, width, height);
+					R.drawable.body_male_walkcycle_west, width, height);
 			moveWest.setPhase(AnimationType.HUMANOID_MOVE_WEST.ordinal());
 			
 			SpriteAnimation moveEast = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_move_east,
-					R.drawable.body_skeleton_walkcycle_east, width, height);
+					R.drawable.body_male_walkcycle_east, width, height);
 			moveEast.setPhase(AnimationType.HUMANOID_MOVE_EAST.ordinal());
 			
 			SpriteAnimation idleNorth = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_idle_north,
-					R.drawable.body_skeleton_walkcycle_north, width, height);
+					R.drawable.body_male_walkcycle_north, width, height);
 			idleNorth.setPhase(AnimationType.HUMANOID_IDLE_NORTH.ordinal());
 			
 			SpriteAnimation idleSouth = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_idle_south,
-					R.drawable.body_skeleton_walkcycle_south, width, height);
+					R.drawable.body_male_walkcycle_south, width, height);
 			idleSouth.setPhase(AnimationType.HUMANOID_IDLE_SOUTH.ordinal());
 			
 			SpriteAnimation idleWest = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_idle_west,
-					R.drawable.body_skeleton_walkcycle_west, width, height);
+					R.drawable.body_male_walkcycle_west, width, height);
 			idleWest.setPhase(AnimationType.HUMANOID_IDLE_WEST.ordinal());
 			
 			SpriteAnimation idleEast = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_idle_east,
-					R.drawable.body_skeleton_walkcycle_east, width, height);
+					R.drawable.body_male_walkcycle_east, width, height);
 			idleEast.setPhase(AnimationType.HUMANOID_IDLE_EAST.ordinal());
 			
 			SpriteAnimation spellcastNorth = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_attack_spell_north,
-					R.drawable.body_skeleton_spellcast_north, width, height);
+					R.drawable.body_male_spellcast_north, width, height);
 			spellcastNorth.setPhase(AnimationType.HUMANOID_ATTACK_SPELL_NORTH.ordinal());
 			
 			SpriteAnimation spellcastSouth = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_attack_spell_south,
-					R.drawable.body_skeleton_spellcast_south, width, height);
+					R.drawable.body_male_spellcast_south, width, height);
 			spellcastSouth.setPhase(AnimationType.HUMANOID_ATTACK_SPELL_SOUTH.ordinal());
 			
 			SpriteAnimation spellcastWest = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_attack_spell_west,
-					R.drawable.body_skeleton_spellcast_west, width, height);
+					R.drawable.body_male_spellcast_west, width, height);
 			spellcastWest.setPhase(AnimationType.HUMANOID_ATTACK_SPELL_WEST.ordinal());
 			
 			SpriteAnimation spellcastEast = animationFactory.loadAnimation(
 					R.raw.animation_humanoid_attack_spell_east,
-					R.drawable.body_skeleton_spellcast_east, width, height);
+					R.drawable.body_male_spellcast_east, width, height);
 			spellcastEast.setPhase(AnimationType.HUMANOID_ATTACK_SPELL_EAST.ordinal());	
 
 			staticData.add(moveNorth);
@@ -704,6 +704,8 @@ public class GameObjectFactory extends BaseObject {
 					R.drawable.animation_combat_dummy_death, width, height);
 			deadIdleAnimation.setPhase(AnimationType.HUMANOID_DEAD_SOUTH.ordinal());	
 			
+			//TODO: this is a bad way to keep GOs from passing through eachother
+			//make a dynamic collision box that uses HitType.PUSH
 			SolidSurfaceComponent solidSurfaceComponent = (SolidSurfaceComponent) allocateComponent(SolidSurfaceComponent.class);
 			solidSurfaceComponent.inititalize(4); //TODO: magic number >.<
 			Vector2 topLeft = new Vector2(20, 6);

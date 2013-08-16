@@ -67,8 +67,8 @@ public class GameThread implements Runnable {
                         secondsDelta = 0.1f;
                     }
                     mLastTime = time;
-                    
 					mGameRoot.update(secondsDelta, null);
+					
 					float x = 0.0f;
 					float y = 0.0f;
 					CameraSystem camera = BaseObject.sSystemRegistry.cameraSystem;

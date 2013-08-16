@@ -38,6 +38,8 @@ public class AnimationFactory {
 	
 	/*TODO: Figure out a way to "smooth" the collision volumes so that
 	 * 		volumes that are similar are not allocated multiple times
+	 * 
+	 * Should probably be done in the file preprocessor 
 	 */
 
 
@@ -64,8 +66,8 @@ public class AnimationFactory {
 		for (int i = 0; i < animationInfo.frames; ++i) {
 
 			int[] crop = new int[4];
-			crop[0] = animationInfo.offset
-					+ animationInfo.frameWidth * i;
+			crop[0] = (animationInfo.offset *animationInfo.frameWidth )
+					+ (animationInfo.frameWidth * i);
 			crop[1] = animationInfo.frameHeight;
 			crop[2] = animationInfo.frameWidth;
 			crop[3] = animationInfo.frameHeight;

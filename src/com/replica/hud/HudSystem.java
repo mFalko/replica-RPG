@@ -17,6 +17,7 @@
 package com.replica.hud;
 
 import com.replica.core.BaseObject;
+import com.replica.core.GameObject;
 import com.replica.core.GameObjectManager;
 import com.replica.input.ButtonConstants;
 import com.replica.input.InputGameInterface;
@@ -52,28 +53,30 @@ public class HudSystem extends BaseObject {
 
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
-		final GameObjectManager manager = sSystemRegistry.gameObjectManager;
-
-		if (manager != null && manager.getPlayer() != null) {
-			// Only draw player-specific HUD elements when there's a player.
-
-		}
+		
 
 		if (firstRun_) {
 			init();
 			firstRun_ = false;
 		}
-
-		if (useTouchInterface_) {
-
-			dpad_.update(timeDelta, this);
-			menuButton_.update(timeDelta, this);
-			for (int i = 0; i < attackButtons_.length; ++i) {
-				attackButtons_[i].update(timeDelta, this);
-			}
-			
-			
+		
+		final GameObjectManager manager = sSystemRegistry.gameObjectManager;
+		GameObject player = null;
+		if (manager != null) {
+			player = manager.getPlayer();
 		}
+	
+		if (player != null) {
+			// Only draw player-specific HUD elements when there's a player.
+
+			if (useTouchInterface_) {
+				dpad_.update(timeDelta, this);
+				menuButton_.update(timeDelta, this);
+				for (int i = 0; i < attackButtons_.length; ++i) {
+					attackButtons_[i].update(timeDelta, this);
+				}
+			}
+		}		
 
 	}
 
@@ -86,7 +89,15 @@ public class HudSystem extends BaseObject {
 	}
 	
 	
-
+	public void setButtonTexture(int button, int texture) {
+		if (button < 0 || button >= ButtonConstants.GAME_BUTTON_COUNT) {
+			// DebugLog.v("Input Interface", "Invalid Button Index");
+			return;
+		}
+		
+		attackButtons_[button].setTexture(texture);
+	}
+	
 	public void registerTouchInput(InputGameInterface inputInterface, int viewWidth, int viewHeight) {
 		
 		dpad_.setBounds(ButtonConstants.D_PAD_REGION_X,
@@ -133,7 +144,6 @@ public class HudSystem extends BaseObject {
 				ButtonConstants.MENU_BUTTON_HEIGHT);
 	}
 	
-
 	private boolean useTouchInterface_ = true;
 	private boolean firstRun_ = true;
 	private HUDVirtualDPad dpad_ = new HUDVirtualDPad();

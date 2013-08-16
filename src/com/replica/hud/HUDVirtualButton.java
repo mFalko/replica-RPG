@@ -79,6 +79,11 @@ public class HUDVirtualButton extends BaseObject {
 		}
 	}
 	
+	public void setTexture(int texture) {
+		buttonGraphic_.setTexture(sSystemRegistry.shortTermTextureLibrary
+				.getTextureByResource(texture));
+	}
+	
 	public void setIndex(int index) {
 		if (index < 0 || index >= ButtonConstants.GAME_BUTTON_COUNT) {
 			DebugLog.v("Input Interface", "Invalid Button Index");

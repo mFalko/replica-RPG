@@ -15,17 +15,16 @@
  */
 
 package com.replica.core.components;
-import android.util.Log;
-
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.GameObject.ActionType;
 import com.replica.core.GameObjectManager;
-import com.replica.core.collision.CollisionParameters;
 import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.core.factory.GameObjectFactory;
+import com.replica.core.game.AttackConstants;
 import com.replica.input.InputDPad;
 import com.replica.input.InputGameInterface;
+import com.replica.utility.FixedSizeArray;
 import com.replica.utility.TimeSystem;
 import com.replica.utility.Vector2;
 import com.replica.utility.VectorPool;
@@ -46,6 +45,8 @@ public class PlayerComponent extends GameComponent {
 	
 	private State mState;
 	private float mTimer;
+	
+    public FixedSizeArray<AttackConstants> attackList;
 
 	private InventoryComponent mInventory;
 	private Vector2 mHotSpotTestPoint;
@@ -57,6 +58,8 @@ public class PlayerComponent extends GameComponent {
 		mHotSpotTestPoint = new Vector2();
 		reset();
 		setPhase(ComponentPhases.THINK.ordinal());
+		//TODO: Magic number, need to figure out where to define this
+		attackList = new FixedSizeArray<AttackConstants>(6); 
 	}
 
 	@Override
@@ -66,6 +69,7 @@ public class PlayerComponent extends GameComponent {
 		mInventory = null;
 		mHotSpotTestPoint.zero();
 		mHitReaction = null;
+//		attackList.clear();
 	}
 
 	protected void move(float time, float timeDelta, GameObject parentObject) {
@@ -110,7 +114,7 @@ public class PlayerComponent extends GameComponent {
 
 				parentObject.setCurrentAction(ActionType.MOVE);
 				
-//				Log.v("SnowBall", "Position: X = " + pos.x + " : Y = " + pos.y);
+//				DebugLog.d("SnowBall", "Position: X = " + pos.x + " : Y = " + pos.y);
 			} else {
 				parentObject.setCurrentAction(ActionType.IDLE);
 			}
@@ -180,7 +184,7 @@ public class PlayerComponent extends GameComponent {
             mTimer = gameTime;
         } 
 //		parentObject.currentAttack.castTime
-		if (gameTime - mTimer >= 0.5f) {
+		if (gameTime - mTimer >= 0.7f) {
 			GameObjectFactory factory = sSystemRegistry.gameObjectFactory;
             GameObjectManager manager = sSystemRegistry.gameObjectManager;
             VectorPool pool = sSystemRegistry.vectorPool;

@@ -27,6 +27,7 @@ import com.replica.core.collision.AABoxCollisionVolume;
 import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.core.collision.CollisionVolume;
 import com.replica.core.components.HitReactionComponent;
+import com.replica.utility.DebugLog;
 import com.replica.utility.DebugSystem;
 import com.replica.utility.FixedSizeArray;
 import com.replica.utility.ShellSorter;
@@ -180,8 +181,6 @@ public class GameObjectCollisionSystem extends BaseObject {
                         if (hit2 != HitType.INVALID) {
                             boolean hitAccepted = false;
                             if (record.reactionComponent != null) {
-                            	//TODO: Im hitting twice....figure this out!!
-                            	//FIXME: Im hitting twice....figure this out!!
                                 hitAccepted = record.reactionComponent.receivedHit(
                                         record.object, other.object, hit2);
                             }
