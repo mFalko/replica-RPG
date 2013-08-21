@@ -229,7 +229,7 @@ public class Game extends AllocationGuard {
 
 			Zone zone_ = null;
 			try {
-				InputStream in = context.getAssets().open("town.xml");
+				InputStream in = context.getAssets().open("main_snowball_test.zon");
 				ZoneLoader loader = new XMLZoneLoader(params.viewWidth,
 						params.viewHeight);
 				zone_ = loader.loadZone(in, context);

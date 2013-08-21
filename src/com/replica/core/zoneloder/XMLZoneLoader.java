@@ -322,7 +322,7 @@ public class XMLZoneLoader implements ZoneLoader {
 	}
 
 	private FixedSizeArray<LineSegment> backgroundCollisionLines_;
-	private static final int MAX_LAYERS = 6;
+	private static final int MAX_LAYERS = 20;
 	private static final int BACKGROUND = 0;
 	private static final int HIGHGROUND = 1;
 	private long[][][] mapData_;
