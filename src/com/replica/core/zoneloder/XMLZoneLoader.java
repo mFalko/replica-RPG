@@ -96,11 +96,15 @@ public class XMLZoneLoader implements ZoneLoader {
 
 			VertexGrid[] grids = new VertexGrid[gridCount];
 			Texture[] textures = new Texture[gridCount];
+			
+			DebugLog.v("SnowBall", "Layer " + i + " sheet count: " + gridCount);
 
 			for (int j = 0; j < grids.length; ++j) {
 				grids[j] = new VertexGrid(worldWidth_, worldHeight_);
 				textures[j] = sheets[j].texture_;
 			}
+			
+			DebugLog.v("SnowBall", "Loaded Layer " + i);
 
 			final int tileHeight = tileSet_.getTileHeight();
 			final int tileWidth = tileSet_.getTileWidth();

@@ -31,7 +31,6 @@ import com.replica.utility.Vector2;
  * location of the camera focus in the scene) or not (meaning their screen position is relative to
  * the origin at the lower-left corner of the display).
  * 
- * 4/25: I think that the camera relative is causing a bug w/ the quadtree collision detection
  * 	
  */
 public class RenderComponent extends GameComponent {

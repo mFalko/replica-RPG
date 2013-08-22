@@ -85,14 +85,10 @@ public class VertexGrid {
 		int i = quadX * 2;
 		int j = quadY * 2;
 
-		setVertex(i, j + 1, positions[0][0], positions[0][1], positions[0][2],
-				uvs[0][0], uvs[0][1]);
-		setVertex(i, j, positions[1][0], positions[1][1], positions[1][2],
-				uvs[1][0], uvs[1][1]);
-		setVertex(i + 1, j, positions[2][0], positions[2][1], positions[2][2],
-				uvs[2][0], uvs[2][1]);
-		setVertex(i + 1, j + 1, positions[3][0], positions[3][1],
-				positions[3][2], uvs[3][0], uvs[3][1]);
+		setVertex(i,     j + 1, positions[0][0], positions[0][1], positions[0][2], uvs[0][0], uvs[0][1]);
+		setVertex(i,     j,     positions[1][0], positions[1][1], positions[1][2], uvs[1][0], uvs[1][1]);
+		setVertex(i + 1, j,     positions[2][0], positions[2][1], positions[2][2], uvs[2][0], uvs[2][1]);
+		setVertex(i + 1, j + 1, positions[3][0], positions[3][1], positions[3][2], uvs[3][0], uvs[3][1]);
 	}
 
 	private void setVertex(int i, int j, float x, float y, float z, float u,
