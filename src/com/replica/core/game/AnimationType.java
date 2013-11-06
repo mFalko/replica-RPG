@@ -64,6 +64,7 @@ public enum AnimationType {
 		HUMANOID_ATTACK_ARROW_EAST,
 	
 		//SimpleDirection
+		IDLE,
 		NORTH,
 		NORTH_EAST,
 		EAST,

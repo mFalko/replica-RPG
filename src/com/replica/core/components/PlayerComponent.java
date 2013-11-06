@@ -18,6 +18,7 @@ package com.replica.core.components;
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.GameObject.ActionType;
+import com.replica.core.GameObject.Team;
 import com.replica.core.GameObjectManager;
 import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.core.factory.GameObjectFactory;
@@ -162,27 +163,40 @@ public class PlayerComponent extends GameComponent {
 		
 		if (mTimer < 0.0f) {
             mTimer = gameTime;
-        } 
-//		parentObject.currentAttack.castTime
-		if (gameTime - mTimer >= 0.7f) {
-			GameObjectFactory factory = sSystemRegistry.gameObjectFactory;
-            GameObjectManager manager = sSystemRegistry.gameObjectManager;
-            VectorPool pool = sSystemRegistry.vectorPool;
+            GameObjectFactory factory = sSystemRegistry.gameObjectFactory;
+          GameObjectManager manager = sSystemRegistry.gameObjectManager;
             
-            
-            
-            GameObject object = factory.spawnFireball(
-            		parentObject.getPosition().x + (20*parentObject.facingDirection.x)+10, parentObject.getPosition().y + (10*parentObject.facingDirection.y)+10);
-            
-            Vector2 vel = pool.allocate();
-            vel.set(parentObject.facingDirection);
-            vel.multiply(300);
-            object.setMaxSpeed(300);
-            object.setVelocity(vel);
-            object.facingDirection.set(parentObject.facingDirection);
-            pool.release(vel);
-            
+            GameObject object = factory.spawnQuake(
+            		parentObject.getCenteredPositionX(), parentObject.getPosition().y);
+            object.team = Team.PLAYER;
             manager.add(object);
+            
+        } 
+		
+		
+		
+		
+		
+//		parentObject.currentAttack.castTime
+		if (gameTime - mTimer >= 0.6f) {
+//			GameObjectFactory factory = sSystemRegistry.gameObjectFactory;
+//            GameObjectManager manager = sSystemRegistry.gameObjectManager;
+//            VectorPool pool = sSystemRegistry.vectorPool;
+//            
+//            
+//            
+//            GameObject object = factory.spawnFireball(
+//            		parentObject.getPosition().x + (20*parentObject.facingDirection.x)+10, parentObject.getPosition().y + (10*parentObject.facingDirection.y)+10);
+//            
+//            Vector2 vel = pool.allocate();
+//            vel.set(parentObject.facingDirection);
+//            vel.multiply(300);
+//            object.setMaxSpeed(300);
+//            object.setVelocity(vel);
+//            object.facingDirection.set(parentObject.facingDirection);
+//            pool.release(vel);
+//            
+//            manager.add(object);
             
 			gotoMove(parentObject);
 		}
@@ -208,6 +222,9 @@ public class PlayerComponent extends GameComponent {
 			goToAttack(parentObject);
 		}
 		
+//		if (input.getButtonPressed(1)) {
+//			goToAttack(parentObject);
+//		}
 
 	}
 	

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
 import com.replica.core.game.AnimationType;
 
 public class SimpleAnimationComponent extends GameComponent {
@@ -35,32 +36,34 @@ public class SimpleAnimationComponent extends GameComponent {
 			final AnimationType oldAnimation = currentAnimation_;
 			boolean visible = true;
 			float opacity = 1.0f;
-			final int x = (int) Math.ceil(parentObject.facingDirection.x);
-			final int y = (int) Math.ceil(parentObject.facingDirection.y);
-			currentAnimation_ = y > 0? 
-								//we're facing north
-								x > 0? AnimationType.NORTH_EAST 
-							:   x < 0? AnimationType.NORTH_WEST
-							:	AnimationType.NORTH 
-								
-							:	y < 0? 
-								//we're facing south	
-								x > 0? AnimationType.SOUTH_EAST 
-							:   x < 0? AnimationType.SOUTH_WEST
-							:	AnimationType.SOUTH
-								
-							:	x > 0?
-								//we're facing east
-									AnimationType.EAST
-								
-							:	x < 0?
-								//we're facing west	
-									AnimationType.WEST
-								
-								//play default of north
-							:   AnimationType.NORTH ;
-
-					
+			if (parentObject.getCurrentAction() == ActionType.IDLE) {
+				currentAnimation_ = AnimationType.IDLE;
+			} else {
+				final int x = (int) Math.ceil(parentObject.facingDirection.x);
+				final int y = (int) Math.ceil(parentObject.facingDirection.y);
+				currentAnimation_ = y > 0? 
+									//we're facing north
+									x > 0? AnimationType.NORTH_EAST 
+								:   x < 0? AnimationType.NORTH_WEST
+								:	AnimationType.NORTH 
+									
+								:	y < 0? 
+									//we're facing south	
+									x > 0? AnimationType.SOUTH_EAST 
+								:   x < 0? AnimationType.SOUTH_WEST
+								:	AnimationType.SOUTH
+									
+								:	x > 0?
+									//we're facing east
+										AnimationType.EAST
+									
+								:	x < 0?
+									//we're facing west	
+										AnimationType.WEST
+									
+									//play default of north
+								:   AnimationType.NORTH ;
+			}
 
 			spriteComponent_.setVisible(visible);
 			spriteComponent_.setOpacity(opacity);

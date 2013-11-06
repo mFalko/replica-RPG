@@ -123,7 +123,7 @@ public class GameObjectFactory extends BaseObject {
 		// Objects 301 - 400
 
 		// Effects 401 - 500
-
+		QUAKE(401),
 		// Projectiles 501 - 600
 		FIREBALL_SMALL(501),
 
@@ -326,6 +326,9 @@ public class GameObjectFactory extends BaseObject {
 		textureLibrary.allocateTexture(R.drawable.attack_spell_fireball_south);
 		textureLibrary.allocateTexture(R.drawable.attack_spell_fireball_west);
 		textureLibrary.allocateTexture(R.drawable.attack_spell_fireball_east);
+		
+		textureLibrary.allocateTexture(R.drawable.quake);
+		
 
 	}
 
@@ -665,6 +668,64 @@ public class GameObjectFactory extends BaseObject {
 				objectSpriteComponent);
 
 		object.setCurrentAction(ActionType.MOVE);
+		return object;
+	}
+	
+
+	public GameObject spawnQuake(float positionX, float positionY) {
+		final float width = 256;
+		final float height = 128;
+		GameObject object = mGameObjectPool.allocate();
+		object.getPosition().set(positionX - width/2, positionY- height / 2);
+		object.activationRadius = mTightActivationRadius;
+		object.width = width;
+		object.height = height;
+		object.life = 1;
+		object.destroyOnDeactivation = true;
+
+		FixedSizeArray<BaseObject> staticData = getStaticData(GameObjectType.QUAKE);
+		if (staticData == null) {
+			final int staticObjectCount = 1;
+			staticData = new FixedSizeArray<BaseObject>(staticObjectCount);
+			
+			SpriteAnimation quakeAnimation = animationFactory.loadAnimation(
+					R.raw.attack_quake,
+					R.drawable.quake, width, height);
+			quakeAnimation.setPhase(AnimationType.IDLE.ordinal());	
+
+	
+
+			staticData.add(quakeAnimation);
+			setStaticData(GameObjectType.QUAKE, staticData);
+		}
+
+		SpriteComponent objectSpriteComponent = (SpriteComponent) allocateComponent(SpriteComponent.class);
+		RenderComponent objectRenCom = (RenderComponent) allocateComponent(RenderComponent.class);
+		SimpleAnimationComponent animationCom = (SimpleAnimationComponent) allocateComponent(SimpleAnimationComponent.class);
+
+		objectSpriteComponent.setSize((int) object.width, (int) object.height);
+		objectSpriteComponent.setRenderComponent(objectRenCom);
+		animationCom.setSpriteComponent(objectSpriteComponent);
+		objectRenCom.setPriority(4);
+
+		LifetimeComponent lifetimeCom = (LifetimeComponent) allocateComponent(LifetimeComponent.class);
+		lifetimeCom.setTimeUntilDeath(0.6f);
+
+		DynamicCollisionComponent dynamicCollision = (DynamicCollisionComponent) allocateComponent(DynamicCollisionComponent.class);
+		objectSpriteComponent.setCollisionComponent(dynamicCollision);
+		
+		HitReactionComponent hitReact = (HitReactionComponent)allocateComponent(HitReactionComponent.class);
+        dynamicCollision.setHitReactionComponent(hitReact);
+        
+		object.add(objectSpriteComponent);
+		object.add(objectRenCom);
+		object.add(animationCom);
+		object.add(lifetimeCom);
+		object.add(dynamicCollision);
+		addStaticData(GameObjectType.QUAKE, object,
+				objectSpriteComponent);
+
+		object.setCurrentAction(ActionType.IDLE);
 		return object;
 	}
 	
