@@ -18,9 +18,8 @@ package com.replica.core;
 
 import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.core.game.AttackConstants;
-import com.replica.core.game.AttackConstants.AttackType;
-import com.replica.utility.TimeSystem;
-import com.replica.utility.Utils;
+import com.replica.utility.HasBounds;
+import com.replica.utility.RectF;
 import com.replica.utility.Vector2;
 
 /**
@@ -29,17 +28,18 @@ import com.replica.utility.Vector2;
  * GameObjects themselves have no intrinsic behavior.  GameObjects are also "bags of data" that
  * components can use to share state (direct component-to-component communication is discouraged).
  */
-public class GameObject extends PhasedObjectManager {
+public class GameObject extends PhasedObjectManager implements HasBounds {
 	
     // These fields are managed by components.
 	// define as constants and use a alloc free map to access?
+	
     private Vector2 mPosition;
     private Vector2 mVelocity;
-    private Vector2 mTargetVelocity;
-    private Vector2 mAcceleration;
-    private Vector2 mImpulse;
+    private float  mMaxSpeed;
+    private float mMass;
     private Vector2 mBackgroundCollisionNormal;
 
+    private RectF mBounds_;
   
     public boolean positionLocked;
     public boolean touchingWall;
@@ -96,11 +96,8 @@ public class GameObject extends PhasedObjectManager {
 
         mPosition = new Vector2();
         mVelocity = new Vector2();
-        mTargetVelocity = new Vector2();
-        mAcceleration = new Vector2();
-        mImpulse = new Vector2();
         mBackgroundCollisionNormal = new Vector2();
-        
+        mBounds_ = new RectF();
         facingDirection = new Vector2(1, 0);
         
         reset();
@@ -113,9 +110,6 @@ public class GameObject extends PhasedObjectManager {
         
         mPosition.zero();
         mVelocity.zero();
-        mTargetVelocity.zero();
-        mAcceleration.zero();
-        mImpulse.zero();
         mBackgroundCollisionNormal.zero();
         facingDirection.set(1.0f, 1.0f);
         
@@ -155,29 +149,13 @@ public class GameObject extends PhasedObjectManager {
     public final void setVelocity(Vector2 velocity) {
         mVelocity.set(velocity);
     }
-
-    public final Vector2 getTargetVelocity() {
-        return mTargetVelocity;
+    
+    public final float getMaxSpeed() {
+    	return mMaxSpeed;
     }
-
-    public final void setTargetVelocity(Vector2 targetVelocity) {
-        mTargetVelocity.set(targetVelocity);
-    }
-
-    public final Vector2 getAcceleration() {
-        return mAcceleration;
-    }
-
-    public final void setAcceleration(Vector2 acceleration) {
-        mAcceleration.set(acceleration);
-    }
-
-    public final Vector2 getImpulse() {
-        return mImpulse;
-    }
-
-    public final void setImpulse(Vector2 impulse) {
-        mImpulse.set(impulse);
+    
+    public final void setMaxSpeed(float maxSpeed) {
+    	mMaxSpeed = maxSpeed;
     }
 
     public final Vector2 getBackgroundCollisionNormal() {
@@ -195,4 +173,23 @@ public class GameObject extends PhasedObjectManager {
     public final void setCurrentAction(ActionType type) {
         mCurrentAction = type;
     }
+
+	public float getMass() {
+		return mMass;
+	}
+
+	public void setMass(float mass) {
+		mMass = mass;
+	}
+
+	@Override
+	public RectF getBounds() {
+		return mBounds_;
+	}
+
+	@Override
+	public void setBounds(RectF bounds) {
+		mBounds_.set(bounds);
+		
+	}
 }

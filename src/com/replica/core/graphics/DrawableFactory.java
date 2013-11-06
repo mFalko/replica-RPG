@@ -17,8 +17,6 @@
 
 package com.replica.core.graphics;
 
-import android.util.Log;
-
 import com.replica.core.BaseObject;
 import com.replica.core.ContextParameters;
 import com.replica.utility.ObjectPool;
@@ -31,7 +29,7 @@ import com.replica.utility.TObjectPool;
  */
 public class DrawableFactory extends BaseObject {
     private final static int BITMAP_POOL_SIZE = 768;
-    
+    private final static int VERTEX_GRID_POOL_SIZE = 120;
     private DrawableBitmapPool mBitmapPool;
     private ScrollableBitmapPool mScrollableBitmapPool;
     private TiledBackgroundVertexGridPool mTiledBackgroundVertexGridPool;
@@ -40,7 +38,7 @@ public class DrawableFactory extends BaseObject {
     public DrawableFactory() {
         super();
         mBitmapPool = new DrawableBitmapPool(BITMAP_POOL_SIZE);
-        mTiledBackgroundVertexGridPool = new TiledBackgroundVertexGridPool();
+        mTiledBackgroundVertexGridPool = new TiledBackgroundVertexGridPool(VERTEX_GRID_POOL_SIZE);
         mScrollableBitmapPool = new ScrollableBitmapPool();
     }
     
@@ -136,8 +134,8 @@ public class DrawableFactory extends BaseObject {
     
     private class TiledBackgroundVertexGridPool extends TObjectPool<TiledBackgroundVertexGrid> {
         
-        public TiledBackgroundVertexGridPool() {
-            super();
+        public TiledBackgroundVertexGridPool(int vertexGridPoolSize) {
+            super(vertexGridPoolSize);
         }
         
         @Override

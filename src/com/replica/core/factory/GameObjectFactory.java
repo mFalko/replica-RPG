@@ -18,8 +18,6 @@ package com.replica.core.factory;
 
 import java.util.Comparator;
 
-import android.util.Log;
-
 import com.replica.R;
 import com.replica.core.BaseObject;
 import com.replica.core.ContextParameters;
@@ -35,7 +33,6 @@ import com.replica.core.components.CombatDummyComponent;
 import com.replica.core.components.CrusherAndouComponent;
 import com.replica.core.components.DoorAnimationComponent;
 import com.replica.core.components.DynamicCollisionComponent;
-import com.replica.core.components.EnemyAnimationComponent;
 import com.replica.core.components.FadeDrawableComponent;
 import com.replica.core.components.FixedAnimationComponent;
 import com.replica.core.components.FrameRateWatcherComponent;
@@ -57,7 +54,6 @@ import com.replica.core.components.MovementComponent;
 import com.replica.core.components.NPCAnimationComponent;
 import com.replica.core.components.NPCComponent;
 import com.replica.core.components.OrbitalMagnetComponent;
-import com.replica.core.components.PatrolComponent;
 import com.replica.core.components.PhysicsComponent;
 import com.replica.core.components.PlaySingleSoundComponent;
 import com.replica.core.components.PlayerComponent;
@@ -67,13 +63,14 @@ import com.replica.core.components.ScrollerComponent;
 import com.replica.core.components.SelectDialogComponent;
 import com.replica.core.components.SimpleAnimationComponent;
 import com.replica.core.components.SimpleCollisionComponent;
-import com.replica.core.components.SimplePhysicsComponent;
-import com.replica.core.components.SleeperComponent;
 import com.replica.core.components.SolidSurfaceComponent;
 import com.replica.core.components.SpriteComponent;
+import com.replica.core.components.SteeringBehavior;
+import com.replica.core.components.VehicleComponent;
 import com.replica.core.game.AnimationType;
 import com.replica.core.graphics.SpriteAnimation;
 import com.replica.core.graphics.TextureLibrary;
+import com.replica.core.systems.CameraSystem;
 import com.replica.utility.DebugLog;
 import com.replica.utility.FixedSizeArray;
 import com.replica.utility.SortConstants;
@@ -121,6 +118,7 @@ public class GameObjectFactory extends BaseObject {
 
 		// NPC Enemies 201 - 300
 		COMBAT_DUMMY(201),
+		SKELETON(202),
 
 		// Objects 301 - 400
 
@@ -214,9 +212,8 @@ public class GameObjectFactory extends BaseObject {
 				new ComponentClass(CrusherAndouComponent.class, 1),
 				new ComponentClass(DoorAnimationComponent.class, 256), // !
 				new ComponentClass(DynamicCollisionComponent.class, 256),
-				new ComponentClass(EnemyAnimationComponent.class, 256),
 				new ComponentClass(FadeDrawableComponent.class, 32),
-				new ComponentClass(FixedAnimationComponent.class, 8),
+				new ComponentClass(FixedAnimationComponent.class, 32),
 				new ComponentClass(FrameRateWatcherComponent.class, 1),
 				new ComponentClass(GenericAnimationComponent.class, 32),
 				new ComponentClass(GhostComponent.class, 256),
@@ -230,11 +227,10 @@ public class GameObjectFactory extends BaseObject {
 				new ComponentClass(LifetimeComponent.class, 384),
 				new ComponentClass(MotionBlurComponent.class, 1),
 				new ComponentClass(MovementComponent.class, 128),
-				new ComponentClass(NPCAnimationComponent.class, 8),
-				new ComponentClass(NPCComponent.class, 8),
+				new ComponentClass(NPCAnimationComponent.class, 32),
+				new ComponentClass(NPCComponent.class, 32),
 				new ComponentClass(OrbitalMagnetComponent.class, 1),
-				new ComponentClass(PatrolComponent.class, 256),
-				new ComponentClass(PhysicsComponent.class, 8),
+				new ComponentClass(PhysicsComponent.class, 32),
 				new ComponentClass(PlayerComponent.class, 1),
 				new ComponentClass(PlaySingleSoundComponent.class, 128),
 				new ComponentClass(PopOutComponent.class, 32),
@@ -243,11 +239,10 @@ public class GameObjectFactory extends BaseObject {
 				new ComponentClass(SelectDialogComponent.class, 8),
 				new ComponentClass(SimpleAnimationComponent.class, 64),
 				new ComponentClass(SimpleCollisionComponent.class, 32),
-				new ComponentClass(SimplePhysicsComponent.class, 256),
-				new ComponentClass(SleeperComponent.class, 32),
 				new ComponentClass(SolidSurfaceComponent.class, 16),
 				new ComponentClass(SpriteComponent.class, 384),
-
+				new ComponentClass(SteeringBehavior.class, 32),
+				new ComponentClass(VehicleComponent.class, 32),
 		};
 
 		mComponentPools = new FixedSizeArray<GameComponentPool>(
@@ -582,6 +577,12 @@ public class GameObjectFactory extends BaseObject {
 		addStaticData(GameObjectType.PLAYER, object, playerSpriteComponent);
 
 		object.setCurrentAction(ActionType.IDLE);
+		
+		CameraSystem camera = sSystemRegistry.cameraSystem;
+        if (camera != null) {
+            camera.setTarget(object);
+        }
+		
 		return object;
 
 	}
@@ -760,6 +761,173 @@ public class GameObjectFactory extends BaseObject {
 
 		object.setCurrentAction(ActionType.IDLE);
 		return object;
+	}
+	
+	public GameObject spawnSkeleton(float positionX, float positionY) {
+		
+		final float width = 50;
+		final float height = 50;
+		
+		GameObject object = mGameObjectPool.allocate();
+		object.getPosition().set(positionX, positionY);
+		object.activationRadius = mNormalActivationRadius;
+		object.width = width;
+		object.height = height;
+		object.setMass(20);
+        object.setMaxSpeed(20);
+        object.facingDirection.y = 1;
+		object.team = Team.ENEMY;
+		
+		
+		FixedSizeArray<BaseObject> staticData = getStaticData(GameObjectType.SKELETON);
+
+		if (staticData == null) {
+			final int staticObjectCount = 12;
+			staticData = new FixedSizeArray<BaseObject>(staticObjectCount);
+
+			SpriteAnimation moveNorth = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_move_north,
+					R.drawable.body_skeleton_walkcycle_north, width, height);	
+			moveNorth.setPhase(AnimationType.HUMANOID_MOVE_NORTH.ordinal());
+			
+			SpriteAnimation moveSouth = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_move_south,
+					R.drawable.body_skeleton_walkcycle_south, width, height);
+			moveSouth.setPhase(AnimationType.HUMANOID_MOVE_SOUTH.ordinal());
+			
+			SpriteAnimation moveWest = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_move_west,
+					R.drawable.body_skeleton_walkcycle_west, width, height);
+			moveWest.setPhase(AnimationType.HUMANOID_MOVE_WEST.ordinal());
+			
+			SpriteAnimation moveEast = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_move_east,
+					R.drawable.body_skeleton_walkcycle_east, width, height);
+			moveEast.setPhase(AnimationType.HUMANOID_MOVE_EAST.ordinal());
+			
+			SpriteAnimation idleNorth = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_idle_north,
+					R.drawable.body_skeleton_walkcycle_north, width, height);
+			idleNorth.setPhase(AnimationType.HUMANOID_IDLE_NORTH.ordinal());
+			
+			SpriteAnimation idleSouth = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_idle_south,
+					R.drawable.body_skeleton_walkcycle_south, width, height);
+			idleSouth.setPhase(AnimationType.HUMANOID_IDLE_SOUTH.ordinal());
+			
+			SpriteAnimation idleWest = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_idle_west,
+					R.drawable.body_skeleton_walkcycle_west, width, height);
+			idleWest.setPhase(AnimationType.HUMANOID_IDLE_WEST.ordinal());
+			
+			SpriteAnimation idleEast = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_idle_east,
+					R.drawable.body_skeleton_walkcycle_east, width, height);
+			idleEast.setPhase(AnimationType.HUMANOID_IDLE_EAST.ordinal());
+			
+			SpriteAnimation spellcastNorth = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_attack_spell_north,
+					R.drawable.body_skeleton_spellcast_north, width, height);
+			spellcastNorth.setPhase(AnimationType.HUMANOID_ATTACK_SPELL_NORTH.ordinal());
+			
+			SpriteAnimation spellcastSouth = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_attack_spell_south,
+					R.drawable.body_skeleton_spellcast_south, width, height);
+			spellcastSouth.setPhase(AnimationType.HUMANOID_ATTACK_SPELL_SOUTH.ordinal());
+			
+			SpriteAnimation spellcastWest = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_attack_spell_west,
+					R.drawable.body_skeleton_spellcast_west, width, height);
+			spellcastWest.setPhase(AnimationType.HUMANOID_ATTACK_SPELL_WEST.ordinal());
+			
+			SpriteAnimation spellcastEast = animationFactory.loadAnimation(
+					R.raw.animation_humanoid_attack_spell_east,
+					R.drawable.body_skeleton_spellcast_east, width, height);
+			spellcastEast.setPhase(AnimationType.HUMANOID_ATTACK_SPELL_EAST.ordinal());	
+
+			staticData.add(moveNorth);
+			staticData.add(moveSouth);
+			staticData.add(moveWest);
+			staticData.add(moveEast);
+			staticData.add(idleNorth);
+			staticData.add(idleSouth);
+			staticData.add(idleWest);
+			staticData.add(idleEast);
+			staticData.add(spellcastNorth);
+			staticData.add(spellcastSouth);
+			staticData.add(spellcastWest);
+			staticData.add(spellcastEast);
+
+			setStaticData(GameObjectType.SKELETON, staticData);
+		}
+
+		
+
+		HumanoidAnimationComponent playerAnimationComponent = (HumanoidAnimationComponent) allocateComponent(HumanoidAnimationComponent.class);
+
+		SpriteComponent spriteComponent = (SpriteComponent) allocateComponent(SpriteComponent.class);
+
+		RenderComponent playerRenCom = (RenderComponent) allocateComponent(RenderComponent.class);
+
+		BackgroundCollisionComponent backgroundCollisionComponent = (BackgroundCollisionComponent) allocateComponent(BackgroundCollisionComponent.class);
+		backgroundCollisionComponent.setSize(10, 10);
+		backgroundCollisionComponent.setOffset(20, 0);
+
+		spriteComponent.setSize((int) object.width, (int) object.height);
+		spriteComponent.setRenderComponent(playerRenCom);
+		playerRenCom.setPriority(SortConstants.GAMEOBJECT_BASE_FLIP); //TODO why do this here?
+		
+		
+		
+		// TODO: remove Sprite updater and make something better cannot allocate here
+		SimpleSpriteUpdater spriteUpdater = new SimpleSpriteUpdater();
+		spriteUpdater.setSprite(spriteComponent);
+		playerAnimationComponent.setSpriteUpdater(spriteUpdater);
+
+		
+		
+		DynamicCollisionComponent dynamicCollision = (DynamicCollisionComponent) allocateComponent(DynamicCollisionComponent.class);
+		spriteComponent.setCollisionComponent(dynamicCollision);
+		
+		HitReactionComponent hitReact = (HitReactionComponent)allocateComponent(HitReactionComponent.class);
+        dynamicCollision.setHitReactionComponent(hitReact);
+        
+        
+        //playerComponent.setHitReactionComponent(hitReact);
+        
+        
+        VehicleComponent vehicleComponent = (VehicleComponent) allocateComponent(VehicleComponent.class);
+        NPCComponent npcComponent  = (NPCComponent) allocateComponent(NPCComponent.class);
+        SteeringBehavior steeringBehavior = (SteeringBehavior) allocateComponent(SteeringBehavior.class);
+        
+        
+        vehicleComponent.setSteeringAdapter(steeringBehavior);
+        npcComponent.setHitReactionComponent(hitReact);
+        npcComponent.setSteering(steeringBehavior);
+        
+     
+        
+        steeringBehavior.setVehicleParent(object);
+        
+        
+
+		object.add(playerAnimationComponent);
+		object.add(spriteComponent);
+		object.add(playerRenCom);
+		object.add(backgroundCollisionComponent);
+		object.add(dynamicCollision);
+		object.add(hitReact);
+	
+		object.add(vehicleComponent);
+		object.add(npcComponent);
+		object.add(steeringBehavior);
+		addStaticData(GameObjectType.SKELETON, object, spriteComponent);
+
+		object.setCurrentAction(ActionType.MOVE);
+		
+		
+		return object;
+
 	}
 
 	/** Comparator for game objects objects. */

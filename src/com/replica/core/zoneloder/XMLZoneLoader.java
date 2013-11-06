@@ -26,6 +26,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.util.Xml;
 
 import com.replica.R;
@@ -89,87 +90,97 @@ public class XMLZoneLoader implements ZoneLoader {
 		float[][] uvWorkspace = new float[4][2];
 		
 		Zone map = new Zone();
-		
-		for (int i = 0; i < layerCount_; ++i) {
-			Sheet[] sheets = tileSet_.getSheets(mapData_[i]);
-			int gridCount = sheets.length;
-
-			VertexGrid[] grids = new VertexGrid[gridCount];
-			Texture[] textures = new Texture[gridCount];
-			
-			DebugLog.v("SnowBall", "Layer " + i + " sheet count: " + gridCount);
-
-			for (int j = 0; j < grids.length; ++j) {
-				grids[j] = new VertexGrid(worldWidth_, worldHeight_);
-				textures[j] = sheets[j].texture_;
-			}
-			
-			DebugLog.v("SnowBall", "Loaded Layer " + i);
-
-			final int tileHeight = tileSet_.getTileHeight();
-			final int tileWidth = tileSet_.getTileWidth();
-
-			for (int tileY = 0; tileY < worldHeight_; tileY++) {
-				for (int tileX = 0; tileX < worldWidth_; tileX++) {
-
-					final long GID = mapData_[i][tileY][tileX];
-					final float offsetX = tileX * tileWidth;
-					final float offsetY = tileY * tileHeight;
-
-					final float[] p0 = { offsetX, offsetY + tileHeight, 0.0f };
-					final float[] p1 = { offsetX, offsetY, 0.0f };
-					final float[] p2 = { offsetX + tileWidth, offsetY, 0.0f };
-					final float[] p3 = { offsetX + tileWidth,
-							offsetY + tileHeight, 0.0f };
-
-					final float[][] positions = { p0, p1, p2, p3 };
-					int gridIndex = tileSet_.GIDToUV(GID, uvWorkspace, sheets);
-					grids[gridIndex].set(tileX, tileY, positions, uvWorkspace);
-				}
-			}
-			
-			TiledVertexGrid layer = new TiledVertexGrid(textures, 
-														grids,
-														viewWidth_,
-    													viewHeight_,
-														tileWidth, 
-														tileHeight,
-														worldWidth_,
-														worldHeight_);
-			
-			RenderComponent backgroundRender = new RenderComponent();
-			int priority = drawLevel_[i][1];
-			if (drawLevel_[i][0] == BACKGROUND)
-				priority += SortConstants.BACKGROUND_START;
-			else
-				priority += SortConstants.HIGHGROUND_START;
-	        backgroundRender.setPriority(priority);
-	        
-	        //TODO: The map format should really just output independent speeds for x and y,
-	        // but as a short term solution we can assume parallax layers lock in the smaller
-	        // direction of movement.
-	        // 4/25: this needs to allow for different scroll speeds, so far no parallax scrolling
-	        float xScrollSpeed = 1.0f;
-	        float yScrollSpeed = 1.0f;
-	        
-	        ScrollerComponent scroller = new ScrollerComponent(xScrollSpeed,
-	        													yScrollSpeed,
-	        													viewWidth_,
-	        													viewHeight_,
-	        													layer);
-	        scroller.setRenderComponent(backgroundRender);
-
-	        map.add(scroller);
-	        map.add(backgroundRender);
-	        backgroundRender.setCameraRelative(false);
-			
-		}
-
-
-		map.setWorldHeight(worldHeight_ * tileSet_.getTileHeight());
-		map.setWorldWidth(worldWidth_ * tileSet_.getTileWidth());
-		
-		map.setcollisionLines(backgroundCollisionLines_);
+//		long loadTime = 0;
+//		for (int i = 0; i < layerCount_; ++i) {
+//	
+//			Sheet[] sheets = tileSet_.getSheets(mapData_[i]);
+//			int gridCount = sheets.length;
+//
+//			VertexGrid[] grids = new VertexGrid[gridCount];
+//			Texture[] textures = new Texture[gridCount];
+//
+//			for (int j = 0; j < grids.length; ++j) {
+//				grids[j] = new VertexGrid(worldWidth_, worldHeight_);
+//				textures[j] = sheets[j].texture_;
+//			}
+//			
+//			final int tileHeight = tileSet_.getTileHeight();
+//			final int tileWidth = tileSet_.getTileWidth();
+//
+//			for (int tileY = 0; tileY < worldHeight_; tileY++) {
+//				for (int tileX = 0; tileX < worldWidth_; tileX++) {
+//					final float offsetX = tileX * tileWidth;
+//					final float offsetY = tileY * tileHeight;
+//
+//					final float[] p0 = { offsetX, offsetY + tileHeight, 0.0f };
+//					final float[] p1 = { offsetX, offsetY, 0.0f };
+//					final float[] p2 = { offsetX + tileWidth, offsetY, 0.0f };
+//					final float[] p3 = { offsetX + tileWidth,
+//							offsetY + tileHeight, 0.0f };
+//
+//					final float[][] positions = { p0, p1, p2, p3 };
+//					for (int j = 0; j < grids.length; ++j) {
+//						grids[j].setPosition(tileX, tileY, positions);
+//					}
+//				}
+//			}
+//			
+//			
+//			long time = SystemClock.uptimeMillis();
+//			for (int tileY = 0; tileY < worldHeight_; tileY++) {
+//				for (int tileX = 0; tileX < worldWidth_; tileX++) {
+//					final long GID = mapData_[i][tileY][tileX];
+//					int gridIndex = tileSet_.GIDToUV(GID, uvWorkspace, sheets);
+//					grids[gridIndex].setUV(tileX, tileY, uvWorkspace);
+//				}
+//			}
+//			long timeElapsed = SystemClock.uptimeMillis() - time;
+//	        DebugLog.v("SnowBall", "Layer Load time: " + timeElapsed + "ms");
+//	        DebugLog.v("SnowBall", "Loaded Layer " + i);
+//	        DebugLog.v("SnowBall", "~~~~~~~~~~~~~~~~~~~");
+//	        loadTime+= timeElapsed;
+//			TiledVertexGrid layer = new TiledVertexGrid(textures, 
+//														grids,
+//														viewWidth_,
+//    													viewHeight_,
+//														tileWidth, 
+//														tileHeight,
+//														worldWidth_,
+//														worldHeight_);
+//			
+//			RenderComponent backgroundRender = new RenderComponent();
+//			int priority = drawLevel_[i][1];
+//			if (drawLevel_[i][0] == BACKGROUND)
+//				priority += SortConstants.BACKGROUND_START;
+//			else
+//				priority += SortConstants.HIGHGROUND_START;
+//	        backgroundRender.setPriority(priority);
+//	        
+//	        //TODO: The map format should really just output independent speeds for x and y,
+//	        // but as a short term solution we can assume parallax layers lock in the smaller
+//	        // direction of movement.
+//	        // 4/25: this needs to allow for different scroll speeds, so far no parallax scrolling
+//	        float xScrollSpeed = 1.0f;
+//	        float yScrollSpeed = 1.0f;
+//	        ScrollerComponent scroller = new ScrollerComponent(xScrollSpeed,
+//	        													yScrollSpeed,
+//	        													viewWidth_,
+//	        													viewHeight_,
+//	        													layer);
+//	        scroller.setRenderComponent(backgroundRender);
+//
+//	        map.add(scroller);
+//	        map.add(backgroundRender);
+//	        backgroundRender.setCameraRelative(false);
+//			
+//	        
+//		}
+//		DebugLog.v("SnowBall", "Total Load time: " + loadTime );
+//
+//		map.setWorldHeight(worldHeight_ * tileSet_.getTileHeight());
+//		map.setWorldWidth(worldWidth_ * tileSet_.getTileWidth());
+//		
+//		map.setcollisionLines(backgroundCollisionLines_);
 
 		return map;
 	}

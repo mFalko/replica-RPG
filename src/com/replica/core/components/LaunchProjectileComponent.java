@@ -168,7 +168,6 @@ public class LaunchProjectileComponent extends GameComponent {
 	            mWorkingVector.y *= mVelocityY;  
 	            
 	            object.getVelocity().set(mWorkingVector);
-	            object.getTargetVelocity().set(mWorkingVector);
 	            // Center the projectile on the spawn point.
 	            object.getPosition().x -= object.width / 2.0f;
 	            object.getPosition().y -= object.height / 2.0f;

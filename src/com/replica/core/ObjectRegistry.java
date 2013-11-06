@@ -30,6 +30,7 @@ import com.replica.core.systems.OpenGLSystem;
 import com.replica.core.systems.RenderSystem;
 import com.replica.core.systems.SoundSystem;
 import com.replica.core.systems.VibrationSystem;
+import com.replica.core.systems.ZoneSystem;
 import com.replica.core.zoneloder.Zone;
 import com.replica.hud.HudSystem;
 import com.replica.input.InputGameInterface;
@@ -70,6 +71,7 @@ public class ObjectRegistry extends BaseObject {
     public InputSystem inputSystem;
 //    public LevelBuilder levelBuilder;
 //    public LevelSystem levelSystem;
+    public ZoneSystem zoneSystem;
     public OpenGLSystem openGLSystem;
     public SoundSystem soundSystem;
     public TextureLibrary shortTermTextureLibrary;

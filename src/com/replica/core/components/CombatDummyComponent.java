@@ -21,6 +21,8 @@ public class CombatDummyComponent extends GameComponent {
 	private float mTimer;
 	
 	public CombatDummyComponent() {
+		super();
+        setPhase(ComponentPhases.THINK.ordinal());
 		reset();
 	}
 	

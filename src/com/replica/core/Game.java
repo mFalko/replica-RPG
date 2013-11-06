@@ -16,9 +16,6 @@
 
 package com.replica.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
@@ -40,9 +37,8 @@ import com.replica.core.systems.CollisionSystem;
 import com.replica.core.systems.GameObjectCollisionSystem;
 import com.replica.core.systems.OpenGLSystem;
 import com.replica.core.systems.RenderSystem;
-import com.replica.core.zoneloder.XMLZoneLoader;
-import com.replica.core.zoneloder.Zone;
-import com.replica.core.zoneloder.ZoneLoader;
+import com.replica.core.systems.ZoneSystem;
+import com.replica.core.zoneloder.ZoneLoaderXML;
 import com.replica.hud.HudSystem;
 import com.replica.input.InputGameInterface;
 import com.replica.input.InputSystem;
@@ -113,7 +109,6 @@ public class Game extends AllocationGuard {
 				mTouchFilter = new SingleTouchFilter();
 			} else {
 				mTouchFilter = new MultiTouchFilter();
-				Log.v("SNowBAll", "Multitouch");
 			}
 
 			// Short-term textures are cleared between levels.
@@ -171,7 +166,7 @@ public class Game extends AllocationGuard {
 
 			RenderSystem renderer = new RenderSystem();
 			BaseObject.sSystemRegistry.renderSystem = renderer;
-			BaseObject.sSystemRegistry.vectorPool = new VectorPool();
+			BaseObject.sSystemRegistry.vectorPool = new VectorPool(60);
 			BaseObject.sSystemRegistry.drawableFactory = new DrawableFactory();
 
 			InputGameInterface inputInterface = new InputGameInterface();
@@ -193,11 +188,6 @@ public class Game extends AllocationGuard {
 			BaseObject.sSystemRegistry.hudSystem = hud;
 			gameRoot.add(hud);
 			
-			
-			
-			
-			
-			
 
 			// BaseObject.sSystemRegistry.vibrationSystem = new
 			// VibrationSystem();
@@ -218,49 +208,61 @@ public class Game extends AllocationGuard {
 			// moves before the cameracenters.
 			gameRoot.add(camera);
 
+			
+			ZoneSystem zoneSystem = new ZoneSystem(gameWidth, gameHeight);
+			zoneSystem.setLoader(new ZoneLoaderXML());
+			BaseObject.sSystemRegistry.zoneSystem = zoneSystem;
+			//ZoneSystem must be added after the camera
+			gameRoot.add(zoneSystem);
+			
 			mBootstrapComplete = true;
 
 			// TODO: Everything below this point needs to GTFO of bootstrap
 
-			GameObject ghost = objectFactory.spawnPlayer(100, 100);
+			
+			
+			GameObject ghost = objectFactory.spawnPlayer(1300, 1200);
 			gameManager.add(ghost);
 			gameManager.setPlayer(ghost);
-			camera.setTarget(ghost);
-
-			Zone zone_ = null;
-			try {
-				InputStream in = context.getAssets().open("main_snowball_test_two.zon");
-				ZoneLoader loader = new XMLZoneLoader(params.viewWidth,
-						params.viewHeight);
-				zone_ = loader.loadZone(in, context);
-				in.close();
-			} catch (IOException e) {
-
-			}
-			gameRoot.add(zone_);
-			BaseObject.sSystemRegistry.zone = zone_;
 			
-			collision.initialize(zone_.getCollisionLines(),
-					zone_.getWorldWidth(), zone_.getWorldHeight());
+			
+			GameObject ghost2 = objectFactory.spawnSkeleton(1300, 1150);
+			gameManager.add(ghost2);
+			
+			
+			GameObject ghost3 = objectFactory.spawnSkeleton(1300, 1250);
+			gameManager.add(ghost3);
+			
+//			GameObject ghost4 = objectFactory.spawnSkeleton(1300, 1150);
+//			gameManager.add(ghost4);
+//			
+//			GameObject ghost5 = objectFactory.spawnSkeleton(1300, 1150);
+//			gameManager.add(ghost5);
+//			
+//			GameObject ghost6 = objectFactory.spawnSkeleton(1300, 1150);
+//			gameManager.add(ghost6);
+//			
+//			GameObject ghost7 = objectFactory.spawnSkeleton(1300, 1150);
+//			gameManager.add(ghost7);
+//			
+//			GameObject ghost8 = objectFactory.spawnSkeleton(1300, 1150);
+//			gameManager.add(ghost8);
+//			
+//			GameObject ghost9 = objectFactory.spawnSkeleton(1300, 1150);
+//			gameManager.add(ghost9);
+//			
+//			GameObject ghost10 = objectFactory.spawnSkeleton(1300, 1150);
+//			gameManager.add(ghost10);
+//			
+//			GameObject ghost11 = objectFactory.spawnSkeleton(1300, 1150);
+//			gameManager.add(ghost11);
+			
+			
+			zoneSystem.load("home_village_main_2.zon");
+			
 
-			GameObject combatDummy = objectFactory.spawnCombatDummy(200, 200);
-			gameManager.add(combatDummy);
-
-			GameObject combatDummy2 = objectFactory.spawnCombatDummy(300, 350);
-			gameManager.add(combatDummy2);
-
-			GameObject combatDummy3 = objectFactory
-					.spawnCombatDummy(2275, 1500);
-			gameManager.add(combatDummy3);
-
-			GameObject combatDummy4 = objectFactory.spawnCombatDummy(456, 850);
-			gameManager.add(combatDummy4);
-
-			GameObject combatDummy5 = objectFactory.spawnCombatDummy(954, 1254);
-			gameManager.add(combatDummy5);
-
-			GameObject combatDummy6 = objectFactory.spawnCombatDummy(1630, 278);
-			gameManager.add(combatDummy6);
+//			GameObject combatDummy = objectFactory.spawnCombatDummy(200, 200);
+//			gameManager.add(combatDummy);
 
 			mGameRoot = gameRoot;
 
@@ -405,6 +407,7 @@ public class Game extends AllocationGuard {
 				mGameThread.resumeGame();
 			}
 			mGameThread.stopGame();
+			BaseObject.sSystemRegistry.zoneSystem.cleanup();
 			try {
 				mGame.join();
 			} catch (InterruptedException e) {

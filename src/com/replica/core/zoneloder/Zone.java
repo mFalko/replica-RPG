@@ -19,46 +19,44 @@
 
 package com.replica.core.zoneloder;
 
-import com.replica.core.GameObject;
 import com.replica.core.collision.LineSegment;
+import com.replica.core.graphics.Texture;
 import com.replica.utility.FixedSizeArray;
 
 /**
  * @author matt
  * 
  */
-public class Zone extends GameObject{
+public class Zone{
+
+	
 
 	public Zone() {
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.falko.android.pinhead.BaseObject#reset()
-	 */
-	@Override
-	public void reset() {
-		worldWidth_ = -1;
-		worldHeight_ = -1;
-//		backgroundCollisionLines_.clear();
-	}
-
 	public int getWorldHeight() {
-		return worldHeight_;
+		return worldTileHeight_ * tilePixelHeight_;
 	}
 	
 	public int getWorldWidth() {
-		return worldWidth_;
+		return worldTileWidth_ * tilePixelWidth_;
 	}
 
-	protected void setWorldHeight(int height) {
-		worldHeight_ = height;
+	public int getWorldTileHeight() {
+		return worldTileHeight_;
 	}
-
-	protected void setWorldWidth(int width) {
-		worldWidth_ = width;
+	
+	public int getWorldTileWidth() {
+		return worldTileWidth_;
+	}
+	
+	public int getTilePixelHeight() {
+		return tilePixelHeight_;
+	}
+	
+	public int getTilePixelWidth() {
+		return tilePixelWidth_;
 	}
 	
 	protected void setcollisionLines(FixedSizeArray<LineSegment> collisionLines) {
@@ -69,8 +67,33 @@ public class Zone extends GameObject{
 		return backgroundCollisionLines_;
 	}
 	
-	//TODO: make this a quadtree and pass the tree to the background collision system
-	private FixedSizeArray<LineSegment> backgroundCollisionLines_;
-	private int worldWidth_;
-	private int worldHeight_;
+	public DrawLayerInfo[] getDrawLayerInfo() {
+		return drawLayerInfo_;
+	}
+	
+	public Texture getTexture() {
+		return texture_;
+	}
+	
+	public void setTexture(Texture texture) {
+		texture_ = texture;
+	}
+	
+	protected DrawLayerInfo[] drawLayerInfo_;
+	protected Texture texture_; //atlas for this zone
+	protected FixedSizeArray<LineSegment> backgroundCollisionLines_;//TODO: make this a quadtree and pass the tree to the background collision system
+//	protected int worldPixelWidth_;  //full map width in pixels
+//	protected int worldPixelHeight_; //full map height in pixels
+	protected int worldTileWidth_;
+	protected int worldTileHeight_;
+	protected int tilePixelHeight_;
+	protected int tilePixelWidth_;
+	
+	public static class DrawLayerInfo {
+		public int priority_;
+		public int[][] mapDataUVs_;
+	}
+
+	
+	
 }

@@ -23,6 +23,7 @@ import com.replica.core.graphics.Texture;
 import com.replica.core.graphics.TiledBackgroundVertexGrid;
 import com.replica.core.graphics.TiledVertexGrid;
 import com.replica.core.systems.CameraSystem;
+import com.replica.utility.DebugLog;
 
 /**
  * Adjusts the scroll position of a drawable object based on the camera's focus position.
@@ -93,6 +94,7 @@ public class ScrollerComponent extends GameComponent {
         mTexture = texture;
     }
     
+    
     @Override
     public void update(float timeDelta, BaseObject parent) {
         final DrawableFactory drawableFactory = sSystemRegistry.drawableFactory;
@@ -126,4 +128,9 @@ public class ScrollerComponent extends GameComponent {
     public void setRenderComponent(RenderComponent render) {
         mRenderComponent = render;
     }
+
+	public TiledVertexGrid getVertexGrid() {
+		// TODO Auto-generated method stub
+		return mVertGrid;
+	}
 }

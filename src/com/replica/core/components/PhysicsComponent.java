@@ -60,16 +60,8 @@ public class PhysicsComponent extends GameComponent {
     public void update(float timeDelta, BaseObject parent) {
         GameObject parentObject = (GameObject) parent;
 
-        // we look to user data so that other code can provide impulses
-        Vector2 impulseVector = parentObject.getImpulse();
-
         final Vector2 currentVelocity = parentObject.getVelocity();
         
-        final Vector2 surfaceNormal = parentObject.getBackgroundCollisionNormal();
-        if (surfaceNormal.length2() > 0.0f) {
-            resolveCollision(currentVelocity, impulseVector, surfaceNormal, impulseVector);
-        }
-
         VectorPool vectorPool = sSystemRegistry.vectorPool;
 
         // if our speed is below inertia, we need to overcome inertia before we can move.
@@ -77,9 +69,13 @@ public class PhysicsComponent extends GameComponent {
         boolean physicsCausesMovement = true;
 
         final float inertiaSquared = getInertia() * getInertia();
-
         Vector2 newVelocity = vectorPool.allocate(currentVelocity);
-        newVelocity.add(impulseVector);
+        
+        final Vector2 surfaceNormal = parentObject.getBackgroundCollisionNormal();
+        if (surfaceNormal.length2() > 0.0f) {
+            resolveCollision(currentVelocity, newVelocity, surfaceNormal, newVelocity);
+        }
+        newVelocity.add(currentVelocity);
 
         if (newVelocity.length2() < inertiaSquared) {
             physicsCausesMovement = false;
@@ -124,9 +120,6 @@ public class PhysicsComponent extends GameComponent {
         // velocity.
         if (physicsCausesMovement) {
             parentObject.setVelocity(newVelocity);
-            parentObject.setTargetVelocity(newVelocity);
-            parentObject.setAcceleration(Vector2.ZERO);
-            parentObject.setImpulse(Vector2.ZERO);
         }
 
         vectorPool.release(newVelocity);

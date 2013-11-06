@@ -18,10 +18,14 @@ package com.replica.core.components;
 
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
+import com.replica.core.collision.HitPoint;
+import com.replica.core.collision.HitPointPool;
 import com.replica.core.systems.CollisionSystem;
+import com.replica.utility.FixedSizeArray;
 import com.replica.utility.RectF;
 import com.replica.utility.Utils;
 import com.replica.utility.Vector2;
+import com.replica.utility.VectorPool;
 
 // Simple collision detection component for objects not requiring complex collision (projectiles, etc)
 public class SimpleCollisionComponent extends GameComponent {
@@ -31,7 +35,8 @@ public class SimpleCollisionComponent extends GameComponent {
 	private Vector2 mHitPoint;
 	private Vector2 mHitNormal;
 	private RectF   mbounds;
-	
+	private FixedSizeArray<HitPoint> outputHitPoints;
+	private static final int MAX_HIT_POINTS = 5;
 	public SimpleCollisionComponent() {
 		super();
 		setPhase(ComponentPhases.COLLISION_DETECTION.ordinal());
@@ -41,6 +46,7 @@ public class SimpleCollisionComponent extends GameComponent {
 		mHitPoint = new Vector2();
 		mHitNormal = new Vector2();
 		mbounds = new RectF();
+		outputHitPoints = new FixedSizeArray<HitPoint>(MAX_HIT_POINTS);
 	}
 	
 	@Override
@@ -71,7 +77,7 @@ public class SimpleCollisionComponent extends GameComponent {
         			mbounds.set(x, y, width, height);
         			
         			final boolean hit = CollisionSystem.testBoxAgainstList(
-        					collision.query(mbounds), x, x+width, y+height, y, parentObject, null, null);
+        					collision.queryBackgroundCollision(mbounds), x, x+width, y+height, y, parentObject, Vector2.ZERO, outputHitPoints);
         			
         			if (hit) {
         				// snap
@@ -88,6 +94,16 @@ public class SimpleCollisionComponent extends GameComponent {
         				//FIXME: implement background collision normals
         				mHitNormal.set(1, 1);
     	                parentObject.setBackgroundCollisionNormal(mHitNormal);
+    	                
+    	                HitPointPool hitPool = sSystemRegistry.hitPointPool;
+    	    			VectorPool vectorPool = sSystemRegistry.vectorPool;
+    	                while (outputHitPoints.getCount() > 0) {
+    	    				HitPoint hitPoint = outputHitPoints.get(0);
+    	    				vectorPool.release(hitPoint.hitNormal);
+    	    				vectorPool.release(hitPoint.hitPoint);
+    	    				hitPool.release(hitPoint);
+    	    				outputHitPoints.remove(0);
+    	    			}
     	                    
         			}
         		}

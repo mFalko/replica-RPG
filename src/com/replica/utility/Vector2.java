@@ -53,6 +53,11 @@ public final class Vector2 extends AllocationGuard {
         x -= other.x;
         y -= other.y;
     }
+    
+    public void subtract(float x1, float y1) {
+    	x -= x1;
+        y -= y1;		
+	}
 
     public final void multiply(float magnitude) {
         x *= magnitude;
@@ -98,7 +103,11 @@ public final class Vector2 extends AllocationGuard {
         float dy = y - other.y;
         return (dx * dx) + (dy * dy);
     }
-
+    
+    public final float distance(Vector2 other) {
+    	return (float) Math.sqrt(distance2(other));
+    }
+    
     public final float normalize() {
         final float magnitude = length();
 
@@ -122,4 +131,6 @@ public final class Vector2 extends AllocationGuard {
     public final void flipVertical(float aboutHeight) {
         y = (aboutHeight - y);
     }
+
+	
 }

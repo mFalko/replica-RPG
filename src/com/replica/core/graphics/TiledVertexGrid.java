@@ -18,8 +18,6 @@ package com.replica.core.graphics;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.util.Log;
-
 import com.replica.core.BaseObject;
 import com.replica.core.systems.OpenGLSystem;
 
@@ -37,12 +35,12 @@ public class TiledVertexGrid extends BaseObject {
 	private int mTilesPerRow;
 	private int mTilesPerColumn;
 
-	private Boolean mGenerated;
+//	private Boolean mGenerated;
 
-	private VertexGrid[] grids_;
-	private Texture[] textures_;
+	private VertexGrid grid_;
+	private Texture texture_;
 
-	public TiledVertexGrid(Texture[] texture, VertexGrid[] grids, int width,
+	public TiledVertexGrid(Texture texture, VertexGrid grid, int width,
 			int height, int tileWidth, int tileHeight, int worldTileWidth,
 			int worldTileHeight) {
 		super();
@@ -59,12 +57,26 @@ public class TiledVertexGrid extends BaseObject {
 		mWorldPixelWidth = tileWidth * worldTileWidth;
 		mWorldPixelHeight = tileHeight * worldTileHeight;
 
-		mGenerated = false;
+//		mGenerated = false;
 
-		textures_ = texture;
-		grids_ = grids;
+		texture_ = texture;
+		grid_ = grid;
 	}
 
+	public void setTexture(Texture texture) {
+		texture_ = texture;
+	}
+
+	public void setTilePixelWidth(int tilePixelWidth) {
+		mTileWidth = tilePixelWidth;
+		mWorldPixelWidth = mTileWidth * mTilesPerRow;
+	}
+
+	public void setTilePixelHeight(int tilePixelHeight) {
+		mTileHeight = tilePixelHeight;
+		mWorldPixelHeight = mTileHeight * mTilesPerColumn;
+	}
+	
 	@Override
 	public void reset() {
 	}
@@ -92,17 +104,19 @@ public class TiledVertexGrid extends BaseObject {
 
 		int originX = (int) (x - scrollOriginX);
 		int originY = (int) (y - scrollOriginY);
+		
+		
 
 		final float worldPixelWidth = mWorldPixelWidth;
 
-		final float percentageScrollRight = scrollOriginX != 0.0f ? scrollOriginX / worldPixelWidth : 0.0f;
+		final float percentageScrollRight = (scrollOriginX-x) != 0.0f ? (scrollOriginX-x) / worldPixelWidth : 0.0f;
 		final float tileSpaceX = percentageScrollRight * mTilesPerRow;
 		final int leftTile = (int) tileSpaceX;
 
 		// calculate the top tile index
 		final float worldPixelHeight = mWorldPixelHeight;
 
-		final float percentageScrollUp = scrollOriginY != 0.0f ? scrollOriginY / worldPixelHeight : 0.0f;
+		final float percentageScrollUp = (scrollOriginY-y) != 0.0f ? (scrollOriginY-y) / worldPixelHeight : 0.0f;
 		final float tileSpaceY = percentageScrollUp * mTilesPerColumn;
 		final int bottomTile = (int) tileSpaceY;
 
@@ -129,17 +143,20 @@ public class TiledVertexGrid extends BaseObject {
 		final int startOffset = (startX * indexesPerTile);
 		final int count = (endX - startX) * indexesPerTile;
 
-		for (int g = 0; g < grids_.length; ++g) {
-			OpenGLSystem.bindTexture(GL10.GL_TEXTURE_2D, textures_[g].name);
-			grids_[g].beginDrawingStrips(gl, true);
-			for (int tileY = startY; tileY < endY && tileY < mTilesPerColumn; tileY++) {
-				final int row = tileY * indexesPerRow;
-				grids_[g].drawStrip(gl, true, row + startOffset, count);
-			}
+
+		OpenGLSystem.bindTexture(GL10.GL_TEXTURE_2D, texture_.name);
+		grid_.beginDrawingStrips(gl, true);
+		for (int tileY = startY; tileY < endY && tileY < mTilesPerColumn; tileY++) {
+			final int row = tileY * indexesPerRow;
+			if (row + startOffset > 0)
+				grid_.drawStrip(gl, true, row + startOffset, count);
 		}
+		
 
 		gl.glPopMatrix();
 		VertexGrid.EndDrawingVertexGrid(gl);
 	}
+
+
 
 }

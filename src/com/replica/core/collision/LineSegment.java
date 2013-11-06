@@ -14,8 +14,7 @@ import com.replica.utility.Vector2;
      * describe the direction that the segment "pushes against" in a collision.
      */
     public class LineSegment extends AllocationGuard implements HasBounds{
-        private Vector2 mStartPoint;
-        private Vector2 mEndPoint;
+    	private short slope;
         private RectF bounds;
         public GameObject owner;
         
@@ -23,22 +22,19 @@ import com.replica.utility.Vector2;
         public LineSegment() {
             super();
             bounds = new RectF();
-            mStartPoint = new Vector2();
-            mEndPoint = new Vector2();
+
         }
         
         public LineSegment(int startx, int starty, int endx, int endy) {
         	this();
-        	mStartPoint.set(startx, starty);
-        	mEndPoint.set(endx, endy);
-        	updateBounds();
+
+        	updateBounds(startx, starty, endx, endy);
         }
         
         /* Sets up the line segment.  Values are copied to local storage. */
         public void set(Vector2 start, Vector2 end) {
-            mStartPoint.set(start);
-            mEndPoint.set(end);
-            updateBounds();
+
+            updateBounds(start.x, start.y, end.x, end.y);
         }
         
         public void setOwner(GameObject ownerObject) {
@@ -50,18 +46,21 @@ import com.replica.utility.Vector2;
 		}
 
 		public void setBounds(RectF bounds) {
-			bounds.set(bounds);
+			//Not used
 		}
 		
-		private void updateBounds() {			
-			bounds.left_ = mStartPoint.x;
-			bounds.right_ = mEndPoint.x;
-			if (mStartPoint.y < mEndPoint.y) {
-				bounds.bottom_ = mStartPoint.y;
-				bounds.top_ = mEndPoint.y;
+		private void updateBounds(float startx, float starty, float endx, float endy) {			
+			bounds.left_ = startx;
+			bounds.right_ = endx;
+			
+			if (starty < endy) {
+				slope = 1;
+				bounds.bottom_ = starty;
+				bounds.top_ = endy;
 			} else {
-				bounds.top_ = mStartPoint.y;
-				bounds.bottom_ = mEndPoint.y;
+				slope = -1;
+				bounds.top_ = starty;
+				bounds.bottom_ = endy;
 			}
 		}
         
@@ -74,12 +73,20 @@ import com.replica.utility.Vector2;
             boolean intersecting = false;
             
             // Reference: http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
-            final float x1 = mStartPoint.x;
-            final float x2 = mEndPoint.x;
+            final float x1 = bounds.left_;
+            final float x2 = bounds.right_;
             final float x3 = otherStart.x;
             final float x4 = otherEnd.x;
-            final float y1 = mStartPoint.y;
-            final float y2 = mEndPoint.y;
+            final float y1;
+            final float y2;
+            if (slope > 0) {
+            	y1 = bounds.bottom_;
+            	y2 = bounds.top_;
+            } else {
+            	y1 = bounds.top_;
+            	y2 = bounds.bottom_;
+            }
+            
             final float y3 = otherStart.y;
             final float y4 = otherEnd.y;
             
@@ -102,10 +109,17 @@ import com.replica.utility.Vector2;
         public boolean calculateIntersectionBox(float left, float right, float top, float bottom, 
                 Vector2 hitPoint) {
             
-            final float x1 = mStartPoint.x;
-            final float x2 = mEndPoint.x;
-            final float y1 = mStartPoint.y;
-            final float y2 = mEndPoint.y;
+        	final float x1 = bounds.left_;
+            final float x2 = bounds.right_;
+            final float y1;
+            final float y2;
+            if (slope > 0) {
+            	y1 = bounds.bottom_;
+            	y2 = bounds.top_;
+            } else {
+            	y1 = bounds.top_;
+            	y2 = bounds.bottom_;
+            }
             
             float startIntersect;
             float endIntersect;
@@ -164,11 +178,13 @@ import com.replica.utility.Vector2;
             if (intersectTimeEnd < intersectTimeStart) {
                 return false;
             }
+            
+            //TODO: fix the hit point  maybe fixed
          
-            hitPoint.set(mEndPoint);
-            hitPoint.subtract(mStartPoint);
+            hitPoint.set(x2,y2);
+            hitPoint.subtract(x1,y1);
             hitPoint.multiply(intersectTimeStart);
-            hitPoint.add(mStartPoint);
+            hitPoint.add(x1,y1);
             
             return true;
         }        

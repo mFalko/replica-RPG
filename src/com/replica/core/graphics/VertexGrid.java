@@ -90,6 +90,49 @@ public class VertexGrid {
 		setVertex(i + 1, j,     positions[2][0], positions[2][1], positions[2][2], uvs[2][0], uvs[2][1]);
 		setVertex(i + 1, j + 1, positions[3][0], positions[3][1], positions[3][2], uvs[3][0], uvs[3][1]);
 	}
+	
+	public void setPosition(int quadX, int quadY, float[][] positions) {
+		if (quadX < 0 || quadX >= width_) {
+			throw new IllegalArgumentException("quadX");
+		}
+		if (quadY < 0 || quadY >= height_) {
+			throw new IllegalArgumentException("quadY");
+		}
+		if (positions.length < 4) {
+			throw new IllegalArgumentException("positions");
+		}
+
+		int i = quadX * 2;
+		int j = quadY * 2;
+
+		setVertexPosition(i,     j + 1, positions[0][0], positions[0][1], positions[0][2]);
+		setVertexPosition(i,     j,     positions[1][0], positions[1][1], positions[1][2]);
+		setVertexPosition(i + 1, j,     positions[2][0], positions[2][1], positions[2][2]);
+		setVertexPosition(i + 1, j + 1, positions[3][0], positions[3][1], positions[3][2]);
+	}
+	
+	
+	public void setUV(int quadX, int quadY, float[][] uvs) {
+		if (quadX < 0 || quadX >= width_) {
+			throw new IllegalArgumentException("quadX");
+		}
+		if (quadY < 0 || quadY >= height_) {
+			throw new IllegalArgumentException("quadY");
+		}
+		if (uvs.length < 4) {
+			throw new IllegalArgumentException("quadY");
+		}
+
+		int i = quadX * 2;
+		int j = quadY * 2;
+
+		setVertexTexture(i,     j + 1, uvs[0][0], uvs[0][1]);
+		setVertexTexture(i,     j,     uvs[1][0], uvs[1][1]);
+		setVertexTexture(i + 1, j,     uvs[2][0], uvs[2][1]);
+		setVertexTexture(i + 1, j + 1, uvs[3][0], uvs[3][1]);
+	}
+	
+	
 
 	private void setVertex(int i, int j, float x, float y, float z, float u,
 			float v) {
@@ -113,7 +156,37 @@ public class VertexGrid {
 		texBuffer_.put(texIndex + 1, v);
 
 	}
+	
+	private void setVertexPosition(int i, int j, float x, float y, float z) {
+		if (i < 0 || i >= width_ * 2) {
+			throw new IllegalArgumentException("i");
+		}
+		if (j < 0 || j >= height_ * 2) {
+			throw new IllegalArgumentException("j");
+		}
 
+		final int index = width_ * 2 * j + i;
+		final int posIndex = index * 3;
+
+		vertexBuffer_.put(posIndex, x);
+		vertexBuffer_.put(posIndex + 1, y);
+		vertexBuffer_.put(posIndex + 2, z);
+	}
+	
+	private void setVertexTexture(int i, int j, float u, float v) {
+		if (i < 0 || i >= width_ * 2) {
+			throw new IllegalArgumentException("i");
+		}
+		if (j < 0 || j >= height_ * 2) {
+			throw new IllegalArgumentException("j");
+		}
+
+		final int index = width_ * 2 * j + i;
+		final int texIndex = index * 2;
+		texBuffer_.put(texIndex, u);
+		texBuffer_.put(texIndex + 1, v);	
+	}
+	
 	public static void BeginDrawingVertexGrid(GL10 gl, boolean useTexture) {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		if (useTexture) {

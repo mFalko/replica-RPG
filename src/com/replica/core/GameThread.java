@@ -56,8 +56,8 @@ public class GameThread implements Runnable {
         mFinished = false;
         while (!mFinished) {
             if (mGameRoot != null) {
-                mRenderer.waitDrawingComplete();
                 
+                mRenderer.waitDrawingComplete();
                 final long time = SystemClock.uptimeMillis();
                 final long timeDelta = time - mLastTime;
                 long finalDelta = timeDelta;
@@ -67,6 +67,8 @@ public class GameThread implements Runnable {
                         secondsDelta = 0.1f;
                     }
                     mLastTime = time;
+                    
+                    
 					mGameRoot.update(secondsDelta, null);
 					
 					float x = 0.0f;
@@ -88,7 +90,8 @@ public class GameThread implements Runnable {
                     mProfileFrames++;
                     if (mProfileTime > PROFILE_REPORT_DELAY * 1000) {
                         final long averageFrameTime = mProfileTime / mProfileFrames;
-                        DebugLog.d("Game Profile", "Average: " + averageFrameTime);
+                        DebugLog.v("Snowball", "Average frame time: " + averageFrameTime);
+//                        Log.v("Snowball", "Average frame time: " + averageFrameTime);
                         mProfileTime = 0;
                         mProfileFrames = 0;
 //                        BaseObject.sSystemRegistry.hudSystem.setFPS(1000 / (int)averageFrameTime);

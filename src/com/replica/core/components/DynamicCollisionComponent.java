@@ -21,6 +21,7 @@ import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.collision.CollisionVolume;
 import com.replica.core.collision.SphereCollisionVolume;
+import com.replica.core.systems.CollisionSystem;
 import com.replica.core.systems.GameObjectCollisionSystem;
 import com.replica.utility.FixedSizeArray;
 import com.replica.utility.Vector2;
@@ -57,13 +58,27 @@ public class DynamicCollisionComponent extends GameComponent {
     }
     
     @Override
-    public void update(float timeDelta, BaseObject parent) {
-        GameObjectCollisionSystem collision = sSystemRegistry.gameObjectCollisionSystem;
-        if (collision != null && mBoundingVolume.getRadius() > 0.0f) {
-            collision.registerForCollisions((GameObject)parent, mHitReactionComponent, mBoundingVolume, 
-                    mAttackVolumes, mVulnerabilityVolumes, doFlip);
-        }
-    }
+	public void update(float timeDelta, BaseObject parent) {
+		GameObject parentObject = (GameObject) parent;
+		GameObjectCollisionSystem collision = sSystemRegistry.gameObjectCollisionSystem;
+		if (collision != null && mBoundingVolume.getRadius() > 0.0f) {
+			collision.registerForCollisions((GameObject) parent,
+					mHitReactionComponent, mBoundingVolume, mAttackVolumes,
+					mVulnerabilityVolumes, doFlip);
+
+		}
+
+		CollisionSystem collision2 = sSystemRegistry.collisionSystem;
+		if (collision2 != null) {
+			parentObject.getBounds().set(0, 0, parentObject.width,
+					parentObject.height);
+			parentObject.getBounds().setCenter(
+					parentObject.getCenteredPositionX(),
+					parentObject.getCenteredPositionY());
+			collision2.addGameObject(parentObject);
+		}
+
+	}
     
     public void setHitReactionComponent(HitReactionComponent component) {
         mHitReactionComponent = component;

@@ -28,7 +28,7 @@ import com.replica.utility.Vector2;
  * a parameter of the intersection test.  This means that a single instance of a CollisionVolume and
  * its derivatives is safe to share amongst many game object instances.
  */
-public abstract class CollisionVolume extends AllocationGuard {
+public abstract class CollisionVolume extends AllocationGuard{
     // TODO: does this really belong here?
     // When used as an attack volume, mHitType specifies the type of hit that the volume deals.
     // When used as a vulnerability volume, it specifies which type the volume is vulernable to
@@ -106,6 +106,7 @@ public abstract class CollisionVolume extends AllocationGuard {
     public abstract float getMaxX();
     public abstract float getMinY();
     public abstract float getMaxY();
+    
     
 
     public static class FlipInfo {

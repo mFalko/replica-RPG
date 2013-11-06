@@ -82,11 +82,27 @@ public class HumanoidAnimationComponent extends GameComponent {
 			boolean visible = true;
 			float opacity = 1.0f;
 			
-			int facing = parentObject.facingDirection.y > 0 ? NORTH
-						 : parentObject.facingDirection.y < 0 ? SOUTH
-						 : parentObject.facingDirection.x < 0 ? WEST 
-						 : parentObject.facingDirection.x > 0 ? EAST 
-						 : NORTH;
+			int facing = 0;
+
+			if (Math.abs(parentObject.facingDirection.x)
+					- Math.abs(parentObject.facingDirection.y) > 0) {
+
+				if (parentObject.facingDirection.x > 0) {
+					facing = EAST;
+				} else {
+					facing = WEST;
+				}
+
+			} else {
+
+				if (parentObject.facingDirection.y > 0) {
+					facing = NORTH;
+				} else {
+					facing = SOUTH;
+				}
+
+			}
+			
 						 
 			switch (currentAction) {
 			case IDLE:

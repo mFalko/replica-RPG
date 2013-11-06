@@ -16,6 +16,9 @@
 
 package com.replica.core;
 
+import android.os.SystemClock;
+
+import com.replica.utility.DebugLog;
 import com.replica.utility.TimeSystem;
 
 /**
@@ -36,7 +39,14 @@ public class MainLoop extends ObjectManager {
     public void update(float timeDelta, BaseObject parent) {
         mTimeSystem.update(timeDelta, parent);
         final float newTimeDelta = mTimeSystem.getFrameDelta();  // The time system may warp time.
+        
+        long time = SystemClock.uptimeMillis();
+        
         super.update(newTimeDelta, parent);
+        
+        long timeElapsed = SystemClock.uptimeMillis() - time;
+        if ( timeElapsed > 16) 
+        DebugLog.v("SnowBall", "Frame Time: " + timeElapsed);
     }
 
     private TimeSystem mTimeSystem;

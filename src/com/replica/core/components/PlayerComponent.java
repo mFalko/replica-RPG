@@ -33,7 +33,7 @@ public class PlayerComponent extends GameComponent {
 
 
 	private static final float HIT_REACT_TIME = 0;
-	private final float PLAYER_MOVEMENT_SPEED = 2.0f;
+	public static final float PLAYER_MOVEMENT_SPEED = 2.0f;
 
 	public enum State {
 		MOVE, 
@@ -81,30 +81,10 @@ public class PlayerComponent extends GameComponent {
 			Vector2 pos = parentObject.getPosition();
 			
 			InputDPad dpad = input.getDpad();
-			if (dpad.pressed()) {
-				
-				Vector2 facingDir = parentObject.facingDirection;
-				facingDir.zero();
-				float deltaX = 0;
-				float deltaY = 0;
-				
-				if (dpad.upPressed()) {
-					deltaY += 1;
-					facingDir.y = 1;
-				} else if (dpad.downPressed()) {
-					deltaY += -1;
-					facingDir.y = -1;
-				} else if (dpad.leftPressed()) {
-					deltaX += -1;
-					facingDir.x = -1;
-				} else if (dpad.rightPressed()) {
-					deltaX += 1;
-					facingDir.x = 1;
-				}
+			Vector2 facingDir = parentObject.facingDirection;
+			if (dpad.getDirection(facingDir)) {
 
-				Vector2 directionDelta = pool.allocate();
-				directionDelta.set(deltaX, deltaY);
-				directionDelta.normalize();
+				Vector2 directionDelta = pool.allocate(facingDir);
 				directionDelta.multiply(PLAYER_MOVEMENT_SPEED);
 
 				pos.y += directionDelta.y;
@@ -197,7 +177,7 @@ public class PlayerComponent extends GameComponent {
             Vector2 vel = pool.allocate();
             vel.set(parentObject.facingDirection);
             vel.multiply(300);
-            
+            object.setMaxSpeed(300);
             object.setVelocity(vel);
             object.facingDirection.set(parentObject.facingDirection);
             pool.release(vel);

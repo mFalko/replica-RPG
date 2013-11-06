@@ -21,12 +21,13 @@ import java.util.Comparator;
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.collision.HitPoint;
+import com.replica.core.collision.HitPointPool;
 import com.replica.core.collision.LineSegment;
 import com.replica.core.systems.CollisionSystem;
-import com.replica.utility.DebugSystem;
 import com.replica.utility.FixedSizeArray;
 import com.replica.utility.RectF;
 import com.replica.utility.Vector2;
+import com.replica.utility.VectorPool;
 
 /**
  * Handles collision against the background. Snaps colliding objects out of
@@ -42,7 +43,7 @@ public class BackgroundCollisionComponent extends GameComponent {
 	// Workspace vectors. Allocated up front for speed.
 	private RectF queryRect;
 	private Vector2 mMergedNormal;
-
+	private FixedSizeArray<HitPoint> outputHitPoints;
 	/**
 	 * Sets up the collision bounding box. This box may be a different size than
 	 * the bounds of the sprite that this object controls.
@@ -71,7 +72,7 @@ public class BackgroundCollisionComponent extends GameComponent {
 
 		queryRect = new RectF();
 		mMergedNormal = new Vector2();
-
+		outputHitPoints = new FixedSizeArray<HitPoint>(10);
 		queryRect.set(0, 0, mWidth, mHeight);
 	}
 
@@ -79,7 +80,7 @@ public class BackgroundCollisionComponent extends GameComponent {
 		super();
 		setPhase(ComponentPhases.COLLISION_RESPONSE.ordinal());
 		mPreviousPosition = new Vector2();
-
+		outputHitPoints = new FixedSizeArray<HitPoint>(10);
 		queryRect = new RectF();
 		mMergedNormal = new Vector2();
 	}
@@ -115,14 +116,23 @@ public class BackgroundCollisionComponent extends GameComponent {
 		float y = parentObject.getCenteredPositionY() - parentObject.height / 2;
 		queryRect.offsetTo(x + mHorizontalOffset, y + mVerticalOffset);
 
-		FixedSizeArray<LineSegment> queryResult = collision.query(queryRect);
+		FixedSizeArray<LineSegment> queryResult = collision.queryBackgroundCollision(queryRect);
 
 		boolean hit = CollisionSystem.testBoxAgainstList(queryResult,
 				queryRect.left_, queryRect.right_, queryRect.top_,
-				queryRect.bottom_, null, null, null);
+				queryRect.bottom_, parentObject, Vector2.ZERO, outputHitPoints);
 		
 		if (hit) {
 			parentObject.getPosition().set(mPreviousPosition);
+			HitPointPool hitPool = sSystemRegistry.hitPointPool;
+			VectorPool vectorPool = sSystemRegistry.vectorPool;
+			while (outputHitPoints.getCount() > 0) {
+				HitPoint hitPoint = outputHitPoints.get(0);
+				vectorPool.release(hitPoint.hitNormal);
+				vectorPool.release(hitPoint.hitPoint);
+				hitPool.release(outputHitPoints.get(0));
+	    		outputHitPoints.remove(0);
+	    	}
 			parentObject.touchingWall = true;
 		} else {
 			mPreviousPosition.set(parentObject.getPosition());

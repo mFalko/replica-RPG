@@ -33,6 +33,7 @@ public class InputDPad extends BaseObject {
 
 	@Override
 	public void update(float currentTime, BaseObject parent) {
+
 		InputSystem input = sSystemRegistry.inputSystem;
 		final InputTouchScreen touch = input.getTouchScreen();
 		final InputXY dpadTouch = touch.findPointerInRegion(position_.x,
@@ -46,9 +47,30 @@ public class InputDPad extends BaseObject {
 			dpadXY_.release();
 		}
 	}
+	
+	
+	public boolean getDirection(Vector2 direction) {
+		
+		if (!dpadXY_.getPressed()) {
+			return false;
+		}
+		
+		float x = dpadXY_.getX() - (width_ * 0.5f);
+		float y = dpadXY_.getY() - (height_ * 0.5f);
+		
+		
+		if (Math.sqrt((x*x) + (y*y)) < (width_ * 0.20f)) {
+			return false;
+		}
+		
+		
+		direction.set(x, y);
+		direction.normalize();
+		return true;
+	}
 
 	public boolean pressed() {
-		return upPressed() || downPressed() || leftPressed() || rightPressed();
+		return dpadXY_.getPressed();
 	}
 
 	public boolean upPressed() {

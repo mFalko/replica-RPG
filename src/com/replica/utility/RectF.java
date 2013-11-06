@@ -1,6 +1,6 @@
 package com.replica.utility;
 
-public class RectF {
+public class RectF{
 
 	public float top_ = 0;
 	public float bottom_ = 0;
@@ -46,7 +46,23 @@ public class RectF {
 				&& left_ < r.left_ && right_ > r.right_;
 	}
 	
-    public final float width() {
+	public boolean intersectsTop(RectF r) {
+		return false;
+	}
+	
+	public boolean intersectsBottom(RectF r) {
+		return false;
+	}
+	
+	public boolean intersectsLeft(RectF r) {
+		return false;
+	}
+	
+	public boolean intersectsRight(RectF r) {
+		return false;
+	}
+	
+	public final float width() {
         return right_ - left_;
     }
 
@@ -80,5 +96,16 @@ public class RectF {
     	right_ = left_ + width;
     	top_ = bottom_ + height;
     }
+    
+    public void setCenter(float centerX, float centerY) {
+    	float width = right_ - left_;
+    	float height = top_ - bottom_;
+    	
+    	left_ = centerX - (width/2);
+    	bottom_ = centerY - (height/2);
+    	right_ = left_ + width;
+    	top_ = bottom_ + height;
+    }
+
     
 }

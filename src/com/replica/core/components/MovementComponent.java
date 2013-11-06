@@ -19,47 +19,63 @@ package com.replica.core.components;
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.utility.Interpolator;
-
+import com.replica.utility.Vector2;
 
 /**
  * A game component that implements velocity-based movement.
  */
 public class MovementComponent extends GameComponent {
-    // If multiple game components were ever running in different threads, this would need
-    // to be non-static.
-    private static Interpolator sInterpolator = new Interpolator();
+	// If multiple game components were ever running in different threads, this
+	// would need
+	// to be non-static.
+	private static Interpolator sInterpolator = new Interpolator();
 
-    public MovementComponent() {
-        super();
-        setPhase(ComponentPhases.MOVEMENT.ordinal());
-    }
-    
-    @Override
-    public void reset() {
-        
-    }
-    
-    @Override
-    public void update(float timeDelta, BaseObject parent) {
-        GameObject object = (GameObject) parent;
+	private Vector2 mAcceleration;
 
-        sInterpolator.set(object.getVelocity().x, object.getTargetVelocity().x,
-                object.getAcceleration().x);
-        float offsetX = sInterpolator.interpolate(timeDelta);
-        float newX = object.getPosition().x + offsetX;
-        float newVelocityX = sInterpolator.getCurrent();
+	public MovementComponent() {
+		super();
+		setPhase(ComponentPhases.MOVEMENT.ordinal());
+		mAcceleration = new Vector2();
+		reset();
+	}
 
-        sInterpolator.set(object.getVelocity().y, object.getTargetVelocity().y,
-                object.getAcceleration().y);
-        float offsetY = sInterpolator.interpolate(timeDelta);
-        float newY = object.getPosition().y + offsetY;
-        float newVelocityY = sInterpolator.getCurrent();
+	@Override
+	public void reset() {
+		mAcceleration.set(Vector2.ZERO);
+	}
 
-        if (object.positionLocked == false) {
-            object.getPosition().set(newX, newY);
-        }
-        
-        object.getVelocity().set(newVelocityX, newVelocityY);
-    }
+	public void setAcceleration(Vector2 acceleration) {
+		if (acceleration != null) {
+			mAcceleration.set(acceleration);
+		} else {
+			mAcceleration.set(Vector2.ZERO);
+		}
+	}
+
+	@Override
+	public void update(float timeDelta, BaseObject parent) {
+		GameObject object = (GameObject) parent;
+
+		sInterpolator.set(object.getVelocity().x, mAcceleration.x);
+		float offsetX = sInterpolator.interpolate(timeDelta);
+		float newX = object.getPosition().x + offsetX;
+		float newVelocityX = sInterpolator.getCurrent();
+
+		sInterpolator.set(object.getVelocity().y, mAcceleration.y);
+		float offsetY = sInterpolator.interpolate(timeDelta);
+		float newY = object.getPosition().y + offsetY;
+		float newVelocityY = sInterpolator.getCurrent();
+
+		if (object.positionLocked == false) {
+			object.getPosition().set(newX, newY);
+		}
+
+		Vector2 velocity = object.getVelocity();
+		velocity.set(newVelocityX, newVelocityY);
+		if (velocity.length() > object.getMaxSpeed()) {
+			velocity.normalize();
+			velocity.multiply(object.getMaxSpeed());
+		}
+	}
 
 }
