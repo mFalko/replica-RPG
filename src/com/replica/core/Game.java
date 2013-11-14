@@ -199,7 +199,7 @@ public class Game extends AllocationGuard {
 			// debug systems
 			BaseObject.sSystemRegistry.debugSystem = new DebugSystem(
 					longTermTextureLibrary);
-			// dynamicCollision.setDebugPrefs(false, true);
+//			 dynamicCollision.setDebugPrefs(true, false);
 
 			// objectFactory.preloadEffects();
 

@@ -31,17 +31,15 @@ public class SteeringBehavior extends GameComponent implements SteeringAdapter{
         queryRect = new RectF();
         outputHitPoints = new FixedSizeArray<HitPoint>(1);
         wanderTarget_ = new Vector2();
-        rand = new Random();
         reset();
     }
-    
+     
     @Override
     public void reset() {
     	vehicleParent_ = null;
     	lastTimeDelta_ = 0.0f;
     	wanderTarget_.zero();
     	wanderTimer =  Float.MAX_VALUE;
-    	rand.setSeed((long) (System.currentTimeMillis() * (SystemClock.uptimeMillis() / Math.random()+.01f)));
     	clearCommands();
     }
 
@@ -218,7 +216,7 @@ public class SteeringBehavior extends GameComponent implements SteeringAdapter{
 	
 	private float randClamped() {
 		
-		return 2 * (rand.nextFloat() - 0.5f);
+		return 2 * (RANDOM.nextFloat() - 0.5f);
 	}
 
 	private void WallAvoidance(Vector2 resultVector) {
@@ -332,5 +330,5 @@ public class SteeringBehavior extends GameComponent implements SteeringAdapter{
 	private float lastTimeDelta_;
 	private Vector2 wanderTarget_;
 	private float wanderTimer;
-	private Random rand;
+	private static final Random RANDOM = new Random((long) (System.currentTimeMillis() * (SystemClock.uptimeMillis() / Math.random()+.01f)));;
 }

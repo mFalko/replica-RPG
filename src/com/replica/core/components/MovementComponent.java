@@ -16,10 +16,14 @@
 
 package com.replica.core.components;
 
+import android.util.Log;
+
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
+import com.replica.core.GameObject.ActionType;
 import com.replica.utility.Interpolator;
 import com.replica.utility.Vector2;
+import com.replica.utility.VectorPool;
 
 /**
  * A game component that implements velocity-based movement.
@@ -56,26 +60,44 @@ public class MovementComponent extends GameComponent {
 	public void update(float timeDelta, BaseObject parent) {
 		GameObject object = (GameObject) parent;
 
-		sInterpolator.set(object.getVelocity().x, mAcceleration.x);
-		float offsetX = sInterpolator.interpolate(timeDelta);
-		float newX = object.getPosition().x + offsetX;
-		float newVelocityX = sInterpolator.getCurrent();
+//		sInterpolator.set(object.getVelocity().x, mAcceleration.x);
+//		float offsetX = sInterpolator.interpolate(timeDelta);
+//		float newX = object.getPosition().x + offsetX;
+//		float newVelocityX = sInterpolator.getCurrent();
+//
+//		sInterpolator.set(object.getVelocity().y, mAcceleration.y);
+//		float offsetY = sInterpolator.interpolate(timeDelta);
+//		float newY = object.getPosition().y + offsetY;
+//		float newVelocityY = sInterpolator.getCurrent();
+		
+		
 
-		sInterpolator.set(object.getVelocity().y, mAcceleration.y);
-		float offsetY = sInterpolator.interpolate(timeDelta);
-		float newY = object.getPosition().y + offsetY;
-		float newVelocityY = sInterpolator.getCurrent();
-
+        
+        if (object.getCurrentAction() != ActionType.MOVE) {
+			return;
+		}
+		
+		VectorPool pool = BaseObject.sSystemRegistry.vectorPool;
+		
+		Vector2 positionOffset = pool.allocate(object.getVelocity());
+		positionOffset.multiply(timeDelta);
 		if (object.positionLocked == false) {
-			object.getPosition().set(newX, newY);
+			object.getPosition().add(positionOffset);
 		}
-
-		Vector2 velocity = object.getVelocity();
-		velocity.set(newVelocityX, newVelocityY);
-		if (velocity.length() > object.getMaxSpeed()) {
-			velocity.normalize();
-			velocity.multiply(object.getMaxSpeed());
-		}
+		pool.release(positionOffset);
+	
+        
+//
+//		if (object.positionLocked == false) {
+//			object.getPosition().set(newX, newY);
+//		}
+//
+//		Vector2 velocity = object.getVelocity();
+//		velocity.set(newVelocityX, newVelocityY);
+//		if (velocity.length() > object.getMaxSpeed()) {
+//			velocity.normalize();
+//			velocity.multiply(object.getMaxSpeed());
+//		}
 	}
 
 }

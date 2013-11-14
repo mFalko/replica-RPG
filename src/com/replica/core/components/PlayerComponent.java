@@ -15,6 +15,7 @@
  */
 
 package com.replica.core.components;
+
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.GameObject.ActionType;
@@ -22,7 +23,9 @@ import com.replica.core.GameObject.Team;
 import com.replica.core.GameObjectManager;
 import com.replica.core.collision.CollisionParameters.HitType;
 import com.replica.core.factory.GameObjectFactory;
+import com.replica.core.factory.GameObjectFactory.GameObjectType;
 import com.replica.core.game.AttackConstants;
+import com.replica.core.systems.CameraSystem;
 import com.replica.input.InputDPad;
 import com.replica.input.InputGameInterface;
 import com.replica.utility.FixedSizeArray;
@@ -32,22 +35,17 @@ import com.replica.utility.VectorPool;
 
 public class PlayerComponent extends GameComponent {
 
-
 	private static final float HIT_REACT_TIME = 0;
 	public static final float PLAYER_MOVEMENT_SPEED = 2.0f;
 
 	public enum State {
-		MOVE, 
-		ATTACK, 
-		HIT_REACT, 
-		DEAD, 
-		FROZEN
+		MOVE, ATTACK, HIT_REACT, DEAD, FROZEN
 	}
-	
+
 	private State mState;
 	private float mTimer;
-	
-    public FixedSizeArray<AttackConstants> attackList;
+
+	public FixedSizeArray<AttackConstants> attackList;
 
 	private InventoryComponent mInventory;
 	private Vector2 mHotSpotTestPoint;
@@ -59,8 +57,8 @@ public class PlayerComponent extends GameComponent {
 		mHotSpotTestPoint = new Vector2();
 		reset();
 		setPhase(ComponentPhases.THINK.ordinal());
-		//TODO: Magic number, need to figure out where to define this
-		attackList = new FixedSizeArray<AttackConstants>(6); 
+		// TODO: Magic number, need to figure out where to define this
+		attackList = new FixedSizeArray<AttackConstants>(6);
 	}
 
 	@Override
@@ -70,17 +68,17 @@ public class PlayerComponent extends GameComponent {
 		mInventory = null;
 		mHotSpotTestPoint.zero();
 		mHitReaction = null;
-//		attackList.clear();
+		// attackList.clear();
 	}
 
-	protected void move(float time, float timeDelta, GameObject parentObject) {
+	private void move(float time, float timeDelta, GameObject parentObject) {
 		VectorPool pool = sSystemRegistry.vectorPool;
 		InputGameInterface input = sSystemRegistry.inputGameInterface;
 
 		if (pool != null && input != null) {
-			
+
 			Vector2 pos = parentObject.getPosition();
-			
+
 			InputDPad dpad = input.getDpad();
 			Vector2 facingDir = parentObject.facingDirection;
 			if (dpad.getDirection(facingDir)) {
@@ -90,18 +88,39 @@ public class PlayerComponent extends GameComponent {
 
 				pos.y += directionDelta.y;
 				pos.x += directionDelta.x;
-				
+
 				pool.release(directionDelta);
 
 				parentObject.setCurrentAction(ActionType.MOVE);
+
 				
-//				DebugLog.d("SnowBall", "Position: X = " + pos.x + " : Y = " + pos.y);
 			} else {
 				parentObject.setCurrentAction(ActionType.IDLE);
 			}
 		}
 	}
-	
+
+	private void updateInput(float time, float timeDelta,
+			GameObject parentObject) {
+		final InputGameInterface input = sSystemRegistry.inputGameInterface;
+
+		
+		
+		if (input.getButtonPressed(1)) {
+			parentObject.currentAttack = AttackConstants.FIREBALL_1;
+			goToAttack(parentObject);
+		}
+		
+		if (input.getButtonPressed(0)) {
+			parentObject.currentAttack = AttackConstants.QUAKE;
+			goToAttack(parentObject);
+
+		}
+
+		
+
+	}
+
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
 
@@ -122,7 +141,7 @@ public class PlayerComponent extends GameComponent {
 					&& parentObject.lastReceivedHitType != HitType.INVALID
 					&& parentObject.getCurrentAction() == ActionType.HIT_REACT) {
 				gotoHitReact(parentObject, gameTime);
-			} 
+			}
 		}
 
 		switch (mState) {
@@ -147,103 +166,78 @@ public class PlayerComponent extends GameComponent {
 	}
 
 	protected void goToAttack(GameObject parentObject) {
-		
-//		if (parentObject.currentAttack == null) {
-//			gotoMove(parentObject);
-//			return;
-//		}
-		
+
+		// if (parentObject.currentAttack == null) {
+		// gotoMove(parentObject);
+		// return;
+		// }
+
 		parentObject.setCurrentAction(GameObject.ActionType.ATTACK);
+		AttackConstants attackInfo = parentObject.currentAttack;
+		mlauncher.disableProjectileTracking();
+		mlauncher.setShotsPerSet(999);
+		mlauncher.setSetsPerActivation(1);
+		mlauncher
+				.setDelayBeforeFirstSet(attackInfo.waitForCastTime_ ? attackInfo.castTime_
+						: 0);
+		mlauncher.setDelayBetweenShots(attackInfo.castTime_ + 0.05f);
+		mlauncher.setObjectTypeToSpawn(attackInfo.attackObject_);
+		mlauncher.setRequiredAction(ActionType.ATTACK);
+
+		mlauncher.setVelocityX(parentObject.facingDirection.x
+				* attackInfo.speed_);
+		mlauncher.setVelocityY(parentObject.facingDirection.y
+				* attackInfo.speed_);
+
+		mlauncher.setOffsetY(-parentObject.height / 2);
 		mState = State.ATTACK;
-		mTimer = -1.0f;	
+		mTimer = -1.0f;
 	}
-	
+
 	private void stateAttack(float gameTime, float timeDelta,
 			GameObject parentObject) {
+
 		
+
 		if (mTimer < 0.0f) {
-            mTimer = gameTime;
-            GameObjectFactory factory = sSystemRegistry.gameObjectFactory;
-          GameObjectManager manager = sSystemRegistry.gameObjectManager;
-            
-            GameObject object = factory.spawnQuake(
-            		parentObject.getCenteredPositionX(), parentObject.getPosition().y);
-            object.team = Team.PLAYER;
-            manager.add(object);
-            
-        } 
-		
-		
-		
-		
-		
-//		parentObject.currentAttack.castTime
-		if (gameTime - mTimer >= 0.6f) {
-//			GameObjectFactory factory = sSystemRegistry.gameObjectFactory;
-//            GameObjectManager manager = sSystemRegistry.gameObjectManager;
-//            VectorPool pool = sSystemRegistry.vectorPool;
-//            
-//            
-//            
-//            GameObject object = factory.spawnFireball(
-//            		parentObject.getPosition().x + (20*parentObject.facingDirection.x)+10, parentObject.getPosition().y + (10*parentObject.facingDirection.y)+10);
-//            
-//            Vector2 vel = pool.allocate();
-//            vel.set(parentObject.facingDirection);
-//            vel.multiply(300);
-//            object.setMaxSpeed(300);
-//            object.setVelocity(vel);
-//            object.facingDirection.set(parentObject.facingDirection);
-//            pool.release(vel);
-//            
-//            manager.add(object);
-            
+			mTimer = gameTime;
+
+		}
+		AttackConstants attackInfo = parentObject.currentAttack;
+		if (gameTime - mTimer >= attackInfo.castTime_) {
 			gotoMove(parentObject);
 		}
-		
-		
-		//TODO: attack stuff
+
 	}
 
 	private void gotoMove(GameObject parentObject) {
 		mState = State.MOVE;
 	}
 
-	private void stateMove(float time, float timeDelta,
-			GameObject parentObject) {
+	private void stateMove(float time, float timeDelta, GameObject parentObject) {
 
 		move(time, timeDelta, parentObject);
-
-		final InputGameInterface input = sSystemRegistry.inputGameInterface;
-
-		// check input buttons here
-		
-		if (input.getButtonPressed(0)) {
-			goToAttack(parentObject);
-		}
-		
-//		if (input.getButtonPressed(1)) {
-//			goToAttack(parentObject);
-//		}
+		updateInput(time, timeDelta, parentObject);
 
 	}
-	
+
 	private void gotoHitReact(GameObject parentObject, float time) {
-//		if (parentObject.lastReceivedHitType == CollisionParameters.HitType.LAUNCH) {
-//			if (mState != State.FROZEN) {
-//				gotoFrozen(parentObject);
-//			}
-//		} else {
-//			mState = State.HIT_REACT;
-//			mTimer = time;
-//
-//		}
+		// if (parentObject.lastReceivedHitType ==
+		// CollisionParameters.HitType.LAUNCH) {
+		// if (mState != State.FROZEN) {
+		// gotoFrozen(parentObject);
+		// }
+		// } else {
+		// mState = State.HIT_REACT;
+		// mTimer = time;
+		//
+		// }
 	}
 
 	private void stateHitReact(float time, float timeDelta,
 			GameObject parentObject) {
-		
-		//TODO: do different stuff based on the last hit
+
+		// TODO: do different stuff based on the last hit
 		gotoMove(parentObject);
 	}
 
@@ -252,8 +246,7 @@ public class PlayerComponent extends GameComponent {
 		mTimer = time;
 	}
 
-	private void stateDead(float time, float timeDelta,
-			GameObject parentObject) {
+	private void stateDead(float time, float timeDelta, GameObject parentObject) {
 
 		// TODO:what happens on death?
 	}
@@ -269,7 +262,7 @@ public class PlayerComponent extends GameComponent {
 			gotoMove(parentObject);
 		}
 	}
-	
+
 	public final void setInventory(InventoryComponent inventory) {
 		mInventory = inventory;
 	}
@@ -278,4 +271,8 @@ public class PlayerComponent extends GameComponent {
 		mHitReaction = hitReact;
 	}
 
+	public final void setLaunchProjectileComponent(
+			LaunchProjectileComponent launcher) {
+		mlauncher = launcher;
+	}
 }

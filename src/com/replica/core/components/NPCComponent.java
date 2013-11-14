@@ -160,17 +160,10 @@ public class NPCComponent extends GameComponent {
 		if (!closeEnough(parentObject, mTarget)) {
 			mSteering.postCommand(Behavior.Seek, mTarget);
 			mSteering.postCommand(Behavior.WallAvoidance);
-			DebugSystem debug = BaseObject.sSystemRegistry.debugSystem;
-			debug.drawShape(mTarget.x-10, mTarget.y-10, 20, 20,
-					DebugSystem.SHAPE_CIRCLE, DebugSystem.COLOR_BLUE);
-			
-			
 
 		} else {
 			mSteering.postCommand(Behavior.WallAvoidance);
 			mSteering.postCommand(Behavior.Wander);
-			
-//			gotoIdle(parentObject);
 		}
 		
 		parentObject.facingDirection.set(parentObject.getVelocity());

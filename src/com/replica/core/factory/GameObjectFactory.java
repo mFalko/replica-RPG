@@ -67,6 +67,7 @@ import com.replica.core.components.SolidSurfaceComponent;
 import com.replica.core.components.SpriteComponent;
 import com.replica.core.components.SteeringBehavior;
 import com.replica.core.components.VehicleComponent;
+import com.replica.core.factory.GameObjectFactory.GameObjectType;
 import com.replica.core.game.AnimationType;
 import com.replica.core.graphics.SpriteAnimation;
 import com.replica.core.graphics.TextureLibrary;
@@ -433,11 +434,18 @@ public class GameObjectFactory extends BaseObject {
 		}
 	}
 
-	public GameObject spawn(GameObjectType type, float x, float y,
-			boolean horzFlip) {
+	public GameObject spawn(GameObjectType type, float x, float y) {
 		GameObject newObject = null;
 		switch (type) {
 
+		case QUAKE: 
+			newObject = spawnQuake(x,y);
+			break;
+			
+			
+		case FIREBALL_SMALL: 
+			newObject = spawnFireball(x,y);
+			break;
 		}
 
 		return newObject;
@@ -566,7 +574,11 @@ public class GameObjectFactory extends BaseObject {
 		HitReactionComponent hitReact = (HitReactionComponent)allocateComponent(HitReactionComponent.class);
         dynamicCollision.setHitReactionComponent(hitReact);
         playerComponent.setHitReactionComponent(hitReact);
-
+        
+        
+        LaunchProjectileComponent launcher = (LaunchProjectileComponent)allocateComponent(LaunchProjectileComponent.class);
+        playerComponent.setLaunchProjectileComponent(launcher);
+        
 		// object.life =
 		object.team = Team.PLAYER;
 
@@ -577,6 +589,7 @@ public class GameObjectFactory extends BaseObject {
 		object.add(backgroundCollisionComponent);
 		object.add(dynamicCollision);
 		object.add(hitReact);
+		object.add(launcher);
 		addStaticData(GameObjectType.PLAYER, object, playerSpriteComponent);
 
 		object.setCurrentAction(ActionType.IDLE);
@@ -664,6 +677,7 @@ public class GameObjectFactory extends BaseObject {
 		object.add(movementCom);
 		object.add(collisionCom);
 		object.add(dynamicCollision);
+		
 		addStaticData(GameObjectType.FIREBALL_SMALL, object,
 				objectSpriteComponent);
 
@@ -676,7 +690,7 @@ public class GameObjectFactory extends BaseObject {
 		final float width = 256;
 		final float height = 128;
 		GameObject object = mGameObjectPool.allocate();
-		object.getPosition().set(positionX - width/2, positionY- height / 2);
+		object.getPosition().set(positionX, positionY);
 		object.activationRadius = mTightActivationRadius;
 		object.width = width;
 		object.height = height;
@@ -1032,5 +1046,11 @@ public class GameObjectFactory extends BaseObject {
 			super.release(entry);
 		}
 
+	}
+
+	public GameObject spawn(GameObjectType mObjectTypeToSpawn, float x,
+			float y, boolean flip) {
+		
+		return spawn(mObjectTypeToSpawn, x, y);
 	}
 }

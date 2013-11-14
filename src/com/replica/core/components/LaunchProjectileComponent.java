@@ -16,6 +16,8 @@
 
 package com.replica.core.components;
 
+import android.util.Log;
+
 import com.replica.core.BaseObject;
 import com.replica.core.GameObject;
 import com.replica.core.GameObject.ActionType;
@@ -141,19 +143,21 @@ public class LaunchProjectileComponent extends GameComponent {
         if (factory != null && manager != null) {
             float offsetX = mOffsetX;
             float offsetY = mOffsetY;
-            boolean flip = false;
-            if (parentObject.facingDirection.x < 0.0f) {
-                offsetX = parentObject.width - mOffsetX;
-                flip = true;
-            }
-                
-            if (parentObject.facingDirection.y < 0.0f) {
-                offsetY = parentObject.height - mOffsetY;
-            }
             
-            final float x = parentObject.getPosition().x + offsetX;
-            final float y = parentObject.getPosition().y + offsetY;
-            GameObject object = factory.spawn(mObjectTypeToSpawn, x, y, flip);
+            
+//            boolean flip = false;
+//            if (parentObject.facingDirection.x < 0.0f) {
+//                offsetX = parentObject.width - mOffsetX;
+//                flip = true;
+//            }
+                
+//            if (parentObject.facingDirection.y < 0.0f) {
+//                offsetY = parentObject.height - mOffsetY;
+//            }
+            
+            final float x = parentObject.getCenteredPositionX() + offsetX;
+            final float y = parentObject.getCenteredPositionY() + offsetY;
+            GameObject object = factory.spawn(mObjectTypeToSpawn, x, y);//, flip);
             if (object != null) {
 	            mWorkingVector.set(1.0f, 1.0f);
 	            if (mThetaError > 0.0f) {
@@ -164,14 +168,19 @@ public class LaunchProjectileComponent extends GameComponent {
 	                    mWorkingVector.set(1.0f, 1.0f);
 	                }
 	            }
-	            mWorkingVector.x *= flip ? -mVelocityX : mVelocityX;
+//	            mWorkingVector.x *= flip ? -mVelocityX : mVelocityX;
+	            mWorkingVector.x *= mVelocityX;
 	            mWorkingVector.y *= mVelocityY;  
 	            
 	            object.getVelocity().set(mWorkingVector);
+	            object.facingDirection.set(mWorkingVector);
+	            object.facingDirection.normalize();
+//	            Log.v("SnowBall", "VelocityX: " + object.getVelocity().x);
+//	            Log.v("SnowBall", "VelocityY: " + object.getVelocity().y);
 	            // Center the projectile on the spawn point.
 	            object.getPosition().x -= object.width / 2.0f;
 	            object.getPosition().y -= object.height / 2.0f;
-	            
+	            object.team = parentObject.team;
 	            
 	            if (mTrackProjectiles) {
 	                object.commitUpdates();

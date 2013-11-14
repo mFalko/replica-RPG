@@ -39,30 +39,26 @@ public class SimpleAnimationComponent extends GameComponent {
 			if (parentObject.getCurrentAction() == ActionType.IDLE) {
 				currentAnimation_ = AnimationType.IDLE;
 			} else {
-				final int x = (int) Math.ceil(parentObject.facingDirection.x);
-				final int y = (int) Math.ceil(parentObject.facingDirection.y);
-				currentAnimation_ = y > 0? 
-									//we're facing north
-									x > 0? AnimationType.NORTH_EAST 
-								:   x < 0? AnimationType.NORTH_WEST
-								:	AnimationType.NORTH 
-									
-								:	y < 0? 
-									//we're facing south	
-									x > 0? AnimationType.SOUTH_EAST 
-								:   x < 0? AnimationType.SOUTH_WEST
-								:	AnimationType.SOUTH
-									
-								:	x > 0?
-									//we're facing east
-										AnimationType.EAST
-									
-								:	x < 0?
-									//we're facing west	
-										AnimationType.WEST
-									
-									//play default of north
-								:   AnimationType.NORTH ;
+				
+				if (Math.abs(parentObject.facingDirection.x)
+						- Math.abs(parentObject.facingDirection.y) > 0) {
+
+					if (parentObject.facingDirection.x > 0) {
+						currentAnimation_ = AnimationType.EAST;
+					} else {
+						currentAnimation_ = AnimationType.WEST;
+					}
+
+				} else {
+
+					if (parentObject.facingDirection.y > 0) {
+						currentAnimation_ = AnimationType.NORTH;
+					} else {
+						currentAnimation_ = AnimationType.SOUTH;
+					}
+
+				}
+				
 			}
 
 			spriteComponent_.setVisible(visible);
