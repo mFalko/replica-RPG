@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<map MapTileHeight="2" MapTileWidth="5" TilePixilHeight="32" TilePixilWidth="32" originx="0" originy="0">
-    <tileset firstGID="1" imageHeight="128" imageWidth="128" name="atlas_test2" tileHeight="32" tileWidth="32"/>
-    <layer bottom="0" drawLevel="background" left="0" priority="0" right="0" top="0">
-        <data>
-1,2,3,4,5,
-6,7,8,9,10</data>
-    </layer>
-</map>
