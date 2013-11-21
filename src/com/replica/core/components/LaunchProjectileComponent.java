@@ -77,7 +77,6 @@ public class LaunchProjectileComponent extends GameComponent {
         mVelocityX = 0.0f;
         mVelocityY = 0.0f;
         mDelayBetweenShots = 0.0f;
-        mProjectilesInSet = 0;
         mDelayBetweenSets = 0.0f;
         mLastProjectileTime = 0.0f;
         mSetStartedTime = -1.0f;

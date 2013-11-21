@@ -16,6 +16,7 @@
 
 package com.replica.core.factory;
 
+import java.io.InputStream;
 import java.util.Comparator;
 
 import com.replica.R;
@@ -433,6 +434,58 @@ public class GameObjectFactory extends BaseObject {
 			}
 		}
 	}
+	
+	public GameObject spawnFromData(InputStream gameObjectStream) {
+		
+		
+		
+		
+		
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public GameObject spawn(GameObjectType type, float x, float y) {
 		GameObject newObject = null;

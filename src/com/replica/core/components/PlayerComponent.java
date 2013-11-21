@@ -173,22 +173,17 @@ public class PlayerComponent extends GameComponent {
 		// }
 
 		parentObject.setCurrentAction(GameObject.ActionType.ATTACK);
-		AttackConstants attackInfo = parentObject.currentAttack;
-		mlauncher.disableProjectileTracking();
-		mlauncher.setShotsPerSet(999);
-		mlauncher.setSetsPerActivation(1);
+		AttackConstants attackInfo = parentObject.currentAttack;		
+		
 		mlauncher
 				.setDelayBeforeFirstSet(attackInfo.waitForCastTime_ ? attackInfo.castTime_
 						: 0);
 		mlauncher.setDelayBetweenShots(attackInfo.castTime_ + 0.05f);
 		mlauncher.setObjectTypeToSpawn(attackInfo.attackObject_);
-		mlauncher.setRequiredAction(ActionType.ATTACK);
-
 		mlauncher.setVelocityX(parentObject.facingDirection.x
 				* attackInfo.speed_);
 		mlauncher.setVelocityY(parentObject.facingDirection.y
 				* attackInfo.speed_);
-
 		mlauncher.setOffsetY(-parentObject.height / 2);
 		mState = State.ATTACK;
 		mTimer = -1.0f;
@@ -274,5 +269,9 @@ public class PlayerComponent extends GameComponent {
 	public final void setLaunchProjectileComponent(
 			LaunchProjectileComponent launcher) {
 		mlauncher = launcher;
+		mlauncher.setShotsPerSet(1);
+		mlauncher.setSetsPerActivation(-1);
+		mlauncher.setRequiredAction(ActionType.ATTACK);
+		mlauncher.disableProjectileTracking();
 	}
 }
