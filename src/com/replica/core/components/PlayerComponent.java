@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
+/*
+ * This file has been modified from the original.
+ * 
+ * The original file can be found at:
+ *		https://code.google.com/p/replicaisland/
+ */
+ 
 package com.replica.core.components;
 
 import com.replica.core.BaseObject;
@@ -167,24 +174,20 @@ public class PlayerComponent extends GameComponent {
 
 	protected void goToAttack(GameObject parentObject) {
 
-		// if (parentObject.currentAttack == null) {
-		// gotoMove(parentObject);
-		// return;
-		// }
-
 		parentObject.setCurrentAction(GameObject.ActionType.ATTACK);
 		AttackConstants attackInfo = parentObject.currentAttack;		
 		
-		mlauncher
-				.setDelayBeforeFirstSet(attackInfo.waitForCastTime_ ? attackInfo.castTime_
-						: 0);
-		mlauncher.setDelayBetweenShots(attackInfo.castTime_ + 0.05f);
-		mlauncher.setObjectTypeToSpawn(attackInfo.attackObject_);
-		mlauncher.setVelocityX(parentObject.facingDirection.x
-				* attackInfo.speed_);
-		mlauncher.setVelocityY(parentObject.facingDirection.y
-				* attackInfo.speed_);
-		mlauncher.setOffsetY(-parentObject.height / 2);
+		if (attackInfo.attackObject_ != null) {
+			mlauncher.setDelayBeforeFirstSet(
+					attackInfo.waitForCastTime_ ? attackInfo.castTime_ : 0);
+			mlauncher.setDelayBetweenSets(attackInfo.castTime_ + 0.05f);
+			mlauncher.setObjectTypeToSpawn(attackInfo.attackObject_);
+			mlauncher.setVelocityX(parentObject.facingDirection.x
+					* attackInfo.speed_);
+			mlauncher.setVelocityY(parentObject.facingDirection.y
+					* attackInfo.speed_);
+			mlauncher.setOffsetY(-parentObject.height / 2);	
+		}
 		mState = State.ATTACK;
 		mTimer = -1.0f;
 	}

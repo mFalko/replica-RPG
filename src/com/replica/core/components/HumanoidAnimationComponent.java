@@ -33,6 +33,8 @@ import com.replica.utility.FixedSizeArray;
  * sprite. There is a SpriteUpdater class that provides an interface to allow
  * for multiple layers on a sprite.
  */
+
+//TODO: Make this interface not suck
 public class HumanoidAnimationComponent extends GameComponent {
 	
 

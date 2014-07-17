@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
+/*
+ * This file has been modified from the original.
+ * 
+ * The original file can be found at:
+ *		https://code.google.com/p/replicaisland/
+ */
+ 
 package com.replica.core;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -231,32 +238,7 @@ public class Game extends AllocationGuard {
 			
 			
 			GameObject ghost3 = objectFactory.spawnSkeleton(1300, 1250);
-			gameManager.add(ghost3);
-			
-//			GameObject ghost4 = objectFactory.spawnSkeleton(1300, 1150);
-//			gameManager.add(ghost4);
-//			
-//			GameObject ghost5 = objectFactory.spawnSkeleton(1300, 1150);
-//			gameManager.add(ghost5);
-//			
-//			GameObject ghost6 = objectFactory.spawnSkeleton(1300, 1150);
-//			gameManager.add(ghost6);
-//			
-//			GameObject ghost7 = objectFactory.spawnSkeleton(1300, 1150);
-//			gameManager.add(ghost7);
-//			
-//			GameObject ghost8 = objectFactory.spawnSkeleton(1300, 1150);
-//			gameManager.add(ghost8);
-//			
-//			GameObject ghost9 = objectFactory.spawnSkeleton(1300, 1150);
-//			gameManager.add(ghost9);
-//			
-//			GameObject ghost10 = objectFactory.spawnSkeleton(1300, 1150);
-//			gameManager.add(ghost10);
-//			
-//			GameObject ghost11 = objectFactory.spawnSkeleton(1300, 1150);
-//			gameManager.add(ghost11);
-			
+			gameManager.add(ghost3);			
 			
 			zoneSystem.load("home_village_main_2.zon");
 			
@@ -264,6 +246,8 @@ public class Game extends AllocationGuard {
 //			GameObject combatDummy = objectFactory.spawnCombatDummy(200, 200);
 //			gameManager.add(combatDummy);
 
+			
+			//end GTFO of bootstrap
 			mGameRoot = gameRoot;
 
 			mGameThread = new GameThread(mRenderer);

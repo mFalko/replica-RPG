@@ -24,11 +24,10 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * @author matt
- * 
- * 
- *         A hack of Grid.java from Replica Island.
- * 
+ *     A hack of Grid.java from Replica Island.
+ * 			The original file can be found at:
+ *			https://code.google.com/p/replicaisland/
+ *
  */
 public class VertexGrid {
 

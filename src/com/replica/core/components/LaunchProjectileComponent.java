@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
+/*
+ * This file has been modified from the original.
+ * 
+ * The original file can be found at:
+ *		https://code.google.com/p/replicaisland/
+ */
+ 
 package com.replica.core.components;
 
 import android.util.Log;
@@ -77,6 +84,7 @@ public class LaunchProjectileComponent extends GameComponent {
         mVelocityX = 0.0f;
         mVelocityY = 0.0f;
         mDelayBetweenShots = 0.0f;
+        mProjectilesInSet = 0;
         mDelayBetweenSets = 0.0f;
         mLastProjectileTime = 0.0f;
         mSetStartedTime = -1.0f;

@@ -1,3 +1,12 @@
+ 
+/*
+ * This file has been modified from the original.
+ * 
+ * The original file can be found at:
+ *		https://code.google.com/p/replicaisland/
+ */
+ 
+
 package com.replica.utility;
 
 import java.net.HttpURLConnection;

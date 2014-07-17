@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
+/*
+ * This file has been modified from the original.
+ * 
+ * The original file can be found at:
+ *		https://code.google.com/p/replicaisland/
+ */
+ 
 package com.replica.core.graphics;
 
 public class TiledBackgroundVertexGrid extends ScrollableBitmap {

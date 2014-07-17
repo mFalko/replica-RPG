@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
+/*
+ * This file has been modified from the original.
+ * 
+ * The original file can be found at:
+ *		https://code.google.com/p/replicaisland/
+ */
+ 
 package com.replica.core.components;
 
 import com.replica.core.BaseObject;
@@ -36,6 +43,8 @@ import com.replica.utility.TimeSystem;
  * that object to respond to dynamic collisions.
  */
 public class HitReactionComponent extends GameComponent {
+    private static final float ATTACK_PAUSE_DELAY = (1.0f / 60) * 4;
+    private final static float DEFAULT_BOUNCE_MAGNITUDE = 200.0f;
     private final static float EVENT_SEND_DELAY = 5.0f;
     private final static float INVINCIBLE_AFTER_HIT_TIME = 0.05f;
  
@@ -45,6 +54,7 @@ public class HitReactionComponent extends GameComponent {
     private boolean mDieOnAttack;
     private ChangeComponentsComponent mPossessionComponent;
     private LauncherComponent mLauncherComponent;
+    private int mLauncherHitType;
     private float mInvincibleTime;
     private int mGameEventHitType;
     private float mLastGameEventTime;
