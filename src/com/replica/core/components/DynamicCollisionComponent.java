@@ -75,16 +75,6 @@ public class DynamicCollisionComponent extends GameComponent {
 
 		}
 
-		CollisionSystem collision2 = sSystemRegistry.collisionSystem;
-		if (collision2 != null) {
-			parentObject.getBounds().set(0, 0, parentObject.width,
-					parentObject.height);
-			parentObject.getBounds().setCenter(
-					parentObject.getCenteredPositionX(),
-					parentObject.getCenteredPositionY());
-			collision2.addGameObject(parentObject);
-		}
-
 	}
     
     public void setHitReactionComponent(HitReactionComponent component) {

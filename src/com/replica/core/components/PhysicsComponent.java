@@ -68,8 +68,8 @@ public class PhysicsComponent extends GameComponent {
         GameObject parentObject = (GameObject) parent;
 
         // we look to user data so that other code can provide impulses
-        Vector2 impulseVector = parentObject.getImpulse();
-
+        Vector2 impulseVector = Vector2.ZERO; //parentObject.getImpulse();
+        									//TODO: put impulse back in
         final Vector2 currentVelocity = parentObject.getVelocity();
         
         final Vector2 surfaceNormal = parentObject.getBackgroundCollisionNormal();
@@ -131,9 +131,9 @@ public class PhysicsComponent extends GameComponent {
         // velocity.
         if (physicsCausesMovement) {
             parentObject.setVelocity(newVelocity);
-            parentObject.setTargetVelocity(newVelocity);
-            parentObject.setAcceleration(Vector2.ZERO);
-            parentObject.setImpulse(Vector2.ZERO);
+//            parentObject.setTargetVelocity(newVelocity);
+//            parentObject.setAcceleration(Vector2.ZERO);
+//            parentObject.setImpulse(Vector2.ZERO);
         }
 
         vectorPool.release(newVelocity);

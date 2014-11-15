@@ -35,7 +35,7 @@ import com.replica.utility.Vector2;
  * GameObjects themselves have no intrinsic behavior.  GameObjects are also "bags of data" that
  * components can use to share state (direct component-to-component communication is discouraged).
  */
-public class GameObject extends PhasedObjectManager implements HasBounds {
+public class GameObject extends PhasedObjectManager {
 	
     // These fields are managed by components.
 	// define as constants and use a alloc free map to access?
@@ -187,16 +187,5 @@ public class GameObject extends PhasedObjectManager implements HasBounds {
 
 	public void setMass(float mass) {
 		mMass = mass;
-	}
-
-	@Override
-	public RectF getBounds() {
-		return mBounds_;
-	}
-
-	@Override
-	public void setBounds(RectF bounds) {
-		mBounds_.set(bounds);
-		
 	}
 }

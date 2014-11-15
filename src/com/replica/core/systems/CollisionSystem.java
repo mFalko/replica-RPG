@@ -43,18 +43,14 @@ public class CollisionSystem extends BaseObject {
 
 	QuadTree<LineSegment> lineSegmentQuadtree_;
 	QuadTree<LineSegment> temporaryLineSegmentQuadtree_;
-	QuadTree<GameObject> GameObjectTree_;
 
 	private FixedSizeArray<LineSegment> pendingTemporaryLineSegments_;
-	private FixedSizeArray<GameObject> pendingGameObjects_;
 	private FixedSizeArray<LineSegment> lineSegmentsQuery_;
-	private FixedSizeArray<GameObject> gameObjectQuery_;
 
 	private LineSegmentPool lineSegmentPool_;
 
 	private static final int MAX_LINE_SEGMENTS = 2000;
 	private static final int MAX_TEMPORARY_LINE_SEGMENTS = 256;
-	private static final int MAX_GAME_OBJECTS = 400;
 
 	public CollisionSystem() {
 		super();
@@ -64,16 +60,11 @@ public class CollisionSystem extends BaseObject {
 		lineSegmentQuadtree_ = new QuadTree<LineSegment>(MAX_LINE_SEGMENTS);
 		temporaryLineSegmentQuadtree_ = new QuadTree<LineSegment>(
 				MAX_TEMPORARY_LINE_SEGMENTS);
-		GameObjectTree_ = new QuadTree<GameObject>(MAX_GAME_OBJECTS);
 
 		pendingTemporaryLineSegments_ = new FixedSizeArray<LineSegment>(
 				MAX_TEMPORARY_LINE_SEGMENTS);
 		lineSegmentsQuery_ = new FixedSizeArray<LineSegment>(MAX_LINE_SEGMENTS
 				+ MAX_TEMPORARY_LINE_SEGMENTS);
-		pendingGameObjects_ = new FixedSizeArray<GameObject>(
-				MAX_GAME_OBJECTS);
-		gameObjectQuery_ = new FixedSizeArray<GameObject>(
-				MAX_GAME_OBJECTS);
 
 		lineSegmentPool_ = new LineSegmentPool(MAX_TEMPORARY_LINE_SEGMENTS * 2);
 
@@ -131,14 +122,6 @@ public class CollisionSystem extends BaseObject {
 		return lineSegmentsQuery_;
 	}
 
-	public FixedSizeArray<GameObject> queryActiveGameObjects(RectF queryRect) {
-		gameObjectQuery_.clear();
-		GameObjectTree_.Query(queryRect, gameObjectQuery_);
-
-		return gameObjectQuery_;
-
-	}
-
 	/*
 	 * Inserts a temporary surface into the collision world. It will persist for
 	 * one frame.
@@ -153,10 +136,6 @@ public class CollisionSystem extends BaseObject {
 		pendingTemporaryLineSegments_.add(newSegment);
 	}
 
-	public void addGameObject(GameObject object) {
-		pendingGameObjects_.add(object);
-	}
-
 	@Override
 	public void update(float timeDelta, BaseObject parent) {
 
@@ -168,13 +147,7 @@ public class CollisionSystem extends BaseObject {
 					.get(i));
 		}
 		pendingTemporaryLineSegments_.clear();
-		
-		GameObjectTree_.reset();
-		int pendingObjectCount = pendingGameObjects_.getCount();
-		for (int i = 0; i < pendingObjectCount; ++i) {
-			GameObjectTree_.add(pendingGameObjects_.get(i));
-		}
-		pendingGameObjects_.clear();
+
 	}
 
 	/*
